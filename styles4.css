@@ -8,7 +8,7 @@
       display: block;
       width: 100%;
       background-color: #ffffff;
-      color: #333;
+      color: #000000;
       border: 1px solid black;
       padding: 15px;
       margin: 10px 0;
@@ -19,7 +19,7 @@
     }
 
     button.question:hover {
-      background-color: #d0d0d0;
+      background-color: #9c9c9c;
     }
 
     .answer {
