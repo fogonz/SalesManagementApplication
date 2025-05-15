@@ -13,21 +13,21 @@
 <body>
 	<div class="main">
 		<!-- SECCION IZQUIERDA -->
-		<div id="main_1">
+		<div class="main_1">
 			<!-- TOPBAR -->
 			<div class="topbar whiteish row">
-				<button id="currency"> UYU / USD</button>
-				<div class="open-sans" id="stats">Estadísticas</div>
+				<button class="currency"> UYU / USD</button>
+				<div class="open-sans stats">Estadísticas</div>
 			</div>
 			
 			<!-- ALERTAS -->
 			<div class="container column">
 				<!-- cartel -->
-				<div class="open-sans" id="alertas_top">
+				<div class="open-sans alertas_top">
 					⚠ Advertencias
 				</div>
 				<!-- contenido (alertas) -->
-				<div id="alertas_bottom">
+				<div class="alertas_bottom">
 					<div class="button alerta grad-yellow">STOCK crítico en 2 productos de alto rendimiento</div>
 					<div class="button alerta grad-red delay1">1 DEUDA/S a saldar en 2 días</div>
 					<div class="button alerta grad-red delay2">DISMINUCIÓN de 50% de ventas en 2 productos</div>
@@ -35,15 +35,24 @@
 			</div>
 
 			<!-- GRAFICAS -->
-			<div class="container" id="graphs">
+			<div class="container graphs">
 				<div class="graphBlock">
-					STAT
+                    <div class=".graph">
+                        <p> Ingreso </p>
+                        <div class="ing">$400.000 </div>
+                    </div>
 				</div>
 				<div class="graphBlock">
-					STAT
+					<div class=".graph">
+                        <p> Egreso </p>
+                        <div class="eg">$300.000 </div>
+                    </div>
 				</div>
 				<div class="graphBlock">
-					STAT
+					<div class=".graph">
+                        <p> Total </p>
+                        <div class="to">$300.000 </div>
+                    </div>
 				</div>
 			</div>
 
@@ -52,7 +61,7 @@
 		</div>
 
 		<!-- SECCION DERECHA -->
-		<div id="main_2">
+		<div class="main_2">
 
 			<!-- SIDEBAR -->
 			<div class="sidebar black column">
@@ -62,7 +71,7 @@
 				</div>
 				
 				<!-- CONTENEDOR BOTONES -->
-				<div class="column" id="sidebar_container_buttons">
+				<div class="column sidebar_container_buttons">
 					<button class="menu-button blackish">
 						INVENTARIO
 					</button>
@@ -84,14 +93,6 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
 
 
 

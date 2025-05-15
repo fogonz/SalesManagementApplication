@@ -147,7 +147,7 @@ body{
 	overflow:hidden
 }
 
-#main_1{
+.main_1{
 	width: 100%;
 	height: 100%;
 	display: flex;
@@ -155,7 +155,7 @@ body{
 	row-gap: 1.5vh;
 }
 
-#main_2{
+.main_2{
 	background-color: rgb(43, 175, 43);
 	display: flex;
 	position: relative;
@@ -163,7 +163,7 @@ body{
 	width: auto;
 }
 
-#sidebar_container_buttons{
+.sidebar_container_buttons{
 	padding-left: 0%;
 	padding-top: 10%;
 	padding-right: 0;
@@ -173,11 +173,11 @@ body{
 	width: 100%; 
 }
 
-#currency{
+.currency{
 	border: none;
 }
 
-#stats{
+.stats{
 	position: absolute;
 	left: 50%;
 	top: 0%;
@@ -187,7 +187,7 @@ body{
 }
 
 
-#alertas_top{
+.alertas_top{
 	text-align: left;
 	background: linear-gradient(90deg, #202020, #20202000);
 	display: flex;
@@ -199,7 +199,7 @@ body{
 	margin-left: -1%;
 }
 
-#alertas_bottom{
+.alertas_bottom{
 	display: flex;
 	width: 100%;
 	height: 6vh;
@@ -243,22 +243,22 @@ body{
 }
 
 .graphBlock{
-	background-color: white;
-	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.342);
-	box-sizing: border-box;
-	height: 30vh;
-	width: 40vh;
-	padding: 1.5%;
-	border-radius: 25px;
-	align-content: center;
-	justify-content: center;
-	text-align: center;
+  background-color: white;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.342);
+  padding: 1%;
+  border-radius: 25px;
+  text-align: center;
+  height: 20vh;
 }
 
-#graphs{
-	display: flex;
-	flex: row;
-	column-gap: 2vh;
+.graphs{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  column-gap: 2vh;      
+  row-gap: 2vh;         
+  justify-content: start; 
+  width: 40%; /* Largo de los cuadros (seguramente se agranden) */
+  padding-left: 1.6%; /* Mueve todos los bloques en general para la derecha */
 }
 
 .delay1{
@@ -286,4 +286,21 @@ body{
 	transform: translateX(0);       /* posición final */
 	opacity: 1;                      /* asegurar visibilidad */
 }
+}
+
+.graphBlock:last-child {
+  grid-column: span 2;
+}
+
+.ing {
+    color: #4cc428;
+    
+}
+
+.eg {
+    color: #f02323;
+}
+
+.to {
+    color: #4cc428;
 }
