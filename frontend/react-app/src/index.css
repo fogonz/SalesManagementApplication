@@ -16,7 +16,7 @@
     --success-color: #27ae60;
     --danger-color: #e74c3c;
     --warning-color: #f39c12;
-    --light-color: #d9dcdd;
+    --light-color: #666666;
     --dark-color: #34495e;
     --background-color: #d4d2d2;
     --background-color-accent: #969292;
@@ -25,7 +25,7 @@
     --sidebar-width: 300px;
     --content-padding: 20px;
     --toolbar-height: 70px;
-    --tabs-height: 40px;
+    --topbar-height: 4vh;
     
     /* Component Variables */
     --sidebar-color: #1a1a1a;
@@ -77,4 +77,14 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.column{
+  display: flex;
+  flex-direction: column;
+}
+
+.row{
+  display: flex;
+  flex-direction: row;
 }

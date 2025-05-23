@@ -8,10 +8,9 @@ function App() {
   return (
     <div>
       <TopBar></TopBar>
-      <div className="column">
+      <div className="row">
         <SideBar></SideBar>
         <TableBox></TableBox>
-        
       </div>
     </div>
   );

@@ -1,58 +1,60 @@
 .sidebar {
-position: fixed;
-top: var(--tabs-height);
-width: var(--sidebar-width);
-height: calc(100vh - var(--tabs-height));
-background-color: var(--sidebar-color);
-color: white;
-box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-z-index: 100;
-display: flex;
-flex-direction: column;
-overflow-y: auto;
+    position: relative;
+    top: var(--topbar-height);
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--sidebar-color);
+    color: white;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .sidebar-toggle {
-display: none;
-background: transparent;
-border: none;
-color: #555;
-cursor: pointer;
-font-size: 18px;
-margin-right: auto;
+    display: none;
+    background: transparent;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 18px;
+    margin-right: auto;
 }
 
 .logo-section {
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 20px;
-padding: 25px 0;
-width: 100%;
-background-color: white;
-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 25px 0;
+    width: 100%;
+    background-color: white;
+    color: black;
 }
 
 .logo-section img {
-width: 100px;
-border-radius: 50%;
+    width: 100px;
+    border-radius: 50%;
 }
 
 .logo-title {
-font-weight: bold;
-margin-top: 10px;
-font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+    font-size: 18px;
 }
 
 .logo-subtitle {
-font-size: 1em;
-color: #666;
+    font-size: 1em;
+    color: #666;
 }
 
 .sidebar-menu-container {
-margin-top: 40px;
-display: flex;
-flex-direction: column;
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1vh;
 }
 
 .menu-button {
@@ -66,24 +68,31 @@ flex-direction: column;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.2s ease;
-	width: 100%;
+	width: 80%;
+    clip-path: inset(0 0 0 12%);
+    margin-left: -10%;
 }	
 
 .menu-button i {
-margin-right: 15px;
-font-size: 16px;
-transition: all 0.3s ease;
-width: 20px;
-text-align: center;
+    margin-right: 15px;
+    margin-left: 10%;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    width: 20px;
+    text-align: center;
 }
 
 .menu-button:hover {
-background-color: #4a4a4a;
-transform: translateX(8px);
+    background-color: #4a4a4a;
+    transform: translateX(3%);
+    clip-path: inset(0 0 0 8%);;
 }
 
 .menu-button.active {
-background-color: #5a5a5a;
-transform: translateX(8px);
-box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    background-color: var(--light-color);
+    transform: translateX(3%);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    clip-path: inset(0 0 0 8%);
+    border: none;
+    outline: none;
 }
