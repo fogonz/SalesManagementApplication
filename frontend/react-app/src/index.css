@@ -50,6 +50,7 @@ html, body {
   height: 100%;
   box-sizing: border-box;
   overflow-x: auto;
+  background-color: var(--background-color);
 }
 
 h1 {

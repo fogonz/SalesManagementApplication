@@ -1,13 +1,16 @@
 import React from "react";
-import Message from "./Message";
-import TopBar from "./TopBar/TopBar";
-import TableBox from "./TableBox/TableBox";
+import TopBar from "./components/TopBar/TopBar";
+import TableBox from "./components/TableBox/TableBox";
+import SideBar from "./components/SideBar/SideBar";
 
 function App() {
   return (
     <div>
       <TopBar></TopBar>
-      <TableBox></TableBox>
+      <div className="column">
+        <SideBar></SideBar>
+        <TableBox></TableBox>
+      </div>
     </div>
   );
 }

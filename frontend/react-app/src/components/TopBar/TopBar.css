@@ -1,0 +1,45 @@
+.header-top {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+
+	background-color: #fff;
+	border-bottom: 2px solid #e0e0e0;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+
+	z-index: 5;
+	width: 100%;
+	height: 4vh;
+	position: fixed;
+	top: 0;
+	overflow: hidden;
+}
+
+.header-icons {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	align-items: center;
+
+	padding: 0 10px;
+	height: 100%;
+}
+
+.header-icon {
+	height: 90%;
+	aspect-ratio: 1 / 1;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.2s;
+	color: var(--background-color-accent);
+	background-color: var(--background-color);
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.header-icon i {
+	font-size: 2vh;
+	line-height: 1;
+}
