@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+{% load static django_vite %}
+<html lang="es">
+  <head>
+    {# 1) mete el cliente HMR de Vite para el build "default" #}
+    {% vite_hmr_client 'default' %}
+
+    {# 2) mete tu entry point, también para "default" #}
+    {% vite_asset 'src/main.tsx' 'default' %}
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventario Maderas Lo de Juan</title>
+    <link rel="stylesheet" href="{% static 'css/styles3.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Tabs on top -->
+    <div class="tabs-container">
+      <div class="tab active" id="dashboardTab">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
+      </div>
+      <div class="tab" id="adminTab">
+        <i class="fas fa-user"></i>
+        <span>Admin</span>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo-section" style="width: 100%">
+        <img
+          src="https://images.steamusercontent.com/ugc/1298675651395030773/1490E7F605879E8E6336535DE2F282BE766BF930/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"
+          alt="Logo"
+        />
+        <div class="logo-text">
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
+          <div class="logo-title">Ferretería Lo de Pablo</div>
+          <div class="logo-subtitle">
+            Aplicación de Registro y<br />Administración de Ventas
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-menu-container">
+        <button class="menu-button" onclick="toggleActive(this)">
+          <i class="fas fa-home"></i>MOVIMIENTOS
+        </button>
+        <button class="menu-button" onclick="toggleActive(this)">
+          <i class="fas fa-cash-register"></i> CAJA CHICA
+        </button>
+        <button class="menu-button" onclick="toggleActive(this)">
+          <i class="fas fa-boxes"></i> STOCK
+        </button>
+        <button class="menu-button" onclick="toggleActive(this)">
+          <i class="fas fa-address-card"></i> CUENTAS
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Header superior con icons -->
+      <div class="header-top">
+        <button class="sidebar-toggle" id="sidebarToggle"></button>
+
+        <div class="header-icons">
+          <!-- BOTÓN AYUDA -->
+          <button class="header-icon" onclick="window.location.href='/ayuda'">
+            <i class="fas fa-question"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Content container -->
+      <div class="content-container">
+        <!-- Combined toolbar and white sheet -->
+        <div class="content-box">
+          <!-- Toolbar -->
+          <div class="toolbar">
+            <div class="toolbar-nav">
+              <div class="toolbar-icon">
+                <i class="fas fa-home"></i>
+              </div>
+              <div class="toolbar-icon">
+                <i class="fas fa-list"></i>
+              </div>
+              <div class="toolbar-icon">
+                <i class="fas fa-table"></i>
+              </div>
+            </div>
+
+            <div class="search-container">
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Buscar movimientos..."
+              />
+              <button class="search-button">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+            <div class="toolbar-actions">
+              <button class="action-button">
+                <i class="fas fa-filter"></i>
+              </button>
+              <button class="action-button">
+                <i class="fas fa-sort"></i>
+              </button>
+              <button
+                class="add-button"
+                onclick="window.location.href='/newtransaction'"
+              >
+                <span>Añadir Movimiento</span>
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabla -->
+          <div id="table-container">
+            <div id="root"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="login-overlay" id="loginOverlay">
+      <div class="login-container">
+        <button class="close-btn" id="closeLoginBtn">&times;</button>
+        <div class="login-header">
+          <h1>Admin Login</h1>
+          <p>Ingrese sus credenciales de administrador</p>
+        </div>
+
+        <form id="loginForm">
+          <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" placeholder="Usuario" required />
+          </div>
+
+            <i class="fas fa-lock"></i>
+            <input
+              type="password"
+              id="password"
+              placeholder="Contraseña"
+              required
+            />
+          </div>
+
+          <div id="loginError" class="error-message">
+            Usuario o contraseña incorrectos
+          </div>
+
+          <button type="submit" class="login-button">INGRESAR</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Toggle active class for menu buttons
+      function toggleActive(button) {
+        // Remove active class from all buttons first
+        document.querySelectorAll(".menu-button").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        // Add active class to clicked button
+        button.classList.add("active");
+      }
+
+      // Toggle sidebar on mobile
+      const sidebarToggle = document.getElementById("sidebarToggle");
+      const sidebar = document.querySelector(".sidebar");
+
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener("click", function () {
+          sidebar.classList.toggle("active");
+        });
+      }
+
+      // Admin login modal functionality
+      const adminTab = document.getElementById("adminTab");
+      const dashboardTab = document.getElementById("dashboardTab");
+      const loginOverlay = document.getElementById("loginOverlay");
+      const closeLoginBtn = document.getElementById("closeLoginBtn");
+      const loginForm = document.getElementById("loginForm");
+      const loginError = document.getElementById("loginError");
+
+      // Admin tab click opens login modal
+      adminTab.addEventListener("click", function () {
+        // Toggle active class for tabs
+        dashboardTab.classList.remove("active");
+        adminTab.classList.add("active");
+
+        // Show login overlay
+        loginOverlay.classList.add("active");
+      });
+
+      // Close login modal
+      closeLoginBtn.addEventListener("click", function () {
+        loginOverlay.classList.remove("active");
+        // Reset form and errors
+        loginForm.reset();
+        loginError.style.display = "none";
+
+        // Return to dashboard tab
+        adminTab.classList.remove("active");
+        dashboardTab.classList.add("active");
+      });
+
+      // Close modal when clicking outside
+      loginOverlay.addEventListener("click", function (e) {
+        if (e.target === loginOverlay) {
+          loginOverlay.classList.remove("active");
+          // Reset form and errors
+          loginForm.reset();
+          loginError.style.display = "none";
+
+          // Return to dashboard tab
+          adminTab.classList.remove("active");
+          dashboardTab.classList.add("active");
+        }
+      });
+
+      // Demo login check
+      loginForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        // Demo credentials - in real app this would check with server
+        if (username === "admin" && password === "admin123") {
+          // Successful login
+          loginError.style.display = "none";
+          alert("Login exitoso! Redirigiendo al panel de administración...");
+          loginOverlay.classList.remove("active");
+        } else {
+          // Failed login
+          loginError.style.display = "block";
+        }
+      });
+
+      // Tabs functionality
+      const tabs = document.querySelectorAll(".tab");
+      tabs.forEach((tab) => {
+        if (tab.id !== "adminTab") {
+          // We handle adminTab separately
+          tab.addEventListener("click", function () {
+            tabs.forEach((t) => t.classList.remove("active"));
+            this.classList.add("active");
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
