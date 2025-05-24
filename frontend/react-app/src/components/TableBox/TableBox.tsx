@@ -32,11 +32,6 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
         return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     };
 
-    // Función para normalizar texto removiendo tildes/acentos
-    const normalizeText = (text: string): string => {
-        return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-    };
-
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
