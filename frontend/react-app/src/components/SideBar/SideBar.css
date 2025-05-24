@@ -56,7 +56,6 @@
 
 .logo-subtitle {
     font-size: 1em;
-    color: #666;
 }
 
 .sidebar-menu-container {
@@ -80,7 +79,6 @@
 	width: 100%;
     clip-path: inset(0 0 0 12%);
     margin-left: -10%;
-    background-color: rgba(99, 99, 99, 0.425);
 }	
 
 .menu-button i {
