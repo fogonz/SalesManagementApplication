@@ -79,6 +79,7 @@
 	width: 100%;
     clip-path: inset(0 0 0 12%);
     margin-left: -10%;
+    background-color: #272727;
 }	
 
 .menu-button i {
