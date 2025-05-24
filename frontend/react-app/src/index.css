@@ -10,7 +10,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-    /* Color Variables */
+    /* COLORES : GENERAL */
     --primary-color: #2c3e50;
     --secondary-color: #3498db;
     --success-color: #27ae60;
@@ -21,18 +21,35 @@
     --background-color: #bcc4c4;
     --background-color-accent: #969292;
     
-    /* Layout Variables */
-    --sidebar-width: 30vw;
+    /* LAYOUT VARS */
+    --sidebar-width: 25vw;
     --content-padding: 20px;
     --toolbar-height: 70px;
     --topbar-height: 4vh;
     
-    /* Component Variables */
+    /* COLORES COMPONENTS */
     --sidebar-color: #1a1a1a;
     --sidebar-accent: #3498db;
     --toolbar-gradient: #383838;
     --tabs-background: #1a1a1a;
+
+    /* COLORES TABLA */
+    --font-color-amount: #30333b;
+    --font-color-general: red;
+    --header-color-1: #1a1a1a;
+    --header-color-2: #1a1a1a;
+    --header-font-color: white;
+    --header-border:  rgba(255, 255, 255, 0.3);
+    --row-hover: #7bafd4;
+    --row-even: #b5c5a5;
+    --row-odd: #c8d0bf;
+    --font-color: #3498db;
+    --row-color-1st: #383838;
+    --row-color-2nd: #1a1a1a;
+    --row-color-1st: #383838;
+    --row-color-2nd: #1a1a1a;
 }
+
 
 a {
   font-weight: 500;

@@ -11,13 +11,12 @@
 
 .table_container {
   background-color: #ffffff;
-  border: 1px solid #4B7BA6;
-  border-radius: 0.75rem;
+  border-radius: 0.2rem;
   box-shadow: 0 4px 6px rgba(2, 48, 89, 0.1), 0 1px 3px rgba(75, 123, 166, 0.15);
   min-width: 900px;
   font-family: 'Inter', 'Open Sans', sans-serif;
   font-size: 0.875rem;
-  color: #023059;
+  color: var(--font-color-general);
   overflow-y: hidden;
   height: 100%;
   width: 100%;
@@ -26,21 +25,20 @@
 /* Encabezado de la tabla */
 .table_header {
   display: flex;
-  background: linear-gradient(135deg, #023059 0%, #4B7BA6 100%);
-  border-bottom: 2px solid #4B7BA6;
+  background: linear-gradient(135deg, var(--header-color-1) 0%, var(--header-color-2) 100%);
   text-transform: uppercase;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.05em; 
 }
 
 /* Celdas del encabezado */
 .table_header__cell {
-  padding: 1rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  padding: .5rem;
+  border-right: 1px solid var(--header-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--header-font-color);
   font-size: 0.75rem;
   font-weight: 700;
   box-sizing: border-box;
@@ -104,6 +102,7 @@
 .table_body {
   display: flex;
   flex-direction: column;
+  row-gap: .25rem;
   overflow-y: auto;
   height: 100%;
   max-height: 100%;
@@ -126,7 +125,6 @@
 /* Filas de la tabla */
 .table_row {
   display: flex;
-  border-bottom: 1px solid #D7D7D9;
   transition: all 0.2s ease;
   cursor: pointer;
 }
@@ -136,23 +134,23 @@
 }
 
 .table_row:hover {
-  background-color: #7bafd4!important;
+  background-color: var(--row-hover)!important;
   color: #ffffff;
 }
 
 /* Filas alternadas */
 .table_row--even {
-  background-color: #9CAF88;
+  background-color: var(--row-even);
 }
 
 .table_row--odd {
-  background-color: #D7D7D9;
+  background-color: var(--row-odd );
 }
 
 /* Celdas de la tabla */
 .table_cell {
-  padding: 0.875rem 1rem;
-  border-right: 1px solid #D7D7D9;
+  padding: 0.5rem 1rem;
+  border-right: 2px solid #ffffff;
   display: flex;
   align-items: center;
   font-size: 0.875rem;
@@ -225,7 +223,7 @@
   max-width: 120px;
   justify-content: flex-end;
   font-weight: 600;
-  color: #023059;
+  color: var(--font-color-amount);
 }
 
 /* Responsive Design */
