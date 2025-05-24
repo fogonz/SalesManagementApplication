@@ -1,117 +1,209 @@
 /* Contenedor principal de la tabla */
 .table_wrapper {
-	width: 100%;
-	height: 100%;
-	overflow-x: hidden;
-	overflow-y: hidden;
-	padding: 1rem;
-	box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  padding: 1rem;
+  box-sizing: border-box;
+  background: white;
+}
+
+.table_container {
+  background-color: #ffffff;
+  border: 1px solid #4B7BA6;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(2, 48, 89, 0.1), 0 1px 3px rgba(75, 123, 166, 0.15);
+  min-width: 900px;
+  font-family: 'Inter', 'Open Sans', sans-serif;
+  font-size: 0.875rem;
+  color: #023059;
+  overflow-y: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+/* Encabezado de la tabla */
+.table_header {
+  display: flex;
+  background: linear-gradient(135deg, #023059 0%, #4B7BA6 100%);
+  border-bottom: 2px solid #4B7BA6;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* Celdas del encabezado */
+.table_header__cell {
+  padding: 1rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.table_header__cell:last-child {
+  border-right: none;
+}
+
+/* Columnas específicas del encabezado */
+.table_header__cell--id {
+  flex: 0 0 60px;
+  justify-content: center;
+}
+
+.table_header__cell--name {
+  flex: 1 1 120px;
+  justify-content: flex-start;
+}
+
+.table_header__cell--age {
+  flex: 0 0 80px;
+  justify-content: center;
+}
+
+.table_header__cell--date {
+  flex: 0 0 110px;
+  justify-content: center;
+}
+
+.table_header__cell--account {
+  flex: 1 1 120px;
+  justify-content: flex-start;
+}
+
+.table_header__cell--movement {
+  flex: 1 1 140px;
+  justify-content: flex-start;
+}
+
+.table_header__cell--amount {
+  flex: 0 0 120px;
+  justify-content: flex-end;
+}
+
+/* Cuerpo de la tabla */
+.table_body {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+  max-height: 100%;
+}
+
+/* Personalización del scrollbar */
+.table_body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table_body::-webkit-scrollbar-thumb {
+  background-color: rgba(80, 124, 163, 0.3);
+  border-radius: 3px;
+}
+
+.table_body::-webkit-scrollbar-track {
+  background-color: #D7D7D9;
+}
+
+/* Filas de la tabla */
+.table_row {
+  display: flex;
+  border-bottom: 1px solid #D7D7D9;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.table_row:last-child {
+  border-bottom: none;
+}
+
+.table_row:hover {
+  background-color:  #7bafd4!important;
+  color: #ffffff;
+}
+
+/* Filas alternadas */
+.table_row--even {
+  background-color: #9CAF88;
+}
+
+.table_row--odd {
+  background-color: #D7D7D9;
+}
+
+/* Celdas de la tabla */
+.table_cell {
+  padding: 0.875rem 1rem;
+  border-right: 1px solid #D7D7D9;
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: #023059;
+}
+
+.table_cell:last-child {
+  border-right: none;
+}
+
+/* Columnas específicas del cuerpo */
+.table_cell--id {
+  flex: 0 0 60px;
+  justify-content: center;
+}
+
+.table_cell--name {
+  flex: 1 1 120px;
+  justify-content: flex-start;
+}
+
+.table_cell--age {
+  flex: 0 0 80px;
+  justify-content: center;
+}
+
+.table_cell--date {
+  flex: 0 0 110px;
+  justify-content: center;
+}
+
+.table_cell--account {
+  flex: 1 1 120px;
+  justify-content: flex-start;
+}
+
+.table_cell--movement {
+  flex: 1 1 140px;
+  justify-content: flex-start;
+}
+
+.table_cell--amount {
+  flex: 0 0 120px;
+  justify-content: flex-end;
+  font-weight: 600;
+  color: #023059;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .table_wrapper {
+    padding: 0.5rem;
   }
   
   .table_container {
-	background-color: #ffffff;
-	border: 1px solid #d1d5db;   /* gris claro */
-	border-radius: 0.5rem;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-	min-width: 600px;
-	font-family: 'Open Sans', sans-serif;
-	font-size: 0.875rem;          /* 14px */
-	color: #374151;
-	overflow-y: hidden;
-	height: 100%;
-	width: 100%;
+    min-width: 100%;
+    font-size: 0.75rem;
   }
   
-  /* Encabezado de la tabla, como antes */
-  .table_header {
-	display: flex;
-	background-color: #f3f4f6;    /* gris muy claro */
-	border-bottom: 1px solid #e5e7eb;
-	text-transform: uppercase;
-	font-weight: 600;
-	letter-spacing: 0.05em;
-  }
-  
-  /* Celdas del encabezado */
-  .table_header__cell {
-	padding: 0.75rem 1rem;
-	border-right: 1px solid #e5e7eb;
-	flex: 1 1 0;
-  }
-  
-  .table_header__cell:last-child {
-	border-right: none;
-  }
-  
-  .table_header__cell--id {
-	flex: 0 0 60px;
-	text-align: center;
-  }
-  
-  .table_header__cell--name {
-	flex: 1 1 0;
-  }
-  
-  .table_header__cell--age {
-	flex: 0 0 80px;
-	text-align: center;
-  }
-  
-  /* Cuerpo de la tabla: columnas flexibles */
-  .table_body {
-	display: flex;
-	flex-direction: column;     
-	overflow-y: auto;
-	height: 100%;
-	max-height: 100%;
-  }
-  
-  /* Opcional: ocultar scrollbar en algunos navegadores 
-	 (solo si quieres “scroll” más discreto) */
-  .table_body::-webkit-scrollbar {
-	width: 6px;
-  }
-  
-  .table_body::-webkit-scrollbar-thumb {
-	background-color: rgba(0, 0, 0, 0.2);
-	border-radius: 3px;
-  }
-  
-  .table_row {
-	display: flex;
-	border-bottom: 1px solid #e5e7eb;
-	transition: background-color 0.2s ease;
-  }
-  
-  .table_row:last-child {
-	border-bottom: none;
-  }
-  
-  .table_row:hover {
-	background-color: #f9fafb; /* gris muy muy claro */
-  }
-  
+  .table_header__cell,
   .table_cell {
-	padding: 0.75rem 1rem;
-	border-right: 1px solid #e5e7eb;
-	flex: 1 1 0;
+    padding: 0.5rem;
   }
   
-  .table_cell:last-child {
-	border-right: none;
+  .table_header__cell--movement,
+  .table_cell--movement {
+    flex: 1 1 100px;
   }
-  
-  .table_cell--id {
-	flex: 0 0 60px;
-	text-align: center;
-  }
-  
-  .table_cell--name {
-	flex: 1 1 0;
-  }
-  
-  .table_cell--age {
-	flex: 0 0 80px;
-	text-align: center;
-  }
-  
+}
