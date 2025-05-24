@@ -33,16 +33,27 @@ const TableBox: React.FC = () => {
         setIsTransactionOpen(false);
     };
 
+    // Función para normalizar texto removiendo tildes/acentos
+    const normalizeText = (text: string): string => {
+        return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    };
+
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
-    // Filtrar datos basado en el término de búsqueda
-    const filteredData = data.filter(item =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.cuenta.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.tipoMovimiento.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Filtrar datos basado en el término de búsqueda - AHORA FILTRA TODOS LOS CAMPOS SIN TILDES
+    const filteredData = data.filter(item => {
+        const normalizedSearchTerm = normalizeText(searchTerm);
+        return (
+            normalizeText(item.name).includes(normalizedSearchTerm) ||
+            normalizeText(item.producto).includes(normalizedSearchTerm) ||
+            normalizeText(item.fecha).includes(normalizedSearchTerm) ||
+            normalizeText(item.cuenta).includes(normalizedSearchTerm) ||
+            normalizeText(item.tipoMovimiento).includes(normalizedSearchTerm) ||
+            normalizeText(item.abonado.toString()).includes(normalizedSearchTerm)
+        );
+    });
 
     useEffect(() => {
         // Simular carga de datos desde una API 
@@ -87,7 +98,7 @@ const TableBox: React.FC = () => {
                         <input
                             type="text"
                             className="search-input"
-                            placeholder="Buscar movimientos..."
+                            placeholder="Buscar en todos los campos..."
                             value={searchTerm}
                             onChange={handleSearch}
                         />
@@ -97,15 +108,42 @@ const TableBox: React.FC = () => {
                     </div>
                     
                     <div className="toolbar-actions">
-                        <button className="action-button">
-                            <i className="fas fa-filter"></i>
-                        </button>
-                        <button className="action-button">
-                            <i className="fas fa-sort"></i>
-                        </button>
-                        <button className="add-button" onClick={handleAddMovement}>
-                            <span>Añadir Movimiento</span>
-                            <i className="fas fa-plus"></i>
+                        <button 
+                            title="Add New"
+                            className="add-movement-btn"
+                            onClick={handleAddMovement}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'rotate(90deg)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'rotate(0deg)';
+                            }}
+                        >
+                            <svg
+                                width="40px"
+                                height="40px"
+                                viewBox="0 0 24 24"
+                                style={{
+                                    stroke: '#13a813',
+                                    fill: 'none',
+                                    strokeWidth: '1.5',
+                                    transition: 'all 0.3s ease'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.fill = '#13a813';
+                                    e.currentTarget.style.stroke = '#374151';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.fill = 'none';
+                                    e.currentTarget.style.stroke = '#13a813';
+                                }}
+                            >
+                                <path
+                                    d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                                ></path>
+                                <path d="M8 12H16"></path>
+                                <path d="M12 16V8"></path>
+                            </svg>
                         </button>
                     </div>
                 </div>

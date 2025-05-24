@@ -2,7 +2,6 @@
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-
 	background-color: #fff;
 	border-bottom: 2px solid #e0e0e0;
 	box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -28,12 +27,11 @@
 .header-icon {
 	height: 90%;
 	aspect-ratio: 1 / 1;
-	border-radius: 4px;
+	border-radius: 300px;
 	cursor: pointer;
 	transition: all 0.2s;
-	color: var(--background-color-accent);
-	background-color: var(--background-color);
-
+	color: white;
+	background-color: var(--dark-color);
 	display: flex;
 	align-items: center;
 	justify-content: center;

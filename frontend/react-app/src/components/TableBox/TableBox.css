@@ -115,59 +115,25 @@
 	background-color: #2980b9;
 	transform: scale(1.05);
 }
-  
-.toolbar-actions {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 12px;
-	height: 70%;
-	overflow: hidden;
-	object-fit: contain;
+
+.add-movement-btn {
+    background: transparent;
+    border: none;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    border-radius: 50%;
+    outline: none;
+    box-shadow: none;
 }
 
-.action-button{
-	aspect-ratio: 1/1;
-	display: flex;
-	height: 80%;
-	max-height: 80%;
-	max-width: 80%;
 
-	align-items: center;
-	justify-content: center;
-
-	cursor: pointer;
-	transition: all 0.3s ease;
-
-	color: rgb(17, 17, 17);
-	background-color: rgba(240, 238, 238, 0.986);
-	border-radius: 6px;
-	font-size: 16px;
-	border: none;
-}
-
-.add-button {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	height: 90%;
-	background-color: var(--success-color);
-	color: white;
-	border: none;
-	border-radius: 4px;
-	font-size: 14px;
-	font-weight: 500;
-	cursor: pointer;
-	transition: all 0.3s ease;
-}
-
-.add-button i {
-	font-size: 16px;
-}
-  
-.add-button:hover {
-	background-color: #219653;
-	transform: translateY(-2px);
+.add-movement-btn:focus {
+    outline: none;
+    box-shadow: none;
 }
 
 
