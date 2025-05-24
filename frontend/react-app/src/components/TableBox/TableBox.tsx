@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './TableBox.css';
 import Transaction from '../Transaction/Transaction'; // Importar el componente Transaction
+import TableComponent from '../TableComponent/TableComponent';
 
 const TableBox: React.FC = () => {
     const [isTransactionOpen, setIsTransactionOpen] = useState(false);
@@ -18,6 +19,55 @@ const TableBox: React.FC = () => {
         console.log("Transacción aceptada");
         setIsTransactionOpen(false);
     };
+
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+      // Simular carga de datos desde una API
+      setTimeout(() => {
+        setData([
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+          { id: 1, name: "Ana", age: 28 },
+          { id: 2, name: "Luis", age: 35 },
+          { id: 3, name: "Carlos", age: 22 },
+        ]);
+      }, 1000);
+    }, []);
 
     return(
         <div className="content-container">
@@ -61,7 +111,7 @@ const TableBox: React.FC = () => {
                 </div>
 
                 <div id="table-container">
-                    <div id="root"></div>
+                    <TableComponent rows={data}></TableComponent>
                 </div>
             </div>
 

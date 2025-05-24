@@ -16,13 +16,13 @@
     --success-color: #27ae60;
     --danger-color: #e74c3c;
     --warning-color: #f39c12;
-    --light-color: #666666;
+    --light-color: #313131;
     --dark-color: #34495e;
     --background-color: #d4d2d2;
     --background-color-accent: #969292;
     
     /* Layout Variables */
-    --sidebar-width: 300px;
+    --sidebar-width: 30vw;
     --content-padding: 20px;
     --toolbar-height: 70px;
     --topbar-height: 4vh;
