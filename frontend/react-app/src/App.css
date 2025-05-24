@@ -1,7 +1,5 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
@@ -39,4 +37,34 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.contenido-principal {
+  background: #fafafa;
+  transition: filter 0.2s ease;
+}
+
+.contenido-principal.blurred {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.app-wrapper {
+  overflow: hidden; 
+}
+
+.app-content {
+  transition: filter 0.2s ease;
+  box-sizing: border-box;
+}
+
+.app-content.blurred {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.row {
+  display: flex;
 }
