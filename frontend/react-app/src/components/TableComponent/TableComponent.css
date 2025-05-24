@@ -36,13 +36,14 @@
 /* Celdas del encabezado */
 .table_header__cell {
   padding: 1rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 700;
+  box-sizing: border-box;
 }
 
 .table_header__cell:last-child {
@@ -51,37 +52,51 @@
 
 /* Columnas específicas del encabezado */
 .table_header__cell--id {
-  flex: 0 0 60px;
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
   justify-content: center;
 }
 
 .table_header__cell--name {
-  flex: 1 1 120px;
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
   justify-content: flex-start;
 }
 
-.table_header__cell--age {
-  flex: 0 0 80px;
-  justify-content: center;
-}
-
 .table_header__cell--date {
-  flex: 0 0 110px;
+  width: 110px;
+  min-width: 110px;
+  max-width: 110px;
   justify-content: center;
 }
 
 .table_header__cell--account {
-  flex: 1 1 120px;
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
+  justify-content: flex-start;
+}
+
+.table_header__cell--product {
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
   justify-content: flex-start;
 }
 
 .table_header__cell--movement {
-  flex: 1 1 140px;
+  width: 160px;
+  min-width: 160px;
+  max-width: 160px;
   justify-content: flex-start;
 }
 
 .table_header__cell--amount {
-  flex: 0 0 120px;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
   justify-content: flex-end;
 }
 
@@ -121,7 +136,7 @@
 }
 
 .table_row:hover {
-  background-color:  #7bafd4!important;
+  background-color: #7bafd4!important;
   color: #ffffff;
 }
 
@@ -142,6 +157,7 @@
   align-items: center;
   font-size: 0.875rem;
   color: #023059;
+  box-sizing: border-box;
 }
 
 .table_cell:last-child {
@@ -150,37 +166,63 @@
 
 /* Columnas específicas del cuerpo */
 .table_cell--id {
-  flex: 0 0 60px;
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
   justify-content: center;
 }
 
 .table_cell--name {
-  flex: 1 1 120px;
+  width: 150px;
+  min-width: 150px;
+  max-width: 150px;
   justify-content: flex-start;
-}
-
-.table_cell--age {
-  flex: 0 0 80px;
-  justify-content: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .table_cell--date {
-  flex: 0 0 110px;
+  width: 110px;
+  min-width: 110px;
+  max-width: 110px;
   justify-content: center;
 }
 
 .table_cell--account {
-  flex: 1 1 120px;
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
   justify-content: flex-start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table_cell--product {
+  width: 140px;
+  min-width: 140px;
+  max-width: 140px;
+  justify-content: flex-start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .table_cell--movement {
-  flex: 1 1 140px;
+  width: 160px;
+  min-width: 160px;
+  max-width: 160px;
   justify-content: flex-start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .table_cell--amount {
-  flex: 0 0 120px;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
   justify-content: flex-end;
   font-weight: 600;
   color: #023059;
@@ -203,7 +245,9 @@
   }
   
   .table_header__cell--movement,
-  .table_cell--movement {
+  .table_cell--movement,
+  .table_header__cell--product,
+  .table_cell--product {
     flex: 1 1 100px;
   }
 }
