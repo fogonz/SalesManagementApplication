@@ -150,3 +150,14 @@
 	align-items: center;
 	justify-content: center;
 }
+.clear-filter-btn {
+    background-color: white;
+    border: 1px solid #888;
+    color: #444;
+    padding: 4px 10px;
+    margin-left: 10px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}

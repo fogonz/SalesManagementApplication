@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './TableBox.css';
-import Transaction from '../Transaction/Transaction'; // Importar el componente Transaction
+import Transaction from '../Transaction/Transaction';
 import TableComponent from '../TableComponent/TableComponent';
-
+import Calendar from '../Calendar/Calendar';
 
 interface TableBoxProps {
     onOpenTransaction: () => void;
@@ -22,6 +22,9 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
     const [isTransactionOpen, setIsTransactionOpen] = useState(false);
     const [data, setData] = useState<UserRow[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [showCalendar, setShowCalendar] = useState(false);
+    const [selectedDates, setSelectedDates] = useState<string[]>([]);
+    const calendarRef = useRef<HTMLDivElement>(null);
 
     const handleAddMovement = () => {
         onOpenTransaction();
@@ -36,10 +39,13 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
         setSearchTerm(event.target.value);
     };
 
-    // Filtrar datos basado en el término de búsqueda - AHORA FILTRA TODOS LOS CAMPOS SIN TILDES
+    // Filtrar datos basado en el término de búsqueda y fechas seleccionadas
     const filteredData = data.filter(item => {
         const normalizedSearchTerm = normalizeText(searchTerm);
-        return (
+        const dateMatch = selectedDates.length === 0 || 
+                         selectedDates.includes(item.fecha);
+        
+        return dateMatch && (
             normalizeText(item.name).includes(normalizedSearchTerm) ||
             normalizeText(item.producto).includes(normalizedSearchTerm) ||
             normalizeText(item.fecha).includes(normalizedSearchTerm) ||
@@ -48,6 +54,11 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
             normalizeText(item.abonado.toString()).includes(normalizedSearchTerm)
         );
     });
+    
+    const handleDateSelect = (dates: string[]) => {
+        setSelectedDates(dates);
+        console.log('Fechas seleccionadas:', dates);
+    };
 
     useEffect(() => {
         // Simular carga de datos desde una API 
@@ -56,7 +67,7 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
                 { id: 1, name: "Ana García", producto: "Roble", fecha: "2024-05-20", cuenta: "ACC-001", tipoMovimiento: "Depósito", abonado: 2500.00 },
                 { id: 2, name: "Luis Martínez", producto: "Arroz", fecha: "2024-05-21", cuenta: "ACC-002", tipoMovimiento: "Transferencia", abonado: 1800.50 },
                 { id: 3, name: "Carlos López", producto: "Azucar", fecha: "2024-05-22", cuenta: "ACC-003", tipoMovimiento: "Pago", abonado: 750.25 },
-                { id: 4, name: "María Rodríguez", producto: "Hierro", fecha: "2024-05-23", cuenta: "ACC-004", tipoMovimiento: "Depósito", abonado: 3200.00 },
+                { id: 4, name: "María Rodríguez", producto: "Hierro", fecha: "2025-05-23", cuenta: "ACC-004", tipoMovimiento: "Depósito", abonado: 3200.00 },
                 { id: 5, name: "Pedro Silva", producto: "Bife", fecha: "2024-05-24", cuenta: "ACC-005", tipoMovimiento: "Retiro", abonado: 1500.75 },
                 { id: 6, name: "Laura Fernández", producto: "Obeja", fecha: "2024-05-25", cuenta: "ACC-006", tipoMovimiento: "Transferencia", abonado: 2750.00 },
                 { id: 7, name: "Diego Morales", producto: "Vaca", fecha: "2024-05-26", cuenta: "ACC-007", tipoMovimiento: "Depósito", abonado: 4100.25 },
@@ -83,11 +94,20 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
                         <div className="toolbar-icon">
                             <i className="fas fa-list"></i>
                         </div>
-                        <div className="toolbar-icon">
+                        <div 
+                            className="toolbar-icon" 
+                            onClick={() => setShowCalendar(!showCalendar)}
+                            style={{ position: 'relative' }}
+                        >
                             <i className="fas fa-table"></i>
+                            {showCalendar && (
+                                <div className="calendar-popup" ref={calendarRef}>
+                                    <Calendar onDateSelect={handleDateSelect} />
+                                </div>
+                            )}
                         </div>
                     </div>
-
+                    
                     <div className="search-container">
                         <input
                             type="text"
@@ -142,11 +162,22 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
                     </div>
                 </div>
 
+                {selectedDates.length > 0 && (
+                    <div className="date-filter-info">
+                        Filtrado por fechas: {selectedDates.join(', ')}
+                        <button 
+                            onClick={() => setSelectedDates([])} 
+                            className="clear-filter-btn"
+                        >
+                            Limpiar filtro
+                        </button>
+                    </div>
+                )}
+
                 <div id="table-container">
                     <TableComponent rows={filteredData} />
                 </div>
             </div>
-
         </div>
     );
 };
