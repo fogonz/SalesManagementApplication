@@ -53,6 +53,81 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                         <div className="topbar">
                             <div className="text open-sans"> PRODUCTOS </div>
                         </div>
+
+                        <div className="search">
+                            <input type="text" className="searchTerm" placeholder="¿Qué producto estás buscando?"></input>
+                        </div>
+
+                        <div className='borderless-header'>
+                            <div><text>Quedan</text></div>
+                            <div><text>Nombre</text></div>
+                            <div><text>Precio</text></div>
+                        </div>
+
+                        <div className="container">
+                            <div className="container-wrapper-nopad">
+                                <div className="productDB">
+                                    <div><text> 10</text></div>
+                                    <div><text> Producto A </text></div>
+                                    <div><text> $200 </text></div>
+                                </div>
+                                <div className="productDB">
+                                    <div><text> 24</text></div>
+                                    <div><text> Producto B </text></div>
+                                    <div><text> $320 </text></div>
+                                </div>
+                                <div className="productDB">
+                                    <div><text> 1</text></div>
+                                    <div><text> Producto C </text></div>
+                                    <div><text> $500 </text></div>
+                                </div>
+                                <div className="productDB">
+                                    <div><text> 10</text></div>
+                                    <div><text> Producto A </text></div>
+                                    <div><text> $200 </text></div>
+                                </div>
+                                <div className="productDB">
+                                    <div><text> 24</text></div>
+                                    <div><text> Producto B </text></div>
+                                    <div><text> $320 </text></div>
+                                </div>
+                                <div className="productDB">
+                                    <div><text> 1</text></div>
+                                    <div><text> Producto C </text></div>
+                                    <div><text> $500 </text></div>
+                                </div>
+                                <div className="productDB">
+                                    <div><text> 10</text></div>
+                                    <div><text> Producto A </text></div>
+                                    <div><text> $200 </text></div>
+                                </div>
+                                <div className="productDB">
+                                    <div><text> 24</text></div>
+                                    <div><text> Producto B </text></div>
+                                    <div><text> $320 </text></div>
+                                </div>
+                                <div className="productDB">
+                                    <div><text> 1</text></div>
+                                    <div><text> Producto C </text></div>
+                                    <div><text> $500 </text></div>
+                                </div>
+                                <div className="productDB">
+                                    <div><text> 10</text></div>
+                                    <div><text> Producto A </text></div>
+                                    <div><text> $200 </text></div>
+                                </div>
+                                <div className="productDB">
+                                    <div><text> 24</text></div>
+                                    <div><text> Producto B </text></div>
+                                    <div><text> $320 </text></div>
+                                </div>
+                                <div className="productDB">
+                                    <div><text> 1</text></div>
+                                    <div><text> Producto C </text></div>
+                                    <div><text> $500 </text></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div className="carrito">
@@ -76,6 +151,11 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                     <p> x1 </p>
                                     <p> Producto A </p>
                                     <p> $125 </p>
+                                </div>
+                                <div className="product">
+                                    <p> x1 </p>
+                                    <p> Producto A </p>
+                                    <p> $200 </p>
                                 </div>
                             </div>
                         </div>
