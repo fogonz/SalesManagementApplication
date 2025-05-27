@@ -60,7 +60,7 @@
 }
 
 .app-content.blurred {
-  filter: blur(6px);
+  filter: blur(8px);
   pointer-events: none;
   user-select: none;
 }

@@ -35,7 +35,7 @@ function App() {
 
       </div>
 
-      {/* Renderizamos el popup Transaction solo si isTransactionOpen = true */}
+      {/* Renderizar Transaction si: isTransactionOpen = true */}
       {isTransactionOpen && (
         <Transaction
           onClose={handleCloseTransaction}
