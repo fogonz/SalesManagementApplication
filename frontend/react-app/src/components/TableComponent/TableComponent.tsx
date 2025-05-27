@@ -6,7 +6,7 @@ interface UserRow {
   name: string;
   fecha: string;
   cuenta: string;
-  producto: string; // Nueva propiedad para producto
+  producto: string;
   tipoMovimiento: string;
   abonado: number;
 }

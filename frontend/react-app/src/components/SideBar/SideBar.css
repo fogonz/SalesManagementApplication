@@ -98,7 +98,7 @@
 }
 
 .menu-button.active {
-    background-color: var(--light-color);
+    background-color: #3b3b3b;
     transform: translateX(3%);
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
     clip-path: inset(0 0 0 6%);

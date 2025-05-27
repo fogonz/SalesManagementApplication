@@ -1,17 +1,56 @@
 .header-top {
 	display: flex;
-	justify-content: flex-end;
 	align-items: center;
 	background-color: #fff;
 	border-bottom: 2px solid #e0e0e0;
 	box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-
 	z-index: 5;
 	width: 100%;
 	height: var(--topbar-height);
 	position: fixed;
 	top: 0;
 	overflow: hidden;
+	outline: none;
+	border: none;
+}
+
+.header-icons .row{
+	display: flex;
+	flex-direction: row;
+	column-gap: 10px;
+	justify-content: flex-start;
+	height: calc(var(--topbar-height) - 1.5vh);
+	align-items: center;
+	align-content: center;
+	text-align: center;
+	overflow: hidden;
+	outline: none;
+	border: none;
+}
+
+
+.topbar-button{
+	color: white;
+	background-color: var(--background-color-accent);
+	outline: none;
+	border: none;
+	align-content: center;
+	max-height: 100%;
+	display: flex;
+	align-items: center;
+}
+
+.topbar-button:active{
+	color: white;
+	background-color: var(--sidebar-color);
+	outline: none;
+	border: none;
+}
+
+.topbar-button p{
+	align-self: center;
+	justify-self: center;
+	text-align: center;
 }
 
 .header-icons {
@@ -19,9 +58,11 @@
 	flex-direction: row;
 	gap: 10px;
 	align-items: center;
-
-	padding: 0 10px;
 	height: 100%;
+	padding: 0 10px;
+	width: 100%;
+	justify-content: space-between;
+	overflow: hidden
 }
 
 .header-icon {
