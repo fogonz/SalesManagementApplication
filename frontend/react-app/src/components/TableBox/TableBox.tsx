@@ -3,6 +3,7 @@ import './TableBox.css';
 import Transaction from '../Transaction/Transaction';
 import TableComponent from '../TableComponent/TableComponent';
 import Calendar from '../Calendar/Calendar';
+import ProductDisplay from '../ProductDisplay/ProductDisplay';
 
 interface TableBoxProps {
     onOpenTransaction: () => void;
@@ -24,22 +25,28 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedDates, setSelectedDates] = useState<string[]>([]);
+    const [activeView, setActiveView] = useState<'table' | 'products'>('table');
     const calendarRef = useRef<HTMLDivElement>(null);
+    const productDisplayRef = useRef<any>(null);
 
     const handleAddMovement = () => {
         onOpenTransaction();
     };
 
-    // Función para normalizar texto removiendo tildes/acentos
+    const handleAddProduct = () => {
+        if (productDisplayRef.current) {
+            productDisplayRef.current.addProduct();
+        }
+    };
+
     const normalizeText = (text: string): string => {
-        return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
     };
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
-    // Filtrar datos basado en el término de búsqueda y fechas seleccionadas
     const filteredData = data.filter(item => {
         const normalizedSearchTerm = normalizeText(searchTerm);
         const dateMatch = selectedDates.length === 0 || 
@@ -54,14 +61,13 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
             normalizeText(item.abonado.toString()).includes(normalizedSearchTerm)
         );
     });
-    
+
     const handleDateSelect = (dates: string[]) => {
         setSelectedDates(dates);
         console.log('Fechas seleccionadas:', dates);
     };
 
     useEffect(() => {
-        // Simular carga de datos desde una API 
         setTimeout(() => {
             setData([
                 { id: 1, name: "Ana García", producto: "Roble", fecha: "2024-05-20", cuenta: "ACC-001", tipoMovimiento: "Depósito", abonado: 2500.00 },
@@ -88,11 +94,11 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
             <div className="content-box">
                 <div className="toolbar">
                     <div className="toolbar-nav">
-                        <div className="toolbar-icon">
+                        <div className="toolbar-icon" onClick={() => setActiveView('table')}>
                             <i className="fas fa-home"></i>
                         </div>
-                        <div className="toolbar-icon">
-                            <i className="fas fa-list"></i>
+                        <div className="toolbar-icon" onClick={() => setActiveView('products')}>
+                            <i className="fas fa-boxes"></i>
                         </div>
                         <div 
                             className="toolbar-icon" 
@@ -107,7 +113,7 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
                             )}
                         </div>
                     </div>
-                    
+
                     <div className="search-container">
                         <input
                             type="text"
@@ -120,12 +126,12 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
                             <i className="fas fa-search"></i>
                         </button>
                     </div>
-                    
+
                     <div className="toolbar-actions">
                         <button 
-                            title="Add New"
+                            title={activeView === 'table' ? 'Add New Transaction' : 'Add New Product'}
                             className="add-movement-btn"
-                            onClick={handleAddMovement}
+                            onClick={activeView === 'table' ? handleAddMovement : handleAddProduct}
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.transform = 'rotate(90deg)';
                             }}
@@ -152,9 +158,7 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
                                     e.currentTarget.style.stroke = '#13a813';
                                 }}
                             >
-                                <path
-                                    d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                                ></path>
+                                <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"></path>
                                 <path d="M8 12H16"></path>
                                 <path d="M12 16V8"></path>
                             </svg>
@@ -175,7 +179,11 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
                 )}
 
                 <div id="table-container">
-                    <TableComponent rows={filteredData} />
+                    {activeView === 'table' ? (
+                        <TableComponent rows={filteredData} />
+                    ) : (
+                        <ProductDisplay ref={productDisplayRef} searchTerm={searchTerm} />
+                    )}
                 </div>
             </div>
         </div>
