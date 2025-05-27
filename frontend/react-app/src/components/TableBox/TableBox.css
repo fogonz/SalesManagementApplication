@@ -68,7 +68,7 @@
 	display: flex;
 	flex-direction: row;
 	width: 40%;
-	height: 80%;
+	height: 70%;
 	align-items: center;
 	justify-content: center;
 	column-gap: 1vh;
@@ -79,7 +79,7 @@
 .search-input {	
 	display: flex;
 	width: 100%;
-	height: 40%;
+	height: 80%;
 	border: none;
 	border-radius: 4px;
 	font-size: medium;
@@ -96,7 +96,7 @@
 .search-button {
 	display: flex;
 	aspect-ratio: 1/1;
-	height: 60%;
+	height: 80%;
 	width: auto;
 	text-align: center;
 	align-items: center;
