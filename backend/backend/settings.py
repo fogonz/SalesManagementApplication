@@ -37,7 +37,7 @@ INSTALLED_APPS = [
 CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
-	"corsheaders.middleware.CorsMiddleware"
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -74,7 +74,9 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "db_schema",
 		"USER": "root",
-		"HOST": "localhost"
+		"HOST": "localhost",
+		"PORT": 3306,
+		"PASSWORD": "765123",
     }
 }
 
@@ -104,10 +106,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 STATIC_URL = "/static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "backend/frontend/static")
-
-STATICFILES_DIRS = [
-	os.path.join(BASE_DIR, 'reactapp/build/static')
-]
 
 # Define MEDIA_URL to avoid collision with STATIC_URL
 MEDIA_URL = "/media/"

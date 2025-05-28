@@ -1,7 +1,7 @@
-from django.urls import path
-from . import views
+from rest_framework import routers
+from .views import MovimientosViewSet
 
-urlpatterns = [
-    path("notes/", views.NoteListCreate.as_view(), name="note-list"),
-    path("notes/delete/<int:pk>/", views.NoteDelete.as_view(), name="delete-note"),
-]
+router = routers.DefaultRouter()
+router.register(r'movimientos', MovimientosViewSet, basename='movimientos')
+
+urlpatterns = router.urls
