@@ -28,13 +28,10 @@ function SideBar() {
           <i className="fas fa-home"></i> MOVIMIENTOS
         </button>
         <button className="menu-button" onClick={toggleActive}>
-          <i className="fas fa-cash-register"></i> CAJA CHICA
+          <i className="fas fa-circle-user"></i> CUENTAS
         </button>
         <button className="menu-button" onClick={toggleActive}>
           <i className="fas fa-boxes"></i> STOCK
-        </button>
-        <button className="menu-button" onClick={toggleActive}>
-          <i className="fas fa-address-card"></i> CUENTAS
         </button>
       </div>
     </div>
