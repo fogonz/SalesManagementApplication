@@ -1,10 +1,6 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotenv
-
-# Carga variables de entorno desde .env
-load_dotenv()
 
 # Paths base
 BASE_DIR = Path(__file__).resolve().parent.parent
