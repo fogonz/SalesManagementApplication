@@ -1,0 +1,39 @@
+            <label className="image-upload-label">
+              📷 Cambiar imagen
+              <input
+                type="file"
+                accept="image/*"
+                className="image-input"
+                onChange={(e) => handleImageUpload(product.id, e.target.files[0])}
+              />
+            </label>
+
+
+
+
+            {/* Stock amount + unit */}
+            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+              <input
+                type="number"
+                className="product-stock"
+                value={product.stockAmount}
+                onChange={(e) =>
+                  handleChange(product.id, "stockAmount", parseFloat(e.target.value) || "")
+                }
+                min={""}
+                placeholder="Cantidad"
+              />
+              <select
+                className="product-stock"
+                value={product.stockUnit}
+                onChange={(e) =>
+                  handleChange(product.id, "stockUnit", e.target.value)
+                }
+              >
+                <option value="uds">uds</option>
+                <option value="kg">kg</option>
+                <option value="g">g</option>
+                <option value="litros">litros</option>
+                <option value="ml">ml</option>
+              </select>
+            </div>

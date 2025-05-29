@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+import React, { useState, forwardRef, useImperativeHandle, useEffect } from "react";
 import "./ProductDisplay.css";
 
 export interface ProductDisplayRef {
@@ -10,35 +10,29 @@ interface ProductDisplayProps {
 }
 
 const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ searchTerm = '' }, ref) => {
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      title: "Auriculares Inalámbricos Bluetooth",
-      description: "Sonido de alta calidad con cancelación de ruido",
-      price: "$59.99",
-      image: "https://via.placeholder.com/200x200.png?text=Producto+1",
-      stockAmount: 5,
-      stockUnit: "uds",
-    },
-    {
-      id: 2,
-      title: "Reloj Inteligente Deportivo",
-      description: "Seguimiento de actividad y notificaciones",
-      price: "$89.99",
-      image: "https://via.placeholder.com/200x200.png?text=Producto+2",
-      stockAmount: 2,
-      stockUnit: "uds",
-    },
-    {
-      id: 3,
-      title: "Cámara de Seguridad WiFi",
-      description: "Monitoreo en tiempo real desde tu móvil",
-      price: "$39.99",
-      image: "https://via.placeholder.com/200x200.png?text=Producto+3",
-      stockAmount: 2,
-      stockUnit: "uds",
-    },
-  ]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/productos/');
+        if (!response.ok) throw new Error('Error al obtener productos');
+
+        const data = await response.json();
+        setProducts(data);
+        console.log(data)
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+
+  }, []);
 
   const handleChange = (id, key, value) => {
     setProducts((prev) =>
@@ -132,58 +126,24 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
 
             <img src={product.image} alt={product.title} className="product-image" />
 
-            <label className="image-upload-label">
-              📷 Cambiar imagen
-              <input
-                type="file"
-                accept="image/*"
-                className="image-input"
-                onChange={(e) => handleImageUpload(product.id, e.target.files[0])}
-              />
-            </label>
-
-            <input
-              className="product-title"
-              value={product.title}
-              onChange={(e) => handleChange(product.id, "title", e.target.value)}
-            />
-            <textarea
-              className="product-description"
-              value={product.description}
-              onChange={(e) => handleChange(product.id, "description", e.target.value)}
-            />
-            <input
-              className="product-price"
-              value={product.price}
-              onChange={(e) => handleChange(product.id, "price", e.target.value)}
-            />
-
-            {/* Stock amount + unit */}
-            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-              <input
-                type="number"
-                className="product-stock"
-                value={product.stockAmount}
-                onChange={(e) =>
-                  handleChange(product.id, "stockAmount", parseFloat(e.target.value) || "")
-                }
-                min={""}
-                placeholder="Cantidad"
-              />
-              <select
-                className="product-stock"
-                value={product.stockUnit}
-                onChange={(e) =>
-                  handleChange(product.id, "stockUnit", e.target.value)
-                }
-              >
-                <option value="uds">uds</option>
-                <option value="kg">kg</option>
-                <option value="g">g</option>
-                <option value="litros">litros</option>
-                <option value="ml">ml</option>
-              </select>
+            <div className="product-title">
+              {product.tipo_producto}
             </div>
+
+            <div className="typeTag">
+              <div className="tag">PRECIO</div>
+              <div className="product-price">
+                ${product.precio_venta_unitario}
+              </div>
+            </div>
+
+            <div className="typeTag">
+              <div className="tag">CANTIDAD</div>
+              <div className="product-text">
+                {product.cantidad}
+              </div>
+            </div>
+
           </div>
         ))}
       </div>

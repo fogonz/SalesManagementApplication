@@ -155,7 +155,7 @@
   position: fixed;
   width: 10px;
   height: 10px;
-  background: none/*var(--row-hover)*/;
+  background-color: none/*var(--row-hover)*/;
   border-radius: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
