@@ -44,12 +44,13 @@
   font-size: 0.75rem;
   font-weight: 700;
   box-sizing: border-box;
-  width: 8vw;
-  max-width: 8vw;
+  flex: 1 1 0;
+  min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
   height: 100%;
 }
+
 
 .table_header__cell:last-child {
   border-right: none;
@@ -113,14 +114,15 @@
   font-size: 0.875rem;
   color: #023059;
   box-sizing: border-box;
-  width: 8vw;
-  max-width: 8vw;
+  flex: 1 1 0;
+  min-width: 0;
   height: 3vh;
   max-height: 4vh;
   overflow-x: auto;
   overflow-y: hidden;
   transition: opacity 0.3s ease-in-out;
 }
+
 
 /* Hide scrollbar by default (WebKit) */
 .table_cell::-webkit-scrollbar {
