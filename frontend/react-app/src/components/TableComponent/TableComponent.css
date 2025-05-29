@@ -29,6 +29,8 @@
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.05em; 
+  align-items: center;
+  height: 4.5vh;
 }
 
 /* Celdas del encabezado */
@@ -42,60 +44,15 @@
   font-size: 0.75rem;
   font-weight: 700;
   box-sizing: border-box;
+  width: 8vw;
+  max-width: 8vw;
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 100%;
 }
 
 .table_header__cell:last-child {
   border-right: none;
-}
-
-/* Columnas específicas del encabezado */
-.table_header__cell--id {
-  width: 60px;
-  min-width: 60px;
-  max-width: 60px;
-  justify-content: center;
-}
-
-.table_header__cell--name {
-  width: 150px;
-  min-width: 150px;
-  max-width: 150px;
-  justify-content: flex-start;
-}
-
-.table_header__cell--date {
-  width: 110px;
-  min-width: 110px;
-  max-width: 110px;
-  justify-content: center;
-}
-
-.table_header__cell--account {
-  width: 140px;
-  min-width: 140px;
-  max-width: 140px;
-  justify-content: flex-start;
-}
-
-.table_header__cell--product {
-  width: 140px;
-  min-width: 140px;
-  max-width: 140px;
-  justify-content: flex-start;
-}
-
-.table_header__cell--movement {
-  width: 160px;
-  min-width: 160px;
-  max-width: 160px;
-  justify-content: flex-start;
-}
-
-.table_header__cell--amount {
-  width: 120px;
-  min-width: 120px;
-  max-width: 120px;
-  justify-content: flex-end;
 }
 
 /* Cuerpo de la tabla */
@@ -156,74 +113,56 @@
   font-size: 0.875rem;
   color: #023059;
   box-sizing: border-box;
+  width: 8vw;
+  max-width: 8vw;
+  height: 3vh;
+  max-height: 4vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  transition: opacity 0.3s ease-in-out;
 }
 
-.table_cell:last-child {
-  border-right: none;
+/* Hide scrollbar by default (WebKit) */
+.table_cell::-webkit-scrollbar {
+  height: 0; /* Hide horizontal scrollbar initially */
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
 }
 
-/* Columnas específicas del cuerpo */
-.table_cell--id {
-  width: 60px;
-  min-width: 60px;
-  max-width: 60px;
-  justify-content: center;
+/* Show scrollbar on hover */
+.table_cell:hover::-webkit-scrollbar {
+  height: 6px; /* Restore height */
+  opacity: 1;
 }
 
-.table_cell--name {
-  width: 150px;
-  min-width: 150px;
-  max-width: 150px;
-  justify-content: flex-start;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* Style the scrollbar track & thumb */
+.table_cell::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
 }
 
-.table_cell--date {
-  width: 110px;
-  min-width: 110px;
-  max-width: 110px;
-  justify-content: center;
+.table_cell::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
 }
 
-.table_cell--account {
-  width: 140px;
-  min-width: 140px;
-  max-width: 140px;
-  justify-content: flex-start;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.table_cell::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
 }
 
-.table_cell--product {
-  width: 140px;
-  min-width: 140px;
-  max-width: 140px;
-  justify-content: flex-start;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.mouse-tracker {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: none/*var(--row-hover)*/;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
-.table_cell--movement {
-  width: 160px;
-  min-width: 160px;
-  max-width: 160px;
-  justify-content: flex-start;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.table_cell--amount {
-  width: 120px;
-  min-width: 120px;
-  max-width: 120px;
-  justify-content: flex-end;
-  font-weight: 600;
-  color: var(--font-color-amount);
+.table_cell:hover ~ .mouse-tracker {
+  opacity: 1;
 }
 
 /* Responsive Design */
@@ -233,13 +172,15 @@
   }
   
   .table_container {
-    min-width: 100%;
+    min-width: 100%; 
     font-size: 0.75rem;
   }
   
   .table_header__cell,
   .table_cell {
     padding: 0.5rem;
+    box-sizing: border-box;
+    display: flex;
   }
   
   .table_header__cell--movement,

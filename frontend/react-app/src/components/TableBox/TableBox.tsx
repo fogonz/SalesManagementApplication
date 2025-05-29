@@ -49,12 +49,11 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
       case 'movimientos':
         return [
           { key: 'id', label: 'ID' },
-          { key: 'name', label: 'Nombre' },
-          { key: 'fecha', label: 'Fecha' },
-          { key: 'cuenta', label: 'Cuenta' },
-          { key: 'producto', label: 'Producto' },
-          { key: 'tipoMovimiento', label: 'Tipo Movimiento' },
-          { key: 'abonado', label: 'Abonado', format: (v: any) => (v != null ? `$${v.toFixed(2)}` : '-') }
+          { key: 'fecha', label: 'FECHA' },
+          { key: 'tipo_comprobante', label: 'TIPO de COMPROBANTE' },
+          { key: 'cuenta_id', label: 'CUENTA' },
+          { key: 'producto_id', label: 'DETALLE' },
+          { key: 'total', label: 'TOTAL', format: (value:any) => (value ? `$${parseFloat(value).toFixed(2)}` : '-')}
         ];
       case 'cuentas':
         return [

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import './TableComponent.css';
 
 export interface MovimientoRow {
@@ -40,17 +40,16 @@ interface TableProps {
   rows: any[]; // Puede ser MovimientoRow[], CuentaRow[], etc.
 }
 
+
 const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
+  const [trackerPosition, setTrackerPosition] = useState({ x: 0, y: 0 });
+  const [isTrackerVisible, setIsTrackerVisible] = useState(false);
+  const tableRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className="table_wrapper">
+    <div className="table_wrapper" ref={tableRef}>
       <div className="table_container">
-        <div className="table_header">
-          {columns.map((col) => (
-            <div key={col.key as string} className="table_header__cell">
-              {col.label}
-            </div>
-          ))}
-        </div>
+        {/* ... (header remains the same) */}
         <div className="table_body">
           {rows.map((row, index) => (
             <div
@@ -58,7 +57,18 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
               className={`table_row ${index % 2 === 0 ? 'table_row--even' : 'table_row--odd'}`}
             >
               {columns.map((col) => (
-                <div key={col.key as string} className="table_cell">
+                <div 
+                  key={col.key as string} 
+                  className="table_cell"
+                  onMouseMove={(e) => {
+                    setTrackerPosition({
+                      x: e.clientX,
+                      y: e.clientY
+                    });
+                    setIsTrackerVisible(true);
+                  }}
+                  onMouseLeave={() => setIsTrackerVisible(false)}
+                >
                   {col.format ? col.format(row[col.key]) : row[col.key] ?? '-'}
                 </div>
               ))}
@@ -66,6 +76,15 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
           ))}
         </div>
       </div>
+      <div 
+        id="mouse-tracker"
+        className="mouse-tracker"
+        style={{
+          left: `${trackerPosition.x}px`,
+          top: `${trackerPosition.y}px`,
+          opacity: isTrackerVisible ? 1 : 0
+        }}
+      />
     </div>
   );
 };
