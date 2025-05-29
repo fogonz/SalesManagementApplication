@@ -1,6 +1,8 @@
 .header-top {
 	display: flex;
 	align-items: center;
+	justify-items: center;
+	justify-content: space-between;
 	background-color: #fff;
 	border-bottom: 2px solid #e0e0e0;
 	box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -28,10 +30,9 @@
 	border: none;
 }
 
-
 .topbar-button{
-	color: white;
-	background-color: var(--background-color-accent);
+	color: gray;
+	background-color: white;
 	outline: none;
 	border: none;
 	align-content: center;
@@ -42,9 +43,10 @@
 
 .topbar-button:active{
 	color: white;
-	background-color: var(--sidebar-color);
+	background-color: gray;
 	outline: none;
 	border: none;
+	border-radius: 5px;
 }
 
 .topbar-button p{
@@ -59,9 +61,8 @@
 	gap: 10px;
 	align-items: center;
 	height: 100%;
-	padding: 0 10px;
-	width: 100%;
-	justify-content: space-between;
+	justify-content: space-evenly;
+	width: 21%;
 	overflow: hidden
 }
 
@@ -75,7 +76,6 @@
 	background-color: var(--dark-color);
 	display: flex;
 	align-items: center;
-	justify-content: center;
 }
 
 .header-icon i {

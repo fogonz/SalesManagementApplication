@@ -25,10 +25,10 @@ const TopBar: React.FC = () => {
           <button onClick={sectionHome} className='topbar-button'> <p>Operador</p> </button>
           <button onClick={sectionAdmin} className='topbar-button'> <p>Administrador</p> </button>
         </div>
-        <button onClick={sectionHelp} className="header-icon">
-          <i className="fas fa-question"></i>
-        </button>
       </div>
+      <button onClick={sectionHelp} className="header-icon">
+          <i className="fas fa-question"></i>
+      </button>
     </div>
   );
 };

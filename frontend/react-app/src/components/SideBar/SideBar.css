@@ -23,19 +23,6 @@
     margin-right: auto;
 }
 
-.logo-section {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    align-content: center;
-    gap: 20px;
-    padding: 25px 0;
-    width: 100%;
-    background-color: white;
-    color: black;
-}
-
 .logo-section img {
     width: 25%;
     height: auto;
