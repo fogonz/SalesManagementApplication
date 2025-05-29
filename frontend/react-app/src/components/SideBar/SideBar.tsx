@@ -1,7 +1,13 @@
 import React from 'react';
 import './SideBar.css';
 
-function SideBar() {
+type Tabla = 'movimientos' | 'cuentas' | 'productos';
+
+interface SideBarProps {
+  setActiveView: React.Dispatch<React.SetStateAction<Tabla>>;
+}
+
+const SideBar: React.FC<SideBarProps> = ({setActiveView}) => {
   const toggleActive = (event) => {
     const buttons = document.querySelectorAll('.menu-button');
     buttons.forEach(btn => btn.classList.remove('active'));
@@ -24,13 +30,13 @@ function SideBar() {
       </div>
 
       <div className="sidebar-menu-container">
-        <button className="menu-button" onClick={toggleActive}>
+        <button className="menu-button" onClick={(e) => {setActiveView('movimientos'); toggleActive(e);}}>
           <i className="fas fa-home"></i> MOVIMIENTOS
         </button>
-        <button className="menu-button" onClick={toggleActive}>
+        <button className="menu-button" onClick={(e) => {setActiveView('cuentas'); toggleActive(e);}}>
           <i className="fas fa-circle-user"></i> CUENTAS
         </button>
-        <button className="menu-button" onClick={toggleActive}>
+        <button className="menu-button" onClick={(e) => {setActiveView('productos'); toggleActive(e);}}>
           <i className="fas fa-boxes"></i> STOCK
         </button>
       </div>

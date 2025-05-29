@@ -8,6 +8,8 @@ type Tabla = 'movimientos' | 'cuentas' | 'productos';
 
 interface TableBoxProps {
   onOpenTransaction: () => void;
+  activeView: 'movimientos' | 'cuentas' | 'productos';
+  setActiveView: (view: 'movimientos' | 'cuentas' | 'productos') => void;
 }
 
 interface MovimientoRow {
@@ -34,12 +36,11 @@ interface ProductoRow {
   precio: number | null;
 }
 
-const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
+const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setActiveView }) => {
   const [data, setData] = useState<MovimientoRow[] | CuentaRow[] | ProductoRow[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
-  const [activeView, setActiveView] = useState<Tabla>('movimientos');
   const calendarRef = useRef<HTMLDivElement>(null);
   const productDisplayRef = useRef<any>(null);
 
@@ -152,15 +153,18 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
       <div className="content-box">
         <div className="toolbar">
           <div className="toolbar-nav">
-            <div className="toolbar-icon" onClick={() => setActiveView('movimientos')}>
+            <div className={`toolbar-icon ${activeView === 'movimientos' ? 'active' : ''}`}>
               <i className="fas fa-home" title="Movimientos"></i>
             </div>
-            <div className="toolbar-icon" onClick={() => setActiveView('cuentas')}>
+            <div className={`toolbar-icon ${activeView === 'cuentas' ? 'active' : ''}`}>
               <i className="fas fa-circle-user" title="Cuentas"></i>
             </div>
-            <div className="toolbar-icon" onClick={() => setActiveView('productos')}>
+            <div className={`toolbar-icon ${activeView === 'productos' ? 'active' : ''}`}>
               <i className="fas fa-boxes" title="Productos"></i>
             </div>
+          </div>
+
+          <div className="search-container">
             <div className="toolbar-icon" onClick={() => setShowCalendar(!showCalendar)} style={{ position: 'relative' }}>
               <i className="fas fa-table"></i>
               {showCalendar && (
@@ -169,9 +173,6 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction }) => {
                 </div>
               )}
             </div>
-          </div>
-
-          <div className="search-container">
             <input
               type="text"
               className="search-input"
