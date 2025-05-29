@@ -14,19 +14,26 @@ interface TableBoxProps {
 
 interface MovimientoRow {
   id: number;
-  name: string;
-  producto: string;
   fecha: string;
-  cuenta: string;
-  tipoMovimiento: string;
-  abonado: number | null;
+  tipo_comprobante: string;
+  cuenta_id: number;
+  producto_id: number;
+  total: string | number | null;
+  name?: string;
+  producto?: string;
+  cuenta?: string;
+  tipoMovimiento?: string;
+  abonado?: number | null;
 }
 
 interface CuentaRow {
   id: number;
   nombre: string;
-  saldo: number | null;
-  tipo: string;
+  contacto_mail: string;
+  contacto_telefono: string;
+  tipo_cuenta: string;
+  saldo?: number | null;
+  tipo?: string;
 }
 
 interface ProductoRow {
@@ -81,8 +88,9 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
   };
 
   const normalizeText = (text: any): string => {
-    if (typeof text !== 'string') return '';
-    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    if (text === null || text === undefined) return '';
+    const str = String(text); // Convert numbers to strings
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,29 +99,45 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
 
   const filteredData = (data as any[]).filter(item => {
     const normalizedSearchTerm = normalizeText(searchTerm);
+    
+    // Date filter logic
     const dateMatch =
       selectedDates.length === 0 ||
-      (activeView === 'movimientos' && selectedDates.includes((item as any).fecha));
+      (activeView === 'movimientos' && selectedDates.includes(item.fecha));
 
     if (!dateMatch) return false;
 
+    // If no search term, return items that pass date filter
+    if (!searchTerm.trim()) return true;
+
+    // Search logic based on active view
     if (activeView === 'movimientos') {
       const mov = item as MovimientoRow;
       return (
+        normalizeText(mov.id).includes(normalizedSearchTerm) ||
+        normalizeText(mov.fecha).includes(normalizedSearchTerm) ||
+        normalizeText(mov.tipo_comprobante).includes(normalizedSearchTerm) ||
+        normalizeText(mov.cuenta_id).includes(normalizedSearchTerm) ||
+        normalizeText(mov.producto_id).includes(normalizedSearchTerm) ||
+        normalizeText(mov.total).includes(normalizedSearchTerm) ||
+        // Also search in optional fields if they exist
         normalizeText(mov.name).includes(normalizedSearchTerm) ||
         normalizeText(mov.producto).includes(normalizedSearchTerm) ||
-        normalizeText(mov.fecha).includes(normalizedSearchTerm) ||
         normalizeText(mov.cuenta).includes(normalizedSearchTerm) ||
         normalizeText(mov.tipoMovimiento).includes(normalizedSearchTerm) ||
-        normalizeText(mov.abonado?.toString()).includes(normalizedSearchTerm)
+        normalizeText(mov.abonado).includes(normalizedSearchTerm)
       );
     }
 
     if (activeView === 'cuentas') {
       const cta = item as CuentaRow;
       return (
+        normalizeText(cta.id).includes(normalizedSearchTerm) ||
         normalizeText(cta.nombre).includes(normalizedSearchTerm) ||
-        normalizeText(cta.saldo?.toString()).includes(normalizedSearchTerm) ||
+        normalizeText(cta.contacto_mail).includes(normalizedSearchTerm) ||
+        normalizeText(cta.contacto_telefono).includes(normalizedSearchTerm) ||
+        normalizeText(cta.tipo_cuenta).includes(normalizedSearchTerm) ||
+        normalizeText(cta.saldo).includes(normalizedSearchTerm) ||
         normalizeText(cta.tipo).includes(normalizedSearchTerm)
       );
     }
@@ -121,9 +145,10 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
     if (activeView === 'productos') {
       const prod = item as ProductoRow;
       return (
+        normalizeText(prod.id).includes(normalizedSearchTerm) ||
         normalizeText(prod.descripcion).includes(normalizedSearchTerm) ||
-        normalizeText(prod.stock?.toString()).includes(normalizedSearchTerm) ||
-        normalizeText(prod.precio?.toString()).includes(normalizedSearchTerm)
+        normalizeText(prod.stock).includes(normalizedSearchTerm) ||
+        normalizeText(prod.precio).includes(normalizedSearchTerm)
       );
     }
 
@@ -133,6 +158,12 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
   const handleDateSelect = (dates: string[]) => {
     setSelectedDates(dates);
   };
+
+  const clearDateFilter = () => {
+    setSelectedDates([]);
+  };
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -146,6 +177,23 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
     };
     fetchData();
   }, [activeView]);
+
+  // Close calendar when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+        setShowCalendar(false);
+      }
+    };
+
+    if (showCalendar) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showCalendar]);
 
   return (
     <div className="content-container">
@@ -228,7 +276,7 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
         {selectedDates.length > 0 && activeView === 'movimientos' && (
           <div className="date-filter-info">
             Filtrado por fechas: {selectedDates.join(', ')}
-            <button onClick={() => setSelectedDates([])} className="clear-filter-btn">
+            <button onClick={clearDateFilter} className="clear-filter-btn">
               Limpiar filtro
             </button>
           </div>
