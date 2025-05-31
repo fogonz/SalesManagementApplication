@@ -87,19 +87,18 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                             <input type="text" className="searchTerm" placeholder="¿Qué producto estás buscando?"></input>
                         </div>
 
-                        <div className='borderless-header'>
-                            <div><span>Quedan</span></div>
-                            <div><span>Nombre</span></div>
-                            <div><span>Precio</span></div>
-                        </div>
-
-                        <div className="container">
-                            <div className="container-wrapper-nopad">
+                        <div className='container-box'>
+                            <div className='borderless-header'>
+                                <div><span>Stock</span></div>
+                                <div><span>Nombre</span></div>
+                                <div><span>Precio</span></div>
+                            </div>
+                            <div className="container-wrapper-nopad scroll-container">
                                 {data?.map((producto, index) => (
                                     <div className="productDB" key={producto.id || index}>
                                         <div><span> {producto.cantidad} </span></div>
                                         <div><span> {producto.tipo_producto} </span></div>
-                                        <div><span> {producto.precio_venta_unitario} </span></div>
+                                        <div><span> ${producto.precio_venta_unitario} </span></div>
                                     </div>
                                 ))}
 

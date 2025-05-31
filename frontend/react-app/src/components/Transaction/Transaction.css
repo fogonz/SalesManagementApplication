@@ -28,7 +28,6 @@
     color: black;
 }
 
-
 .menu_newTransaction_topBar{
 	display: flex;
 	background: #202020;
@@ -91,6 +90,42 @@
 	font-size: small;
 }
 
+.container-box{
+	display: flex;
+	flex-direction: column;
+	padding-top: 1%;
+	height: 100%;
+	align-items: center;
+}
+
+.borderless-header{
+	display: flex;
+	flex-direction: row;
+	height: 1.5lh;
+	width: 100%;
+	padding-left: 1.25vw;
+	padding-right: 1.25vw;
+}
+
+.borderless-header div{	
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 70%;
+}
+
+.borderless-header div:first-child{
+	width: 15%;
+}
+.borderless-header div:last-child{
+	width: 15%;
+}
+
+.borderless-header text{
+	font-size: small;
+	color: gray;
+}
+
 .menu_newTransaction_main .carrito .container-wrapper{
 	width: 100%;
 	height: 100%;
@@ -100,7 +135,7 @@
 	align-items: center;
 	box-sizing: border-box;
 	overflow-y: scroll;
-	overflow-x: hidden;
+	overflow-x: hidden;	text-wrap: none;
 	position: relative;
 	padding: 3%;
 	padding-bottom: 80px;
@@ -113,7 +148,9 @@
 	overflow-x: hidden;
 	position: relative;
 	background-color: white;
-  }
+	box-shadow: none;
+
+}
 
 .menu_newTransaction_main .carrito .container::after {
 	content: "";
@@ -317,11 +354,34 @@
 	overflow-y: scroll;
 	overflow-x: hidden;
 	position: relative;
-	padding-left: 3%;
-	padding-right: 3%;
+	padding-left: 1.25rem;
+	padding-right: .5rem;
 	padding-bottom: 80px;
 	padding-top: 0;
     background-color: white;
+	box-shadow: none;
+	justify-content: flex-start;
+	justify-items: center;
+	scrollbar-gutter: stable overlay;
+}
+
+.scroll-container{
+	transition: all 0.5s ease;
+}
+.scroll-container::-webkit-scrollbar {
+	width: .75rem;
+}
+  
+  /* Scrollbar track (optional, can be transparent) */
+.scroll-container::-webkit-scrollbar-track {
+	background: none;
+}
+  
+  /* Scrollbar thumb */
+.scroll-container::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.4);
+	border-radius: 4px;
+	transition: background-color 0.3s;
 }
 
 .productDB{
@@ -335,34 +395,71 @@
 	flex-direction: row;
 	justify-content:space-evenly;
 	align-items: center;
+	user-select: none;
 }
 
 .productDB div{
-	width: 33%;
+	width: 70%;
 	height: 1.5rem;
 	border-right: 1px solid lightgray;
-	align-items: center;
+	align-items: center;		
 	justify-content: center;
 	align-content: center;
 	text-align: center;
-	overflow: hidden;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	text-wrap: nowrap;
+	padding-left: 2%;
+	padding-right: 2%;
+
 }
 
 .productDB div:first-child{
-	width: 20%;
+	width: 15%;
 }
 
+.productDB div:last-child{
+	border: none;
+	width: 15%;
+}
 
-.productDB text{
-	padding: 2%;
+.productDB span{
 	color: black;
 }
 
-.productDB div:last-child text{
+.productDB div:last-child span{
 	color: gray;
 }
-.productDB div:first-child text{
+
+.productDB div:first-child span{
 	color: gray;
+}
+
+/* Hide scrollbar by default (WebKit) */
+.productDB div::-webkit-scrollbar {
+	height: 0;
+	opacity: 0;
+	transition: opacity 0.3s ease-in-out;
+}
+
+/* Show scrollbar on hover */
+.productDB div:hover::-webkit-scrollbar {
+	height: 6px; /* Restore height */
+	opacity: 1;
+}
+
+/* Style the scrollbar track & thumb */
+.productDB div::-webkit-scrollbar-track {
+	background: rgba(0, 0, 0, 0.1);
+}
+
+.productDB div::-webkit-scrollbar-thumb {
+	background: rgba(0, 0, 0, 0.3);
+	border-radius: 3px;
+}
+
+.productDB div::-webkit-scrollbar-thumb:hover {
+	background: rgba(0, 0, 0, 0.5);
 }
 
 .search{
@@ -385,24 +482,5 @@
 
 .searchButton{
 	height: 100%;
-}
-
-.borderless-header{
-	display: flex;
-	flex-direction: row;
-	justify-content: space-evenly;
-	height: 1.5lh;
-	width: 95%;
-}
-
-.borderless-header div{
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.borderless-header text{
-	font-size: small;
-	color: gray;
 }
 
