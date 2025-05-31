@@ -1,12 +1,41 @@
 import React from 'react';
 import './Transaction.css';
+import { useEffect, useState } from 'react';
 
 interface TransactionProps {
     onClose: () => void;
     onAccept: () => void;
 }
 
+export interface ProductoRow {
+    id: any;
+    tipo_producto: any;
+    cantidad: any;
+    precio_venta_unitario: any;
+    costo_unitario: any;
+}
+
 const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
+    
+    const [data, setData] = useState<ProductoRow[] | null>(null)
+
+    useEffect(() => {
+        if (data) console.log(data);
+      }, [data]);
+
+    useEffect(() => {
+    const fetchData = async () => {
+        try {
+        const res = await fetch(`http://localhost:8000/api/productos`);
+        const json = await res.json();
+        setData(json);
+        } catch (err) {
+        console.error(`Error al cargar :`, err);
+        }
+    };
+    fetchData();
+    }, []);
+
     return(
         <div className="page">
 
@@ -59,73 +88,21 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                         </div>
 
                         <div className='borderless-header'>
-                            <div><text>Quedan</text></div>
-                            <div><text>Nombre</text></div>
-                            <div><text>Precio</text></div>
+                            <div><span>Quedan</span></div>
+                            <div><span>Nombre</span></div>
+                            <div><span>Precio</span></div>
                         </div>
 
                         <div className="container">
                             <div className="container-wrapper-nopad">
-                                <div className="productDB">
-                                    <div><text> 10</text></div>
-                                    <div><text> Producto A </text></div>
-                                    <div><text> $200 </text></div>
-                                </div>
-                                <div className="productDB">
-                                    <div><text> 24</text></div>
-                                    <div><text> Producto B </text></div>
-                                    <div><text> $320 </text></div>
-                                </div>
-                                <div className="productDB">
-                                    <div><text> 1</text></div>
-                                    <div><text> Producto C </text></div>
-                                    <div><text> $500 </text></div>
-                                </div>
-                                <div className="productDB">
-                                    <div><text> 10</text></div>
-                                    <div><text> Producto A </text></div>
-                                    <div><text> $200 </text></div>
-                                </div>
-                                <div className="productDB">
-                                    <div><text> 24</text></div>
-                                    <div><text> Producto B </text></div>
-                                    <div><text> $320 </text></div>
-                                </div>
-                                <div className="productDB">
-                                    <div><text> 1</text></div>
-                                    <div><text> Producto C </text></div>
-                                    <div><text> $500 </text></div>
-                                </div>
-                                <div className="productDB">
-                                    <div><text> 10</text></div>
-                                    <div><text> Producto A </text></div>
-                                    <div><text> $200 </text></div>
-                                </div>
-                                <div className="productDB">
-                                    <div><text> 24</text></div>
-                                    <div><text> Producto B </text></div>
-                                    <div><text> $320 </text></div>
-                                </div>
-                                <div className="productDB">
-                                    <div><text> 1</text></div>
-                                    <div><text> Producto C </text></div>
-                                    <div><text> $500 </text></div>
-                                </div>
-                                <div className="productDB">
-                                    <div><text> 10</text></div>
-                                    <div><text> Producto A </text></div>
-                                    <div><text> $200 </text></div>
-                                </div>
-                                <div className="productDB">
-                                    <div><text> 24</text></div>
-                                    <div><text> Producto B </text></div>
-                                    <div><text> $320 </text></div>
-                                </div>
-                                <div className="productDB">
-                                    <div><text> 1</text></div>
-                                    <div><text> Producto C </text></div>
-                                    <div><text> $500 </text></div>
-                                </div>
+                                {data?.map((producto, index) => (
+                                    <div className="productDB" key={producto.id || index}>
+                                        <div><span> {producto.cantidad} </span></div>
+                                        <div><span> {producto.tipo_producto} </span></div>
+                                        <div><span> {producto.precio_venta_unitario} </span></div>
+                                    </div>
+                                ))}
+
                             </div>
                         </div>
                     </div>

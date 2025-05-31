@@ -18,7 +18,7 @@ const TopBar: React.FC = () => {
   }
 
   const sectionAdmin = () => {
-    navigate('/')
+    navigate('/administrador')
   }
 
   const sectionHome = () => {
@@ -31,7 +31,7 @@ const TopBar: React.FC = () => {
       <div className="header-icons">
         <div className='row'>
           <button onClick={() => {sectionHome(); setActive("1")}} className={`topbar-button ${state === "1" ? "active" : "inactive"}`}> <p>Operador</p> </button>
-          <button onClick={() => {sectionHome(); setActive("2")}} className={`topbar-button ${state === "1" ? "inactive" : "active"}`}> <p>Administrador</p> </button>
+          <button onClick={() => {sectionAdmin(); setActive("2")}} className={`topbar-button ${state === "1" ? "inactive" : "active"}`}> <p>Administrador</p> </button>
         </div>
       </div>
       <button onClick={sectionHelp} className="header-icon">
