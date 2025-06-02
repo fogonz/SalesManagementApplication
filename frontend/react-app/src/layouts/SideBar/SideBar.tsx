@@ -1,5 +1,6 @@
 import React from 'react';
 import './SideBar.css';
+import { useEffect } from 'react';
 
 type Tabla = 'movimientos' | 'cuentas' | 'productos';
 
@@ -13,6 +14,16 @@ const SideBar: React.FC<SideBarProps> = ({setActiveView}) => {
     buttons.forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
   };
+
+  useEffect(() => {
+    setActiveView("movimientos");
+
+    // 2. Find the MOVIMIENTOS button (we know it's the first .menu-button) and add "active"
+    const firstBtn = document.querySelector<HTMLButtonElement>(".menu-button");
+    if (firstBtn) {
+      firstBtn.classList.add("active");
+    }
+  }, [setActiveView])
 
   return (
     <div className="sidebar">

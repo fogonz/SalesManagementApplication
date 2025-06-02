@@ -104,3 +104,9 @@ button:focus-visible {
   display: flex;
   flex-direction: row;
 }
+
+.blurred {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
