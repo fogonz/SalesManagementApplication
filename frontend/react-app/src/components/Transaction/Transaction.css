@@ -217,7 +217,7 @@
 
 .page {
 	position: relative;
-	height: 100vh;
+	height: fit-content;
 	overflow: hidden;
 }
   

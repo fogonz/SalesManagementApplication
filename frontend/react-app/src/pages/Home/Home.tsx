@@ -21,7 +21,7 @@ const Home = () => {
     <div className="app-wrapper">
       <div className={`app-content ${isTransactionOpen ? "blurred" : ""}`}>
         <div className="row">
-          <SideBar setActiveView={setActiveView} />
+          <SideBar setActiveView={setActiveView} currentSection="home"/>
           <TableBox
             onOpenTransaction={handleOpenTransaction}
             activeView={activeView}

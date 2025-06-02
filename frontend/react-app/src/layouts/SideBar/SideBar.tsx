@@ -1,14 +1,17 @@
 import React from 'react';
 import './SideBar.css';
 import { useEffect } from 'react';
+import Options_Home from './SideBarOptions/Options_Home';
+import Options_Admin from './SideBarOptions/Options_Admin';
 
 type Tabla = 'movimientos' | 'cuentas' | 'productos';
 
 interface SideBarProps {
-  setActiveView: React.Dispatch<React.SetStateAction<Tabla>>;
+  setActiveView?: React.Dispatch<React.SetStateAction<Tabla>>;
+  currentSection: string;
 }
 
-const SideBar: React.FC<SideBarProps> = ({setActiveView}) => {
+const SideBar: React.FC<SideBarProps> = ({setActiveView, currentSection="home"}) => {
   const toggleActive = (event) => {
     const buttons = document.querySelectorAll('.menu-button');
     buttons.forEach(btn => btn.classList.remove('active'));
@@ -16,9 +19,10 @@ const SideBar: React.FC<SideBarProps> = ({setActiveView}) => {
   };
 
   useEffect(() => {
-    setActiveView("movimientos");
+    if (setActiveView) {
+      setActiveView("movimientos");
+    }
 
-    // 2. Find the MOVIMIENTOS button (we know it's the first .menu-button) and add "active"
     const firstBtn = document.querySelector<HTMLButtonElement>(".menu-button");
     if (firstBtn) {
       firstBtn.classList.add("active");
@@ -40,17 +44,12 @@ const SideBar: React.FC<SideBarProps> = ({setActiveView}) => {
         </div>
       </div>
 
-      <div className="sidebar-menu-container">
-        <button className="menu-button" onClick={(e) => {setActiveView('movimientos'); toggleActive(e);}}>
-          <i className="fas fa-home"></i> MOVIMIENTOS
-        </button>
-        <button className="menu-button" onClick={(e) => {setActiveView('cuentas'); toggleActive(e);}}>
-          <i className="fas fa-circle-user"></i> CUENTAS
-        </button>
-        <button className="menu-button" onClick={(e) => {setActiveView('productos'); toggleActive(e);}}>
-          <i className="fas fa-boxes"></i> STOCK
-        </button>
-      </div>
+      {currentSection === "home" && (
+          <Options_Home setActiveView={setActiveView} toggleActive={toggleActive} />
+      )}
+      {currentSection === "admin" && (
+          <Options_Admin setActiveView={setActiveView} toggleActive={toggleActive} />
+      )}
     </div>
   );
 }

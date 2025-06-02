@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import HelpMenu from "./pages/Help/help";
 import TopBar from "./layouts/TopBar/TopBar";
-import StatisticsDashboard from "./layouts/StatsDashboard/StatsDashboard";
+import Admin from "./pages/Admin/Admin";
 
 function App() {
   return (
@@ -34,7 +34,7 @@ function App() {
         <Route path="/admin" element={
             <div>
               <TopBar></TopBar>
-              <StatisticsDashboard></StatisticsDashboard>
+              <Admin></Admin>
             </div>
           }>
         </Route>

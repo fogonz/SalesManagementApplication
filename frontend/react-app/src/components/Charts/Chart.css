@@ -1,0 +1,20 @@
+.chart-svg {
+	display: block;
+	overflow: visible;
+  }
+  .roi-line {
+	fill: none;
+	stroke: url(#roiGradient);
+	stroke-width: 2;
+  }
+  .roe-line {
+	fill: none;
+	stroke: url(#roeGradient);
+	stroke-width: 2;
+  }
+  .roi-point {
+	fill: #10b981;
+  }
+  .roe-point {
+	fill: #f87171;
+  }
