@@ -23,27 +23,37 @@
     margin-right: auto;
 }
 
-.logo-section img {
-    width: 25%;
-    height: auto;
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
+.logo-section {
+  display: flex;
+  align-items: center;  
+  gap: 15px;           
 }
 
-.logo-text{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-content: center;
+
+.logo-img {
+  width: 60px;         
+  height: 60px;        
+  border-radius: 10%;  
+  object-fit: cover;   
 }
+
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
 
 .logo-title {
-    font-weight: bold;
-    font-size: 18px;
+  font-weight: bold;
+  font-size: 18px;
+  margin: 0;           
 }
 
 .logo-subtitle {
-    font-size: 1em;
+  font-size: 14px;
+  margin: 0;           
+  line-height: 1.3;    
 }
 
 .sidebar-menu-container {
