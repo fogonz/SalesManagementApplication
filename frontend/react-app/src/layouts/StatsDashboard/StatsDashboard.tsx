@@ -1,5 +1,5 @@
 import React from 'react';
-import './Dashboard.css';
+import './StatsDashboard.css';
 
 const StatisticsDashboard = () => {
   // Sample data for the charts

@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import HelpMenu from "./pages/Help/help";
 import TopBar from "./layouts/TopBar/TopBar";
+import StatisticsDashboard from "./layouts/StatsDashboard/StatsDashboard";
 
 function App() {
   return (
@@ -30,10 +31,10 @@ function App() {
             
       {/* ADMIN PATH */}
       {
-        <Route path="/administrador" element={
+        <Route path="/admin" element={
             <div>
               <TopBar></TopBar>
-              <div> <h1>.</h1><h1> VENTANA DE ADMINISTRACION - PLACHOLDER</h1></div>
+              <StatisticsDashboard></StatisticsDashboard>
             </div>
           }>
         </Route>

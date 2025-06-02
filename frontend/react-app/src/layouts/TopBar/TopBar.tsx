@@ -18,7 +18,7 @@ const TopBar: React.FC = () => {
   }
 
   const sectionAdmin = () => {
-    navigate('/administrador')
+    navigate('/admin')
   }
 
   const sectionHome = () => {
