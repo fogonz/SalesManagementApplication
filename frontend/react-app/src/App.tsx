@@ -1,50 +1,44 @@
-// src/App.tsx
-import React, { useState } from "react";
-import TopBar from "./components/TopBar/TopBar";
-import TableBox from "./components/TableBox/TableBox";
-import SideBar from "./components/SideBar/SideBar";
-import Transaction from "./components/Transaction/Transaction";
-import "./App.css";
-
-// Definí el tipo de vista posible
-type Tabla = "movimientos" | "cuentas" | "productos";
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home/Home";
+import HelpMenu from "./pages/Help/help";
+import TopBar from "./layouts/TopBar/TopBar";
 
 function App() {
-  // Estado que decide si el popup Transaction está abierto
-  const [isTransactionOpen, setIsTransactionOpen] = useState(false);
-
-  // Estado que maneja cuál tabla está activa
-  const [activeView, setActiveView] = useState<Tabla>("movimientos");
-
-  const handleOpenTransaction = () => setIsTransactionOpen(true);
-  const handleCloseTransaction = () => setIsTransactionOpen(false);
-  const handleAcceptTransaction = () => {
-    console.log("Transacción aceptada");
-    setIsTransactionOpen(false);
-  };
-
   return (
-    <div className="app-wrapper">
-      <div className={`app-content ${isTransactionOpen ? "blurred" : ""}`}>
-        <TopBar />
+    <Routes>
+      {/* MAIN PATH - HOME */}
+      {
+        <Route path="/" element={
+            <div>
+              <TopBar></TopBar>
+              <Home></Home>
+            </div>
+          }>
+        </Route>
+      }
 
-        <div className="row">
-          <SideBar setActiveView={setActiveView} />
-          <TableBox
-            onOpenTransaction={handleOpenTransaction}
-            activeView={activeView}
-            setActiveView={setActiveView}
-          />
-        </div>
-      </div>
-
-      {isTransactionOpen && (
-        <Transaction
-          onClose={handleCloseTransaction}
-          onAccept={handleAcceptTransaction}
-        />
-      )}
-    </div>
+      {/* HELP PATH */}
+      {
+        <Route path="/ayuda" element={
+            <div>
+              <TopBar></TopBar>
+              <HelpMenu></HelpMenu>
+            </div>
+          }>
+        </Route>
+      }
+            
+      {/* ADMIN PATH */}
+      {
+        <Route path="/administrador" element={
+            <div>
+              <TopBar></TopBar>
+              <div> <h1>.</h1><h1> VENTANA DE ADMINISTRACION - PLACHOLDER</h1></div>
+            </div>
+          }>
+        </Route>
+      }
+    </Routes>
   );
 }
 

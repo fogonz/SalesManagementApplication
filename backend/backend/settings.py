@@ -27,7 +27,6 @@ INSTALLED_APPS = [
 
     # Aplicaciones locales
     "api",
-    "frontend",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
