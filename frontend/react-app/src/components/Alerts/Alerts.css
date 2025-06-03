@@ -1,0 +1,56 @@
+.dashboard-header {
+  background-color: var(--sidebar-color);
+  color: white;
+  padding: 1.5rem;
+  margin-bottom: 0,5rem;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  width: 100%;
+  box-sizing: border-box; 
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.analysis-label {
+  font-size: 1rem;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg); 
+}
+
+.alert-badges {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.alert-badge {
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+}
+
+.alert-badge--warning {
+    background: linear-gradient(90deg, #facc15 0%, #ca8a04 100%);
+}
+
+.alert-badge--danger {
+  background: linear-gradient(90deg, #f87171 0%, #b91c1c 100%);
+}
+
+.header-right {
+  text-align: right;
+}
+
+.header-title {
+  font-size: 1rem;
+  color: #d1d5db;
+}
