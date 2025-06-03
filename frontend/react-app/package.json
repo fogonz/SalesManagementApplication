@@ -14,7 +14,9 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.1",
+    "react-virtualized-auto-sizer": "^1.0.26",
     "react-window": "^1.8.11",
+    "react-window-infinite-loader": "^1.0.10",
     "router-dom": "^3.0.3"
   },
   "devDependencies": {

@@ -1,6 +1,16 @@
 import React from 'react';
 import './Transaction.css';
 import { useEffect, useState } from 'react';
+import { FixedSizeList as List } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
+
+const ProductItem = ({ index, style, data }) => (
+    <div style={style} className="productDB">
+        <div><span>{data[index]?.cantidad}</span></div>
+        <div><span>{data[index]?.tipo_producto}</span></div>
+        <div><span>${data[index]?.precio_venta_unitario}</span></div>
+    </div>
+);
 
 interface TransactionProps {
     onClose: () => void;
@@ -22,25 +32,47 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     const [descuento, setDescuento] = useState<string>("");
     const [total, setTotal] = useState<string>("");
     const [abonado, setAbonado] = useState<string>("");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredData, setFilteredData] = useState<ProductoRow[]>([]);
     
     const [data, setData] = useState<ProductoRow[] | null>(null)
 
     useEffect(() => {
         if (data) console.log(data);
-      }, [data]);
+    }, [data]);
 
     useEffect(() => {
-    const fetchData = async () => {
-        try {
-        const res = await fetch(`http://localhost:8000/api/productos`);
-        const json = await res.json();
-        setData(json);
-        } catch (err) {
-        console.error(`Error al cargar :`, err);
-        }
-    };
-    fetchData();
+        const fetchData = async () => {
+            try {
+            const res = await fetch(`http://localhost:8000/api/productos`);
+            const json = await res.json();
+            setData(json);
+            } catch (err) {
+            console.error(`Error al cargar :`, err);
+            }
+        };
+        fetchData();
     }, []);
+
+    useEffect(() => {
+        if (data) {
+            if (searchTerm.trim() === "") {
+                setFilteredData(data);
+            } else {
+                const filtered = data.filter(producto => 
+                    producto.tipo_producto.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                setFilteredData(filtered);
+            }
+        }
+    }, [searchTerm, data]);
+    
+    // 🔹 AGREGAR ESTE useEffect PARA INICIALIZAR filteredData:
+    useEffect(() => {
+        if (data) {
+            setFilteredData(data);
+        }
+    }, [data]);
 
     const handleSubmit = async () => {
         console.log([cuenta, abonado])
@@ -144,7 +176,18 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                         </div>
 
                         <div className="search">
-                            <input type="text" className="searchTerm" placeholder="¿Qué producto estás buscando?"></input>
+                            <input 
+                                type="text" 
+                                className="searchTerm" 
+                                placeholder="¿Qué producto estás buscando?"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            {searchTerm && (
+                                <div className="search-results">
+                                    {filteredData.length} producto{filteredData.length !== 1 ? 's' : ''} encontrado{filteredData.length !== 1 ? 's' : ''}
+                                </div>
+                            )}
                         </div>
 
                         <div className='container-box'>
@@ -153,15 +196,22 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                 <div><span>Nombre</span></div>
                                 <div><span>Precio</span></div>
                             </div>
-                            <div className="container-wrapper-nopad scroll-container">
-                                {data?.map((producto, index) => (
-                                    <div className="productDB" key={producto.id || index}>
-                                        <div><span> {producto.cantidad} </span></div>
-                                        <div><span> {producto.tipo_producto} </span></div>
-                                        <div><span> ${producto.precio_venta_unitario} </span></div>
-                                    </div>
-                                ))}
 
+                            <div className="container-wrapper-nopad" style={{ height: '400px' }}>
+                                <AutoSizer>
+                                    {({ height, width }) => (
+                                        <List
+                                            height={height}
+                                            width={width}
+                                            itemCount={filteredData?.length || 0}  // 🔹 CAMBIAR data por filteredData
+                                            itemSize={60}
+                                            itemData={filteredData}                // 🔹 CAMBIAR data por filteredData
+                                            className="scroll-container"
+                                        >
+                                            {ProductItem}
+                                        </List>
+                                    )}
+                                </AutoSizer>
                             </div>
                         </div>
                     </div>
