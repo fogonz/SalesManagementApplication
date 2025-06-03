@@ -32,7 +32,7 @@ const Admin = () => {
 
             <Datachart ingreso={ingreso} egreso={egreso} /> 
             <PerformanceGrid performanceData={performanceData}/>
-            <Datachart ingreso={200} egreso={10}></Datachart>
+            
 
             {/* Additional Cards like Sales/ROI Charts */}
             <div className="card-chart">
