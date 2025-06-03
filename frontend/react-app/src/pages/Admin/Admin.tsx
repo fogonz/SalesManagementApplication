@@ -43,6 +43,7 @@ const Admin = () => {
 
           {/* Main Content */}
           <div className="content-and-sidebar">
+
             <Datachart ingreso={ingreso} egreso={egreso} /> 
             <PerformanceGrid performanceData={performanceData}/>
 
@@ -54,6 +55,9 @@ const Admin = () => {
 
             <div className="card">
               <ROIChart />
+            </div>
+            <div className='wrapper'>
+              <Datachart ingreso={ingreso} egreso={egreso} />
             </div>
           </div>
 
