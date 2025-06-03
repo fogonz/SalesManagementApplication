@@ -53,16 +53,6 @@ const Admin = () => {
               <Datachart ingreso={ingreso} egreso={egreso} performanceData={performanceData} />
             </div>
             
-
-            {/* Additional Cards like Sales/ROI Charts */}
-            <div className="card">
-              <div className="sales-chart-title">Ventas en los Últimos 7 días</div>
-              <SalesChart />
-            </div>
-
-            <div className="card">
-              <ROIChart />
-            </div>
           </div>
 
         </div>
