@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 const TopBar: React.FC = () => {
 
-  const [state, setState] = useState<"1" | "2">("1");
+  const [state, setState] = useState<"1" | "2" | "0">("1");
 
   const setActive = (value: "1" | "2") => {
     setState(value);
@@ -34,7 +34,7 @@ const TopBar: React.FC = () => {
           <button onClick={() => {sectionAdmin(); setActive("2")}} className={`topbar-button ${state === "1" ? "inactive" : "active"}`}> <p>Administrador</p> </button>
         </div>
       </div>
-      <button onClick={sectionHelp} className="header-icon">
+      <button onClick={() => {sectionHelp(); setState("0")}} className="header-icon">
           <i className="fas fa-question"></i>
       </button>
     </div>
