@@ -49,7 +49,10 @@ const Admin = () => {
 
           {/* Main Content */}
           <div className="content-and-sidebar">
-            <Datachart ingreso={ingreso} egreso={egreso} performanceData={performanceData} />
+            <div className='wrapper'>
+              <Datachart ingreso={ingreso} egreso={egreso} performanceData={performanceData} />
+            </div>
+            
 
             {/* Additional Cards like Sales/ROI Charts */}
             <div className="card">

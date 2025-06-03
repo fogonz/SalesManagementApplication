@@ -16,6 +16,12 @@ export interface ProductoRow {
 }
 
 const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
+    const [fecha, setFecha] = useState<string>("");
+    const [cuenta, setCuenta] = useState<string>("");
+    const [tipoMovimiento, setTipoMovimiento] = useState<string>("");
+    const [descuento, setDescuento] = useState<string>("");
+    const [total, setTotal] = useState<string>("");
+    const [abonado, setAbonado] = useState<string>("");
     
     const [data, setData] = useState<ProductoRow[] | null>(null)
 
@@ -36,6 +42,60 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     fetchData();
     }, []);
 
+    const handleSubmit = async () => {
+        console.log([cuenta, abonado])
+
+        {/*
+        if (!fecha || !cuenta || !tipoMovimiento) {
+          alert("Complete Fecha, Cuenta y Tipo de Movimiento.");
+          return;
+        }
+        */}
+      
+        // 3.2) Construir el payload como objeto JavaScript
+        const payload = {
+          tipo_comprobante: tipoMovimiento,
+          fecha: fecha,                          // e.g. "2025-06-03"
+          cuenta: parseInt(cuenta, 10),       // convierte a número
+          cantidad: descuento === "" ? null : parseFloat(descuento),
+          precio_venta: abonado === "" ? null : parseFloat(abonado),
+          total: abonado === "" ? null : parseFloat(abonado),
+          producto_id: null,
+          numero_comprobante: null,
+          saldo_diferencia: null,
+          concepto: null,
+        };
+      
+        // 3.3) Enviar el POST con fetch
+        try {
+          const respuesta = await fetch("http://localhost:8000/api/movimientos/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+      
+          // 3.4) Manejar respuesta no exitosa
+          if (!respuesta.ok) {
+            console.error("Status:", respuesta.status, respuesta.statusText);
+            const textoError = await respuesta.text().catch(() => null);
+            console.error("Error body:", textoError);
+            alert("Error al crear la transacción. Revisa consola.");
+            return;
+          }
+      
+          // 3.5) Si fue 2xx, parsear JSON y llamar onAccept()
+          const datos = await respuesta.json();
+          console.log("Transacción creada:", datos);
+          onAccept();
+        } catch (err) {
+          console.error("Error de red:", err);
+          alert("No se pudo conectar al servidor");
+        }
+    };
+
+
     return(
         <div className="page">
 
@@ -50,31 +110,31 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                             <div className="entry_label">
                                 <div className="text open-sans">Fecha</div>
                             </div>
-                            <input className="custom_input" />
+                            <input type="date" className="custom_input" value={fecha} onChange={(e) => setFecha(e.target.value)}/>
                         </div>
                         <div className="entry">
                             <div className="entry_label">
                                 <div className="text open-sans">Cuenta</div>    
                             </div>
-                            <input className="custom_input" />
+                            <input type="text" className="custom_input" value={cuenta} onChange={(e) => setCuenta(e.target.value)} />
                         </div>
                         <div className="entry">
                             <div className="entry_label">
                                 <div className="text open-sans">Tipo de Movimiento</div>
                             </div>
-                            <input className="custom_input" />
+                            <input type="text" className="custom_input" value={tipoMovimiento} onChange={(e) => setTipoMovimiento(e.target.value)} />
                         </div>
                         <div className="entry">
                             <div className="entry_label">
                                 <div className="text open-sans">Descuento</div>
                             </div>
-                            <input className="custom_input" />
+                            <input type="number" className="custom_input" value={descuento} onChange={(e) => setDescuento(e.target.value)} />
                         </div>
                         <div className="entry">
                             <div className="entry_label">
                                 <div className="text open-sans">Abonado al registrar</div>
                             </div>
-                            <input className="custom_input" />
+                            <input type="number" className="custom_input" value={abonado} onChange={(e) => setAbonado(e.target.value)} />
                         </div>
                     </div>
 
@@ -143,8 +203,8 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                     <button className="bigButton button-shadow gray" onClick={onClose}>
                         <div className="text open-sans">CANCELAR</div>
                     </button>
-                    <button className="bigButton button-shadow green" onClick={onAccept}>
-                        <div className="text open-sans">ACEPTAR</div>
+                    <button className="bigButton button-shadow green" onClick={handleSubmit}>
+                        <div className="text open-sans" onClick={handleSubmit}>ACEPTAR</div>
                     </button>
                 </div>
             </div>
