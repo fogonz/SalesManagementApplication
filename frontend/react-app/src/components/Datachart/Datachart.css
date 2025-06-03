@@ -25,11 +25,13 @@
   font-size: 0.875rem;
   color: #6b7280;
   margin-bottom: 0.25rem;
+  text-align: center;
 }
 
 .metric-value {
   font-size: 1.5rem;
   font-weight: bold;
+  text-align: center;
 }
 
 .metric-value--positive {
@@ -43,6 +45,8 @@
 .total-section {
   border-top: 2px solid #e5e7eb;
   padding-top: 1rem;
+  background-color: rgb(255, 255, 255);
+  border-radius: 0.5rem;
 }
 
 .total-value {
@@ -52,56 +56,9 @@
 
 .card {
   animation: cardAppear 0.8s ease forwards;
+  
 }
 
-.bottom-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-}
-
-/* Métricas de rendimiento */
-.performance-grid {
-   animation: cardAppear 0.8s ease forwards;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-
-.performance-card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-}
-
-.performance-label {
-  font-size: 0.75rem;
-  color: #6b7280;
-  margin-bottom: 0.5rem;
-}
-
-.performance-value {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.performance-value--positive {
-  color: #059669;
-}
-
-.performance-value--negative {
-  color: #ef4444;
-}
-
-.performance-indicator {
-  font-size: 0.75rem;
-}
-
-.performance-indicator--up {
-  color: #059669;
-}
-
-.performance-indicator--down {
-  color: #ef4444;
+.card--total {
+  grid-column: 1 / -1; 
 }

@@ -4,21 +4,15 @@ import SideBar from '../../layouts/SideBar/SideBar';
 import ROIChart from '../../components/Charts/ROIChart/ROIChart';
 import SalesChart from '../../components/Charts/SalesChart/SalesChart';
 import Datachart from '../../components/Datachart/Datachart';
+import performanceData from '../../components/PerformanceGrid/PerformanceGrid';
+import PerformanceGrid from '../../components/PerformanceGrid/PerformanceGrid';
 
 const Admin = () => {
   const ingreso = 400000;
   const egreso = 100000;
 
   const performanceData = [
-    { label: 'Rendimiento de...', value: 11, type: 'negative' },
-    { label: 'Rendimiento de...', value: 11, type: 'negative' },
-    { label: 'Rendimiento de...', value: 11, type: 'negative' },
-    { label: 'Rendimiento de...', value: 11, type: 'negative' },
-    { label: 'Rendimiento de...', value: 11, type: 'negative' },
-    { label: 'Rendimiento de...', value: 11, type: 'negative' },
-    { label: 'Rendimiento de...', value: 11, type: 'negative' },
-    { label: 'Rendimiento de...', value: 11, type: 'negative' },
-    { label: 'Rendimiento de...', value: 11, type: 'negative' },
+    { label: 'Rendimiento de..saaaaaaaaaaaaaaaaaaa.', value: 11, type: 'negative' },
   ];
 
   return (
@@ -49,7 +43,8 @@ const Admin = () => {
 
           {/* Main Content */}
           <div className="content-and-sidebar">
-            <Datachart ingreso={ingreso} egreso={egreso} performanceData={performanceData} />
+            <Datachart ingreso={ingreso} egreso={egreso} /> 
+            <PerformanceGrid performanceData={performanceData}/>
 
             {/* Additional Cards like Sales/ROI Charts */}
             <div className="card">
