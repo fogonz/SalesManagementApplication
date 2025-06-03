@@ -1,0 +1,107 @@
+.datachart-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.income-expense-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #adaeb1; 
+  padding: 1rem;
+  border-radius: 0.5rem; 
+  background-color: white; 
+}
+
+
+.metric-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.metric-value--positive {
+  color: #059669;
+}
+
+.metric-value--negative {
+  color: #ef4444;
+}
+
+.total-section {
+  border-top: 2px solid #e5e7eb;
+  padding-top: 1rem;
+}
+
+.total-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.card {
+  animation: cardAppear 0.8s ease forwards;
+}
+
+.bottom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+/* Métricas de rendimiento */
+.performance-grid {
+   animation: cardAppear 0.8s ease forwards;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.performance-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+}
+
+.performance-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.performance-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.performance-value--positive {
+  color: #059669;
+}
+
+.performance-value--negative {
+  color: #ef4444;
+}
+
+.performance-indicator {
+  font-size: 0.75rem;
+}
+
+.performance-indicator--up {
+  color: #059669;
+}
+
+.performance-indicator--down {
+  color: #ef4444;
+}
