@@ -6,6 +6,7 @@ import SalesChart from '../../components/Charts/SalesChart/SalesChart';
 import Datachart from '../../components/Datachart/Datachart';
 import performanceData from '../../components/PerformanceGrid/PerformanceGrid';
 import PerformanceGrid from '../../components/PerformanceGrid/PerformanceGrid';
+import Alerts from '../../components/Alerts/Aletrs';
 
 const Admin = () => {
   const ingreso = 400000;
@@ -23,22 +24,7 @@ const Admin = () => {
 
           {/* Header */}
           <div className="dashboard-header">
-            <div className="header-content">
-              <div className="header-left">
-                <span className="analysis-label">AVISOS</span>
-                <div className="alert-badges">
-                  <div className="alert-badge alert-badge--warning">
-                    % Productos de alto rendimiento con ventas críticas
-                  </div>
-                  <div className="alert-badge alert-badge--danger">
-                    1 Deuda por pagar dentro de 4 días
-                  </div>
-                </div>
-              </div>
-              <div className="header-right">
-                <div className="header-title">INFORMACIÓN Y ESTADÍSTICAS</div>
-              </div>
-            </div>
+            <Alerts Alerts={Alerts}/>
           </div>
 
           {/* Main Content */}
@@ -48,16 +34,14 @@ const Admin = () => {
             <PerformanceGrid performanceData={performanceData}/>
 
             {/* Additional Cards like Sales/ROI Charts */}
-            <div className="card">
+            <div className="card-chart">
               <div className="sales-chart-title">Ventas en los Últimos 7 días</div>
               <SalesChart />
             </div>
 
-            <div className="card">
+            <div className="card-chart">
+              <div className="sales-chart-title">Roi vs ROe</div>
               <ROIChart />
-            </div>
-            <div className='wrapper'>
-              <Datachart ingreso={ingreso} egreso={egreso} />
             </div>
           </div>
 
