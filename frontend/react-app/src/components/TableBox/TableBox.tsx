@@ -10,6 +10,7 @@ interface TableBoxProps {
   onOpenTransaction: () => void;
   activeView: 'movimientos' | 'cuentas' | 'productos';
   setActiveView: (view: 'movimientos' | 'cuentas' | 'productos') => void;
+  refreshTrigger?: number; // Add this prop
 }
 
 interface MovimientoRow {
@@ -43,7 +44,7 @@ interface ProductoRow {
   precio: number | null;
 }
 
-const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setActiveView }) => {
+const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setActiveView, refreshTrigger }) => {
   const [data, setData] = useState<MovimientoRow[] | CuentaRow[] | ProductoRow[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
@@ -155,6 +156,16 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
     return false;
   });
 
+  const fetchData = async () => {
+    try {
+      const res = await fetch(`http://localhost:8000/api/${activeView}`);
+      const json = await res.json();
+      setData(json);
+    } catch (err) {
+      console.error(`Error al cargar ${activeView}:`, err);
+    }
+  };
+
   const handleDateSelect = (dates: string[]) => {
     setSelectedDates(dates);
   };
@@ -163,21 +174,17 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
     setSelectedDates([]);
   };
 
-
-
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`http://localhost:8000/api/${activeView}`);
-        const json = await res.json();
-        setData(json);
-      } catch (err) {
-        console.error(`Error al cargar ${activeView}:`, err);
-      }
-    };
     fetchData();
   }, [activeView]);
 
+  // Effect for refreshing data when refreshTrigger changes
+  useEffect(() => {
+    if (refreshTrigger && refreshTrigger > 0) {
+      fetchData();
+    }
+  }, [refreshTrigger]);
+  
   // Close calendar when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

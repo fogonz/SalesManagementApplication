@@ -9,12 +9,14 @@ type Tabla = "movimientos" | "cuentas" | "productos";
 const Home = () => {
   const [isTransactionOpen, setIsTransactionOpen] = useState(false);
   const [activeView, setActiveView] = useState<Tabla>("movimientos");
+  const [refreshTrigger, setRefreshTrigger] = useState(0); 
 
   const handleOpenTransaction = () => setIsTransactionOpen(true);
   const handleCloseTransaction = () => setIsTransactionOpen(false);
   const handleAcceptTransaction = () => {
     console.log("Transacción aceptada");
     setIsTransactionOpen(false);
+    setRefreshTrigger(prev => prev + 1);
   };
 
   return (
@@ -26,6 +28,7 @@ const Home = () => {
             onOpenTransaction={handleOpenTransaction}
             activeView={activeView}
             setActiveView={setActiveView}
+            refreshTrigger={refreshTrigger} 
           />
         </div>
       </div>
