@@ -1,14 +1,18 @@
 from rest_framework import serializers
 from .models import (
-    ApiNote, AuthUser, Cuentas,
-    Productos, Movimientos, MovimientoItems, Saldo
+    ApiNote,
+    AuthUser,
+    Cuentas,
+    Productos,
+    Saldo,
+    Transacciones,
+    TransaccionItems,
 )
 
 
 class AuthUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthUser
-        # Incluimos sólo los campos básicos de usuario:
         fields = [
             'id', 'username', 'first_name', 'last_name',
             'email', 'is_active', 'is_staff', 'is_superuser',
@@ -20,8 +24,6 @@ class ApiNoteSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(
         queryset=AuthUser.objects.all()
     )
-    # Si prefieres anidar el usuario, en lugar de PK:
-    # author = AuthUserSerializer(read_only=True)
 
     class Meta:
         model = ApiNote
@@ -46,45 +48,58 @@ class ProductosSerializer(serializers.ModelSerializer):
         ]
 
 
-class MovimientoItemsSerializer(serializers.ModelSerializer):
-    producto = serializers.PrimaryKeyRelatedField(
-        queryset=Productos.objects.all()
-    )
-    movimiento = serializers.PrimaryKeyRelatedField(
-        queryset=Movimientos.objects.all()
-    )
-
-    class Meta:
-        model = MovimientoItems
-        fields = [
-            'id', 'movimiento', 'producto',
-            'cantidad', 'precio_venta', 'descuento'
-        ]
-
-
-class MovimientosSerializer(serializers.ModelSerializer):
-    cuenta = serializers.PrimaryKeyRelatedField(
-        queryset=Cuentas.objects.all()
-    )
-    producto = serializers.PrimaryKeyRelatedField(
-        queryset=Productos.objects.all(), allow_null=True, required=False
-    )
-    # Incluimos los items asociados de forma anidada en la lectura:
-    items = MovimientoItemsSerializer(
-        source='movimientoitems_set', many=True, read_only=True
-    )
-
-    class Meta:
-        model = Movimientos
-        fields = [
-            'id', 'tipo_comprobante', 'fecha', 'cuenta',
-            'cantidad', 'precio_venta', 'total', 'producto',
-            'numero_comprobante', 'saldo_diferencia', 'concepto',
-            'items'
-        ]
-
-
 class SaldoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Saldo
         fields = ['id', 'saldo_actual']
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Serializers para las nuevas tablas “transacciones” y “transaccion_items”
+# ─────────────────────────────────────────────────────────────────────
+
+class TransaccionItemsSerializer(serializers.ModelSerializer):
+    producto = serializers.PrimaryKeyRelatedField(
+        queryset=Productos.objects.all(),
+        allow_null=True,
+        required=False
+    )
+    transaccion = serializers.PrimaryKeyRelatedField(
+        queryset=Transacciones.objects.all()
+    )
+
+    class Meta:
+        model = TransaccionItems
+        fields = [
+            'id',
+            'transaccion',
+            'producto',
+            'nombre_producto',
+            'precio_unitario',
+            'cantidad',
+            'descuento_item',
+        ]
+
+
+class TransaccionesSerializer(serializers.ModelSerializer):
+    cuenta = serializers.PrimaryKeyRelatedField(
+        queryset=Cuentas.objects.all()
+    )
+    items = TransaccionItemsSerializer(
+        source='transaccionitems_set',
+        many=True,
+        read_only=True
+    )
+
+    class Meta:
+        model = Transacciones
+        fields = [
+            'id',
+            'tipo',
+            'fecha',
+            'cuenta',
+            'total',
+            'descuento_total',
+            'concepto',
+            'items',
+        ]

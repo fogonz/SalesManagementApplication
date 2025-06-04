@@ -1,10 +1,3 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
 
@@ -146,35 +139,6 @@ class DjangoSession(models.Model):
         db_table = 'django_session'
 
 
-class MovimientoItems(models.Model):
-    movimiento = models.ForeignKey('Movimientos', models.DO_NOTHING)
-    producto = models.ForeignKey('Productos', models.DO_NOTHING)
-    cantidad = models.DecimalField(max_digits=10, decimal_places=2)
-    precio_venta = models.DecimalField(max_digits=10, decimal_places=2)
-    descuento = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'movimiento_items'
-
-
-class Movimientos(models.Model):
-    tipo_comprobante = models.CharField(max_length=14)
-    fecha = models.DateField()
-    cuenta = models.ForeignKey(Cuentas, models.DO_NOTHING)
-    cantidad = models.FloatField(blank=True, null=True)
-    precio_venta = models.FloatField(blank=True, null=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
-    producto = models.ForeignKey('Productos', models.DO_NOTHING, blank=True, null=True)
-    numero_comprobante = models.IntegerField(blank=True, null=True)
-    saldo_diferencia = models.FloatField(blank=True, null=True)
-    concepto = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'movimientos'
-
-
 class Productos(models.Model):
     tipo_producto = models.CharField(max_length=255)
     precio_venta_unitario = models.FloatField()
@@ -193,3 +157,56 @@ class Saldo(models.Model):
     class Meta:
         managed = False
         db_table = 'saldo'
+
+
+# ─────────────────────────────────────────────────────────────────────
+#  MODELOS RENOMBRADOS: Transacciones y TransaccionItems
+# ─────────────────────────────────────────────────────────────────────
+
+class Transacciones(models.Model):
+    TIPO_CHOICES = [
+        ('factura_compra', 'Factura Compra'),
+        ('factura_venta',  'Factura Venta'),
+        ('cobranza',       'Cobranza'),
+        ('pago',           'Pago'),
+        ('jornal',         'Jornal'),
+        ('alquiler',       'Alquiler'),
+        ('impuestos',      'Impuestos'),
+        ('sueldo',         'Sueldo'),
+        ('aguinaldo',      'Aguinaldo'),
+    ]
+
+    id = models.AutoField(primary_key=True)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    fecha = models.DateField()
+    cuenta = models.ForeignKey(Cuentas, models.DO_NOTHING)
+    total = models.DecimalField(max_digits=12, decimal_places=2)
+    descuento_total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    concepto = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'transacciones'
+
+
+class TransaccionItems(models.Model):
+    id = models.AutoField(primary_key=True)
+    transaccion = models.ForeignKey(
+        Transacciones,
+        models.DO_NOTHING,
+        db_column='transaccion_id'
+    )
+    producto = models.ForeignKey(
+        Productos,
+        models.DO_NOTHING,
+        blank=True,
+        null=True
+    )
+    nombre_producto = models.CharField(max_length=255)
+    precio_unitario = models.DecimalField(max_digits=12, decimal_places=2)
+    cantidad = models.DecimalField(max_digits=10, decimal_places=2)
+    descuento_item = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+
+    class Meta:
+        managed = False
+        db_table = 'transaccion_items'

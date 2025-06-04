@@ -1,8 +1,9 @@
-import React from 'react';
+import * as React from 'react';
 import './Transaction.css';
 import { useEffect, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import { createHandleSubmit, validateTransaction } from '../../utils/validation/validate_insertTransaction';
 
 const ProductItem = ({ index, style, data }) => (
     <div style={style} className="productDB">
@@ -25,35 +26,61 @@ export interface ProductoRow {
     costo_unitario: any;
 }
 
+interface CuentaOption {
+    id: number;
+    nombre: string;
+    contacto_mail: string;
+    contacto_telefono: string;
+    monto: number;
+    tipo_cuenta: string;
+}
+
 const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     const [fecha, setFecha] = useState<string>("");
     const [cuenta, setCuenta] = useState<string>("");
-    const [tipoMovimiento, setTipoMovimiento] = useState<string>("");
+    const [tipo, setTipo] = useState<string>("");
     const [descuento, setDescuento] = useState<string>("");
     const [total, setTotal] = useState<string>("");
     const [abonado, setAbonado] = useState<string>("");
     const [searchTerm, setSearchTerm] = useState("");
+    const [error, setError] = useState<string>("");
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [filteredData, setFilteredData] = useState<ProductoRow[]>([]);
-    
-    const [data, setData] = useState<ProductoRow[] | null>(null)
+    const [data, setData] = useState<ProductoRow[] | null>(null);
+    const [options, setOptions] = useState<CuentaOption[]>([]);
 
+    // Fetch: Table Cuentas
     useEffect(() => {
-        if (data) console.log(data);
-    }, [data]);
+        const fetchAccounts = async () => {
+            try {
+                const responseAccounts = await fetch(`http://localhost:8000/api/cuentas`);
+                const jsonAccounts = await responseAccounts.json();
+                setOptions(jsonAccounts);
+                console.log(jsonAccounts);
+            } catch(err) {
+                console.error(`Error al cargar cuentas:`, err);
+                setError("Error al cargar cuentas");
+            }
+        };
+        fetchAccounts();
+    }, []);
 
+    // Fetch: Table Productos
     useEffect(() => {
         const fetchData = async () => {
             try {
-            const res = await fetch(`http://localhost:8000/api/productos`);
-            const json = await res.json();
-            setData(json);
+                const res = await fetch(`http://localhost:8000/api/productos`);
+                const json = await res.json();
+                setData(json);
             } catch (err) {
-            console.error(`Error al cargar :`, err);
+                console.error(`Error al cargar productos:`, err);
+                setError("Error al cargar productos");
             }
         };
         fetchData();
     }, []);
 
+    // Barra de Búsqueda
     useEffect(() => {
         if (data) {
             if (searchTerm.trim() === "") {
@@ -66,71 +93,44 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
             }
         }
     }, [searchTerm, data]);
-    
-    // 🔹 AGREGAR ESTE useEffect PARA INICIALIZAR filteredData:
-    useEffect(() => {
-        if (data) {
-            setFilteredData(data);
-        }
-    }, [data]);
 
+    // handleSubmit with validation
     const handleSubmit = async () => {
-        console.log([cuenta, abonado])
+        setError(""); 
+        setIsSubmitting(true);
 
-        {/*
-        if (!fecha || !cuenta || !tipoMovimiento) {
-          alert("Complete Fecha, Cuenta y Tipo de Movimiento.");
-          return;
-        }
-        */}
-      
-        // 3.2) Construir el payload como objeto JavaScript
-        const payload = {
-          tipo_comprobante: tipoMovimiento,
-          fecha: fecha,                          // e.g. "2025-06-03"
-          cuenta: parseInt(cuenta, 10),       // convierte a número
-          cantidad: descuento === "" ? null : parseFloat(descuento),
-          precio_venta: abonado === "" ? null : parseFloat(abonado),
-          total: abonado === "" ? null : parseFloat(abonado),
-          producto_id: null,
-          numero_comprobante: null,
-          saldo_diferencia: null,
-          concepto: null,
-        };
-      
-        // 3.3) Enviar el POST con fetch
         try {
-          const respuesta = await fetch("http://localhost:8000/api/movimientos/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          });
-      
-          // 3.4) Manejar respuesta no exitosa
-          if (!respuesta.ok) {
-            console.error("Status:", respuesta.status, respuesta.statusText);
-            const textoError = await respuesta.text().catch(() => null);
-            console.error("Error body:", textoError);
-            alert("Error al crear la transacción. Revisa consola.");
-            return;
-          }
-      
-          // 3.5) Si fue 2xx, parsear JSON y llamar onAccept()
-          const datos = await respuesta.json();
-          console.log("Transacción creada:", datos);
-          onAccept();
+            // Create the enhanced submit handler
+            const dataSubmitted = createHandleSubmit(
+                {
+                    fecha,
+                    cuenta,
+                    tipo,
+                    descuento,
+                    abonado,
+                },
+                () => {
+                    // Success callback
+                    setIsSubmitting(false);
+                    onAccept();
+                },
+                (errorMessage: string) => {
+                    // Error callback
+                    setError(`Error en los campos ingresados: ${errorMessage}`);
+                    setIsSubmitting(false);
+                }
+            );
+
+            // Execute the enhanced submit
+            await dataSubmitted();
         } catch (err) {
-          console.error("Error de red:", err);
-          alert("No se pudo conectar al servidor");
+            setError("Error inesperado al procesar la transacción");
+            setIsSubmitting(false);
         }
     };
 
-
     return(
         <div className="page">
-
             <div className="menu_newTransaction popup">
                 <div className="menu_newTransaction_topBar">
                     <div className="text open-sans"> Agregando Movimiento </div>
@@ -138,35 +138,99 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
 
                 <div className="menu_newTransaction_main">
                     <div className="entries">
+                        {/* Show error message */}
+                        {error && (
+                            <div className="error-message" style={{
+                                color: 'red',
+                                padding: '10px',
+                                backgroundColor: '#ffe6e6',
+                                border: '1px solid #ff9999',
+                                borderRadius: '4px',
+                                marginBottom: '10px'
+                            }}>
+                                {error}
+                            </div>
+                        )}
+
                         <div className="entry">
                             <div className="entry_label">
                                 <div className="text open-sans">Fecha</div>
                             </div>
-                            <input type="date" className="custom_input" value={fecha} onChange={(e) => setFecha(e.target.value)}/>
+                            <input 
+                                type="date" 
+                                className="custom_input" 
+                                value={fecha} 
+                                onChange={(e) => setFecha(e.target.value)}
+                                disabled={isSubmitting}
+                            />
                         </div>
+
                         <div className="entry">
-                            <div className="entry_label">
+                            <div className="entry_label">                                    
                                 <div className="text open-sans">Cuenta</div>    
                             </div>
-                            <input type="text" className="custom_input" value={cuenta} onChange={(e) => setCuenta(e.target.value)} />
+                            <select 
+                                className="custom_input" 
+                                value={cuenta} 
+                                onChange={(e) => setCuenta(e.target.value)}
+                                disabled={isSubmitting}
+                            >
+                                <option value="">-Selecciona una cuenta-</option>
+                                {options.map((item) => (
+                                    <option key={item.id} value={item.id}>
+                                        {item.nombre} ({item.tipo_cuenta})
+                                    </option>
+                                ))}
+                            </select>
                         </div>
+
                         <div className="entry">
                             <div className="entry_label">
-                                <div className="text open-sans">Tipo de Movimiento</div>
+                                <div className="text open-sans">Tipo</div>
                             </div>
-                            <input type="text" className="custom_input" value={tipoMovimiento} onChange={(e) => setTipoMovimiento(e.target.value)} />
+                            <select 
+                                className="custom_input" 
+                                value={tipo} 
+                                onChange={(e) => setTipo(e.target.value)}
+                                disabled={isSubmitting}
+                            >
+                                <option value="">Seleccionar...</option>
+                                <option value="factura venta">Factura Venta</option>
+                                <option value="factura compra">Factura Compra</option>
+                                <option value="pago">Pago</option>
+                                <option value="cobranza">Cobranza</option>
+                                <option value="factura c. varios">Factura C. Varios</option>
+                            </select>
                         </div>
+
                         <div className="entry">
                             <div className="entry_label">
-                                <div className="text open-sans">Descuento</div>
+                                <div className="text open-sans">Descuento (%)</div>
                             </div>
-                            <input type="number" className="custom_input" value={descuento} onChange={(e) => setDescuento(e.target.value)} />
+                            <input 
+                                type="number" 
+                                className="custom_input" 
+                                value={descuento} 
+                                onChange={(e) => setDescuento(e.target.value)}
+                                disabled={isSubmitting}
+                                min="0"
+                                max="100"
+                                step="0.01"
+                            />
                         </div>
                         <div className="entry">
                             <div className="entry_label">
                                 <div className="text open-sans">Abonado al registrar</div>
                             </div>
-                            <input type="number" className="custom_input" value={abonado} onChange={(e) => setAbonado(e.target.value)} />
+                            <input 
+                                type="number" 
+                                className="custom_input" 
+                                value={abonado} 
+                                onChange={(e) => setAbonado(e.target.value)}
+                                disabled={isSubmitting}
+                                min="0"
+                                step="0.01"
+                            />
                         </div>
                     </div>
 
@@ -182,6 +246,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                 placeholder="¿Qué producto estás buscando?"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
+                                disabled={isSubmitting}
                             />
                             {searchTerm && (
                                 <div className="search-results">
@@ -203,9 +268,9 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                         <List
                                             height={height}
                                             width={width}
-                                            itemCount={filteredData?.length || 0}  // 🔹 CAMBIAR data por filteredData
+                                            itemCount={filteredData?.length || 0}
                                             itemSize={60}
-                                            itemData={filteredData}                // 🔹 CAMBIAR data por filteredData
+                                            itemData={filteredData}
                                             className="scroll-container"
                                         >
                                             {ProductItem}
@@ -245,16 +310,25 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
                 
                 <div className="menu_newTransaction_bottomBar">
-                    <button className="bigButton button-shadow gray" onClick={onClose}>
+                    <button 
+                        className="bigButton button-shadow gray" 
+                        onClick={onClose}
+                        disabled={isSubmitting}
+                    >
                         <div className="text open-sans">CANCELAR</div>
                     </button>
-                    <button className="bigButton button-shadow green" onClick={handleSubmit}>
-                        <div className="text open-sans" onClick={handleSubmit}>ACEPTAR</div>
+                    <button 
+                        className="bigButton button-shadow green" 
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                    >
+                        <div className="text open-sans">
+                            {isSubmitting ? 'PROCESANDO...' : 'ACEPTAR'}
+                        </div>
                     </button>
                 </div>
             </div>

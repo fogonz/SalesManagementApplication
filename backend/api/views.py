@@ -1,16 +1,15 @@
 from rest_framework import viewsets, permissions
-from .serializers import MovimientosSerializer, CuentasSerializer, ProductosSerializer
-from .models import Movimientos, Cuentas, Productos
+from .serializers import TransaccionesSerializer, CuentasSerializer, ProductosSerializer, TransaccionItemsSerializer
+from .models import Transacciones, Cuentas, Productos, TransaccionItems
 
-class MovimientosViewSet(viewsets.ModelViewSet):
-    """
-    CRUD completo para Movimientos:
-      - list/retrieve
-      - create/update/partial_update
-      - destroy
-    """
-    queryset = Movimientos.objects.all()
-    serializer_class = MovimientosSerializer
+class TransaccionesViewSet(viewsets.ModelViewSet):
+    queryset = Transacciones.objects.all()
+    serializer_class = TransaccionesSerializer
+    permission_classes = [permissions.AllowAny]
+
+class TransaccionItemsViewSet(viewsets.ModelViewSet):
+    queryset = TransaccionItems.objects.all()
+    serializer_class = TransaccionItemsSerializer
     permission_classes = [permissions.AllowAny]
 
 class CuentasViewSet(viewsets.ModelViewSet):
@@ -23,7 +22,6 @@ class CuentasViewSet(viewsets.ModelViewSet):
     queryset = Cuentas.objects.all()
     serializer_class = CuentasSerializer
     permission_classes = [permissions.AllowAny]
-
 
 class ProductosViewSet(viewsets.ModelViewSet):
     """
