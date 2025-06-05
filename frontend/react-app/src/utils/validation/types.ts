@@ -9,6 +9,7 @@ export interface TransactionFormData {
 	descuento?: string;
 	estado?: string;
 	abonado?: string;
+	concepto?: string;
 }
   
 export interface ValidationResult {

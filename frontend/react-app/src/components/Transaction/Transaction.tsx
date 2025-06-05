@@ -40,6 +40,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     const [cuenta, setCuenta] = useState<string>("");
     const [tipo, setTipo] = useState<string>("");
     const [descuento, setDescuento] = useState<string>("");
+    const [concepto, setConcepto] = useState<string>("");
     const [total, setTotal] = useState<string>("");
     const [abonado, setAbonado] = useState<string>("");
     const [searchTerm, setSearchTerm] = useState("");
@@ -108,6 +109,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                     tipo,
                     descuento,
                     abonado,
+                    concepto
                 },
                 () => {
                     // Success callback
@@ -175,7 +177,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                 onChange={(e) => setCuenta(e.target.value)}
                                 disabled={isSubmitting}
                             >
-                                <option value="">-Selecciona una cuenta-</option>
+                                <option value="">-- Selecciona una cuenta --</option>
                                 {options.map((item) => (
                                     <option key={item.id} value={item.id}>
                                         {item.nombre} ({item.tipo_cuenta})
@@ -194,7 +196,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                 onChange={(e) => setTipo(e.target.value)}
                                 disabled={isSubmitting}
                             >
-                                <option value="">Seleccionar...</option>
+                                <option value="">-- Selecciona un tipo de movimiento --</option>
                                 <option value="factura venta">Factura Venta</option>
                                 <option value="factura compra">Factura Compra</option>
                                 <option value="pago">Pago</option>
@@ -205,19 +207,35 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
 
                         <div className="entry">
                             <div className="entry_label">
+                                <div className="text open-sans">Detalle</div>
+                            </div>
+                            <input 
+                                type="text" 
+                                className="custom_input" 
+                                placeholder="(OPCIONAL) Describir movimiento..."
+                                value={concepto} 
+                                onChange={(e) => setConcepto(e.target.value)}
+                                disabled={isSubmitting}
+                            />
+                        </div>
+
+                        <div className="entry">
+                            <div className="entry_label">
                                 <div className="text open-sans">Descuento (%)</div>
                             </div>
                             <input 
                                 type="number" 
                                 className="custom_input" 
+                                placeholder="(OPCIONAL) Ingresar descuento..."
                                 value={descuento} 
                                 onChange={(e) => setDescuento(e.target.value)}
                                 disabled={isSubmitting}
                                 min="0"
                                 max="100"
-                                step="0.01"
+                                step="0.1"
                             />
                         </div>
+
                         <div className="entry">
                             <div className="entry_label">
                                 <div className="text open-sans">Cantidad Abonada</div>
@@ -225,6 +243,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                             <input 
                                 type="number" 
                                 className="custom_input" 
+                                placeholder="Ingresar total abonado al registrar..."
                                 value={abonado} 
                                 onChange={(e) => setAbonado(e.target.value)}
                                 disabled={isSubmitting}

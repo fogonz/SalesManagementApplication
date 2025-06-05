@@ -7,6 +7,7 @@ export const createHandleSubmit = (
 	  tipo: string;
 	  descuento: string;
 	  abonado: string;
+	  concepto: string;
 	  // Add other form fields as needed
 	},
 	onSuccess: () => void,
@@ -21,6 +22,7 @@ export const createHandleSubmit = (
 		cantidad: "1", // Default or from cart
 		precio: formState.abonado,
 		descuento: formState.descuento,
+		concepto: formState.concepto,
 		// Add other fields as needed
 	  };
   
@@ -43,7 +45,7 @@ export const createHandleSubmit = (
 		producto_id: null,
 		numero_comprobante: validation.data?.numeroComprobanteInt || null,
 		saldo_diferencia: null,
-		concepto: null,
+		concepto: formState.concepto
 	  };
   
 	  // Apply discount if any
