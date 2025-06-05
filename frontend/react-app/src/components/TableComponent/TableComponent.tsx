@@ -4,7 +4,7 @@ import './TableComponent.css';
 export interface MovimientoRow {
   id: number;
   fecha: string;
-  tipo_comprobante: string;
+  tipo: string;
   cuenta_id: number;
   producto_id: number;
   total: string | number | null;

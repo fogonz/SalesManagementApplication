@@ -16,15 +16,11 @@ interface TableBoxProps {
 interface MovimientoRow {
   id: number;
   fecha: string;
-  tipo_comprobante: string;
-  cuenta_id: number;
-  producto_id: number;
+  tipo: string;
+  cuenta: number;
   total: string | number | null;
-  name?: string;
-  producto?: string;
-  cuenta?: string;
-  tipoMovimiento?: string;
-  abonado?: number | null;
+  descuento_total?: string | number | null;
+  concepto?: string;
 }
 
 interface CuentaRow {
@@ -33,8 +29,7 @@ interface CuentaRow {
   contacto_mail: string;
   contacto_telefono: string;
   tipo_cuenta: string;
-  saldo?: number | null;
-  tipo?: string;
+  monto?: number | null;
 }
 
 interface ProductoRow {
@@ -51,6 +46,25 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
   const calendarRef = useRef<HTMLDivElement>(null);
   const productDisplayRef = useRef<any>(null);
+  const [error, setError] = useState<string>("");
+  const [cuentas, setCuentas] = useState<CuentaRow[]>([]);
+
+  // Fetch: Table Cuentas
+  useEffect(() => {
+      const fetchAccounts = async () => {
+          try {
+              const responseAccounts = await fetch(`http://localhost:8000/api/cuentas`);
+              const jsonAccounts = await responseAccounts.json();
+              setCuentas(jsonAccounts)
+              console.log("CUENTAS:")
+              console.log(jsonAccounts)
+          } catch(err) {
+              console.error(`Error al cargar cuentas:`, err);
+              setError("Error al cargar cuentas");
+          }
+      };
+      fetchAccounts();
+  }, []);
 
   const getColumnsForActiveView = () => {
     switch (activeView) {
@@ -58,10 +72,25 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
         return [
           { key: 'id', label: 'ID' },
           { key: 'fecha', label: 'FECHA' },
-          { key: 'tipo_comprobante', label: 'TIPO de COMPROBANTE' },
-          { key: 'cuenta_id', label: 'CUENTA' },
-          { key: 'producto_id', label: 'DETALLE' },
-          { key: 'total', label: 'TOTAL', format: (value:any) => (value ? `$${parseFloat(value).toFixed(2)}` : '-')}
+          { key: 'tipo', label: 'TIPO' },
+          { 
+            key: 'cuenta', 
+            label: 'CUENTA',
+            format: (cuenta_id: number) => {
+              // Si las cuentas aún no se han cargado, mostrar "Cargando..."
+              if (!cuentas || cuentas.length === 0) {
+                return 'Cargando...';
+              }
+              
+              const cuenta = cuentas.find(c => c.id === cuenta_id);
+              console.log(`cuenta_id: ${cuenta_id}, cuenta encontrada:`, cuenta);
+              
+              return cuenta ? cuenta.nombre : `ID: ${cuenta_id} (no encontrada)`;
+            }
+          },
+          { key: 'concepto', label: 'CONCEPTO' },
+          { key: 'total', label: 'TOTAL', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')},
+          { key: 'descuento_total', label: 'DESCUENTO', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')}
         ];
       case 'cuentas':
         return [
@@ -69,7 +98,8 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
           { key: 'nombre', label: 'NOMBRE' },
           { key: 'contacto_mail', label: 'E-MAIL'},
           { key: 'contacto_telefono', label: 'TELÉFONO' },
-          { key: 'tipo_cuenta', label: 'TIPO de CUENTA'}
+          { key: 'tipo_cuenta', label: 'TIPO de CUENTA'},
+          { key: 'monto', label: 'MONTO', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')}
         ];
       case 'productos':
         return [];
@@ -114,19 +144,19 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
     // Search logic based on active view
     if (activeView === 'movimientos') {
       const mov = item as MovimientoRow;
+      // Get account name for search
+      const cuenta = cuentas.find(c => c.id === mov.cuenta);
+      const cuentaNombre = cuenta ? cuenta.nombre : '';
+      
       return (
         normalizeText(mov.id).includes(normalizedSearchTerm) ||
         normalizeText(mov.fecha).includes(normalizedSearchTerm) ||
-        normalizeText(mov.tipo_comprobante).includes(normalizedSearchTerm) ||
-        normalizeText(mov.cuenta_id).includes(normalizedSearchTerm) ||
-        normalizeText(mov.producto_id).includes(normalizedSearchTerm) ||
-        normalizeText(mov.total).includes(normalizedSearchTerm) ||
-        // Also search in optional fields if they exist
-        normalizeText(mov.name).includes(normalizedSearchTerm) ||
-        normalizeText(mov.producto).includes(normalizedSearchTerm) ||
+        normalizeText(mov.tipo).includes(normalizedSearchTerm) ||
         normalizeText(mov.cuenta).includes(normalizedSearchTerm) ||
-        normalizeText(mov.tipoMovimiento).includes(normalizedSearchTerm) ||
-        normalizeText(mov.abonado).includes(normalizedSearchTerm)
+        normalizeText(cuentaNombre).includes(normalizedSearchTerm) ||
+        normalizeText(mov.concepto).includes(normalizedSearchTerm) ||
+        normalizeText(mov.total).includes(normalizedSearchTerm) ||
+        normalizeText(mov.descuento_total).includes(normalizedSearchTerm)
       );
     }
 
@@ -138,8 +168,7 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
         normalizeText(cta.contacto_mail).includes(normalizedSearchTerm) ||
         normalizeText(cta.contacto_telefono).includes(normalizedSearchTerm) ||
         normalizeText(cta.tipo_cuenta).includes(normalizedSearchTerm) ||
-        normalizeText(cta.saldo).includes(normalizedSearchTerm) ||
-        normalizeText(cta.tipo).includes(normalizedSearchTerm)
+        normalizeText(cta.monto).includes(normalizedSearchTerm)
       );
     }
 
@@ -160,6 +189,10 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
     try {
       const res = await fetch(`http://localhost:8000/api/${activeView}`);
       const json = await res.json();
+      if (activeView === "movimientos"){ // Fixed syntax error here
+        console.log("MOVIMIENTOS:")
+        console.log(json)
+      }
       setData(json);
     } catch (err) {
       console.error(`Error al cargar ${activeView}:`, err);
@@ -175,8 +208,12 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
   };
 
   useEffect(() => {
+    // Solo cargar movimientos si las cuentas ya están cargadas
+    if (activeView === 'movimientos' && cuentas.length === 0) {
+      return; // No cargar movimientos hasta tener las cuentas
+    }
     fetchData();
-  }, [activeView]);
+  }, [activeView, cuentas]); 
 
   // Effect for refreshing data when refreshTrigger changes
   useEffect(() => {
@@ -286,7 +323,7 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
             <button onClick={clearDateFilter} className="clear-filter-btn">
               Limpiar filtro
             </button>
-          </div>
+            </div>
         )}
 
         <div id="table-container">

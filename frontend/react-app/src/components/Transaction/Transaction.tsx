@@ -220,7 +220,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                         </div>
                         <div className="entry">
                             <div className="entry_label">
-                                <div className="text open-sans">Abonado al registrar</div>
+                                <div className="text open-sans">Cantidad Abonada</div>
                             </div>
                             <input 
                                 type="number" 
