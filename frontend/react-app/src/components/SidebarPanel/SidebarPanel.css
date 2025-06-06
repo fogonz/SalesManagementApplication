@@ -1,0 +1,137 @@
+.sidebar-panel {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e5e5;
+  height: fit-content;
+  min-height: 60vh;
+  max-height: 800px;
+  overflow-y: auto;
+}
+
+.sidebar-panel-header {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.sidebar-panel-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sidebar-panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sidebar-content-item {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #007bff;
+  transition: all 0.3s ease;
+}
+
+.sidebar-content-item:hover {
+  background: #e9ecef;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-content-item h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.sidebar-content-item p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Scrollbar styling */
+.sidebar-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-panel::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.sidebar-panel::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.sidebar-panel::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .sidebar-panel {
+    flex: none;
+    min-height: 400px;
+    max-height: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-panel {
+    padding: 15px;
+    min-height: 300px;
+    max-height: 500px;
+  }
+  
+  .sidebar-panel-header h3 {
+    font-size: 16px;
+  }
+  
+  .sidebar-content-item {
+    padding: 10px;
+  }
+  
+  .sidebar-content-item h4 {
+    font-size: 13px;
+  }
+  
+  .sidebar-content-item p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar-panel {
+    padding: 12px;
+    min-height: 250px;
+    max-height: 400px;
+  }
+  
+  .sidebar-panel-header h3 {
+    font-size: 15px;
+  }
+  
+  .sidebar-content-item {
+    padding: 8px;
+    gap: 10px;
+  }
+  
+  .sidebar-content-item h4 {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  
+  .sidebar-content-item p {
+    font-size: 11px;
+  }
+}

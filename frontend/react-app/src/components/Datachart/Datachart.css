@@ -42,6 +42,7 @@
   color: #ef4444;
 }
 
+
 .total-section {
   border-top: 2px solid #e5e7eb;
   padding-top: 1rem;
@@ -59,14 +60,21 @@
   
 }
 
-.card--total {
-  grid-column: 1 / -1; 
-}
 
 .card {
   background-color: white;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.card--total {
+  grid-column: span 2; /* ocupa las dos columnas */
+  grid-row: 2; /* se coloca en la segunda fila */
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   box-sizing: border-box;
 }
@@ -77,6 +85,7 @@
   gap: 1.5rem;
   margin-bottom: 1.5rem;
 }
+
 
 @media (max-width: 640px) {
   .income-expense-grid {

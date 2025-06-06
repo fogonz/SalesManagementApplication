@@ -2,6 +2,7 @@
     position: relative;
     top: var(--topbar-height);
     width: var(--sidebar-width);
+    max-width: 226px;
     height: calc(100vh - var(--topbar-height));
     background-color: var(--sidebar-color);
     color: white;
@@ -11,6 +12,7 @@
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
+    flex-shrink: 0;
 }
 
 .sidebar-toggle {
@@ -67,14 +69,14 @@
     display: flex;
     align-items: center;
     padding: 15px 25px 15px 30px;
-	margin-right: -6vh;
+	  margin-right: -6vh;
     border: none;
     border-radius: 25px;
     color: white;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.2s ease;
-	width: 100%;
+  	width: 100%;
     clip-path: inset(0 0 0 9%);
     margin-left: -10%;
     background-color: #272727;

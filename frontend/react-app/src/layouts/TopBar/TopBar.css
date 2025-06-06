@@ -3,7 +3,7 @@
 	align-items: center;
 	justify-items: center;
 	justify-content: space-between;
-	background-color: #fff;
+	background-color: #3f3d3d;
 	border-bottom: 2px solid #e0e0e0;
 	box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 	z-index: 5;
@@ -29,62 +29,92 @@
 	border: none;
 }
 
-.topbar-button{
-	color: gray;
-	background-color: white;
-	outline: none;
-	border: none;
-	align-content: center;
-	max-height: 100%;
-	max-width: 100%;
-	display: flex;
-	align-items: center;
-	border-radius: 5px;
-	transition: all 0.2s;
-	user-select: none;
+.topbar-button {
+  position: relative;
+  padding: 6px 12px;
+  color: #64748b;
+  background: #e2e8f0;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  outline: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  min-width: 108px;
+  max-width: 240px;
+  height: 28px;
+  margin-right: 0;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.topbar-button:hover{
-	box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 2px, rgba(0, 0, 0, 0.1) 0px 2px 2px;
-	margin-bottom: .5vh;
+.topbar-button:hover {
+  background: #cbd5e1;
+  color: #475569;
 }
 
-.topbar-button:active{
-	color: white;
-	background-color: lightgray;
-	outline: none;
-	border: none;
-	border-radius: 5px;
-	margin-top:.5vh;
-	box-shadow: none;
+.topbar-button:active {
+  background: #94a3b8;
 }
 
-.topbar-button.active{
-	color: white;
-	background-color: gray;
-	outline: none;
-	border: none;
-	align-content: center;
-	max-height: 100%;
-	display: flex;
-	align-items: center;
-	box-shadow: none;
+.topbar-button.active {
+  background: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+  z-index: 1;
 }
 
-.topbar-button.active:hover{
-	box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 2px, rgba(0, 0, 0, 0.4) 0px 2px 2px;
+.topbar-button.active:hover {
+  background: #2563eb;
 }
 
-.topbar-button.active:active{
-	box-shadow: none;
+.topbar-button.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -1px;
+  right: -1px;
+  height: 2px;
+  background: #1d4ed8;
+  border-radius: 2px 2px 0 0;
 }
 
+.topbar-button p {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  text-align: center;
+}
 
+/* Close button for tabs */
+.topbar-button .close {
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #5f6368;
+}
 
-.topbar-button p{
-	align-self: center;
-	justify-self: center;
-	text-align: center;
+.topbar-button:hover .close {
+  opacity: 1;
+}
+
+.topbar-button .close:hover {
+  background: #dadce0;
+  color: #202124;
 }
 
 .header-icons {
@@ -105,7 +135,7 @@
 	cursor: pointer;
 	transition: all 0.2s;
 	color: white;
-	background-color: var(--dark-color);
+	background-color: white;
 	display: flex;
 	align-items: center;
 }

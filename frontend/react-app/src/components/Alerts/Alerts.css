@@ -1,7 +1,7 @@
-.dashboard-header {
-          background: #2d3748;
+        .dashboard-header {
+          background: #292929;
           color: white;
-          padding: 1rem 1.5rem;
+          padding: 1rem 0.5rem;
           border-radius: 8px;
           width: 100%;
           box-sizing: border-box;
@@ -124,30 +124,31 @@
         }
 
         .fade-left {
-          left: 0;
-          background: linear-gradient(
-            to right,
-            rgba(45, 55, 72, 0.95) 0%,
-            rgba(45, 55, 72, 0.85) 20%,
-            rgba(45, 55, 72, 0.6) 50%,
-            rgba(45, 55, 72, 0.3) 75%,
-            rgba(45, 55, 72, 0.1) 90%,
-            transparent 100%
-          );
-        }
+           left: 0;
+           background: linear-gradient(
+           to right,
+           rgba(41, 41, 41, 0.95) 0%,
+           rgba(41, 41, 41, 0.85) 20%,
+           rgba(41, 41, 41, 0.6) 50%,
+           rgba(41, 41, 41, 0.3) 75%,
+           rgba(41, 41, 41, 0.1) 90%,
+           transparent 100%
+           );
+          }
 
         .fade-right {
-          right: 0;
-          background: linear-gradient(
-            to left,
-            rgba(45, 55, 72, 0.95) 0%,
-            rgba(45, 55, 72, 0.85) 20%,
-            rgba(45, 55, 72, 0.6) 50%,
-            rgba(45, 55, 72, 0.3) 75%,
-            rgba(45, 55, 72, 0.1) 90%,
-            transparent 100%
-          );
-        }
+         right: 0;
+         background: linear-gradient(
+          to left,
+         rgba(41, 41, 41, 0.95) 0%,
+         rgba(41, 41, 41, 0.85) 20%,
+         rgba(41, 41, 41, 0.6) 50%,
+         rgba(41, 41, 41, 0.3) 75%,
+         rgba(41, 41, 41, 0.1) 90%,
+         transparent 100%
+        );
+          }
+
 
         @media (max-width: 768px) {
           .header-left {
