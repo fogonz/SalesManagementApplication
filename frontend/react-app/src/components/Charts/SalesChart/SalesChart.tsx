@@ -1,78 +1,77 @@
 import React from "react";
-import "../Chart.css"
+import {
+  Sankey,
+  Tooltip,
+  ResponsiveContainer,
+  Text,
+  Layer,
+} from "recharts";
 
-// Datos de ejemplo de ventas diarias
-const salesData: { day: number; value: number }[] = [
-  { day: 1, value: 25 },
-  { day: 2, value: 22 },
-  { day: 3, value: 28 },
-  { day: 4, value: 32 },
-  { day: 5, value: 30 },
-  { day: 6, value: 35 },
-  { day: 7, value: 33 },
-];
+// Sample data: Store spending breakdown
+const data = {
+  nodes: [
+    { name: "Total Spending" },
+    { name: "Inventory" },
+    { name: "Salaries" },
+    { name: "Utilities" },
+    { name: "Marketing" },
+    { name: "Maintenance" },
+    { name: "Suppliers" },
+  ],
+  links: [
+    { source: 0, target: 1, value: 40000, name: "Buy Inventory" },
+    { source: 0, target: 2, value: 25000, name: "Pay Salaries" },
+    { source: 0, target: 3, value: 8000, name: "Utilities Bill" },
+    { source: 0, target: 4, value: 5000, name: "Marketing Spend" },
+    { source: 1, target: 6, value: 15000, name: "Pay Suppliers" },
+  ],
+};
 
-const SalesChart: React.FC = () => {
+const renderLink = ({ link, index }: any) => {
+  const { sourceX, targetX, sourceY, targetY, value, name } = link;
+  const midX = (sourceX + targetX) / 2;
+  const midY = (sourceY + targetY) / 2;
   return (
-    <svg width="200" height="100" className="chart-svg">
-      {/* Líneas de grid horizontales (valores 0,10,20,30,40) */}
-      {[0, 10, 20, 30, 40].map((y) => (
-        <line
-          key={y}
-          className="grid-line"
-          x1={20}
-          y1={80 - y * 1.5}
-          x2={180}
-          y2={80 - y * 1.5}
-        />
-      ))}
-
-      {/* Etiquetas eje Y */}
-      {[0, 10, 20, 30, 40].map((y) => (
-        <text
-          key={y}
-          className="axis-label"
-          x={15}
-          y={85 - y * 1.5}
-          textAnchor="end"
-        >
-          {y}
-        </text>
-      ))}
-
-      {/* Línea de ventas */}
-      <polyline
-        className="sales-line"
-        points={salesData
-          .map((d, i) => `${30 + i * 22},${80 - d.value * 1.5}`)
-          .join(" ")}
+    <Layer key={`custom-link-${index}`}>
+      <path
+        d={`M${sourceX},${sourceY} C${midX},${sourceY} ${midX},${targetY} ${targetX},${targetY}`}
+        fill="none"
+        stroke="#d0e6f7"
+        strokeWidth={Math.max(value / 10000, 1)}
+        strokeOpacity={0.6}
       />
-
-      {/* Puntos de ventas */}
-      {salesData.map((d, i) => (
-        <circle
-          key={i}
-          className="sales-point"
-          cx={30 + i * 22}
-          cy={80 - d.value * 1.5}
-          r={3}
-        />
-      ))}
-
-      {/* Etiquetas eje X (días 1–7) */}
-      {[1, 2, 3, 4, 5, 6, 7].map((day, i) => (
-        <text
-          key={day}
-          className="axis-label"
-          x={30 + i * 22}
-          y={95}
-          textAnchor="middle"
-        >
-          {day}
-        </text>
-      ))}
-    </svg>
+      <Text
+        x={midX}
+        y={midY - 5}
+        textAnchor="middle"
+        fontSize={12}
+        fill="#333"
+      >
+        {name}
+      </Text>
+    </Layer>
   );
 };
 
-export default SalesChart;
+const SankeyChart: React.FC = () => {
+  return (
+    <div style={{ width: "100%", height: 400, }}>
+      <h3 style={{ textAlign: "center", marginBottom: "0px", fontSize: "20px", color: "#333", }}>
+        Distribucion del Gasto
+      </h3>
+      <ResponsiveContainer width="100%" height={220}>
+        <Sankey
+          data={data}
+          nodePadding={20}
+          margin={{ top: 10, bottom: 70 }}
+          link={{ stroke: "#d0e6f7", strokeOpacity: 0.6, }}
+          node={{ stroke: "#005ea2", fill: "#cce5ff" }}
+        >
+          <Tooltip />
+        </Sankey>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+export default SankeyChart;
