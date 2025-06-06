@@ -117,6 +117,7 @@
 .borderless-header div:first-child {
   width: 15%;
 }
+
 .borderless-header div:last-child {
   width: 15%;
 }
@@ -160,13 +161,11 @@
   width: 100%;
   height: 8vh;
   pointer-events: none;
-  background: linear-gradient(
-    to top,
-    white,
-    rgb(255, 255, 255),
-    rgba(255, 255, 255, 0.582),
-    rgba(255, 255, 255, 0)
-  );
+  background: linear-gradient(to top,
+      white,
+      rgb(255, 255, 255),
+      rgba(255, 255, 255, 0.582),
+      rgba(255, 255, 255, 0));
   z-index: 10;
 }
 
@@ -272,8 +271,10 @@
 }
 
 .custom_input:focus {
-  outline: none; /* optional, but avoids double-outline */
-  border-color: #999; /* optional: subtle border shift */
+  outline: none;
+  /* optional, but avoids double-outline */
+  border-color: #999;
+  /* optional: subtle border shift */
   box-shadow: rgba(0, 0, 0, 0.1) 0 3px 5px, rgba(0, 0, 0, 0.1) 0 10px 13px;
   transform: scale(1.05);
 }
@@ -448,7 +449,8 @@
 
 /* Show scrollbar on hover */
 .productDB div:hover::-webkit-scrollbar {
-  height: 6px; /* Restore height */
+  height: 6px;
+  /* Restore height */
   opacity: 1;
 }
 

@@ -10,44 +10,44 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-    /* COLORES : GENERAL */
-    --primary-color: #2c3e50;
-    --secondary-color: #3498db;
-    --success-color: #27ae60;
-    --danger-color: #e74c3c;
-    --warning-color: #f39c12;
-    --light-color: #313131;
-    --dark-color: #34495e;
-    --background-color: #bcc4c4;
-    --background-color-accent: #969292;
-    
-    /* LAYOUT VARS */
-    --sidebar-width: 25vw;
-    --content-padding: 20px;
-    --toolbar-height: 70px;
-    --topbar-height: 4vh;
-    
-    /* COLORES COMPONENTS */
-    --sidebar-color: #1a1a1a;
-    --sidebar-accent: #3498db;
-    --toolbar-gradient: #383838;
-    --tabs-background: #1a1a1a;
+  /* COLORES : GENERAL */
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --success-color: #27ae60;
+  --danger-color: #e74c3c;
+  --warning-color: #f39c12;
+  --light-color: #313131;
+  --dark-color: #34495e;
+  --background-color: #bcc4c4;
+  --background-color-accent: #969292;
 
-    /* COLORES TABLA */
-    --font-color-amount: #30333b;
-    --font-color-general: red;
-    --header-color-1: #1a1a1a;
-    --header-color-2: #1a1a1a;
-    --header-font-color: white;
-    --header-border:  rgba(255, 255, 255, 0.3);
-    --row-hover: #7bafd4;
-    --row-even: #b5c5a5;
-    --row-odd: #c8d0bf;
-    --font-color: #3498db;
-    --row-color-1st: #383838;
-    --row-color-2nd: #1a1a1a;
-    --row-color-1st: #383838;
-    --row-color-2nd: #1a1a1a;
+  /* LAYOUT VARS */
+  --sidebar-width: 15vw;
+  --content-padding: 20px;
+  --toolbar-height: 70px;
+  --topbar-height: 4vh;
+
+  /* COLORES COMPONENTS */
+  --sidebar-color: #1a1a1a;
+  --sidebar-accent: #3498db;
+  --toolbar-gradient: #383838;
+  --tabs-background: #1a1a1a;
+
+  /* COLORES TABLA */
+  --font-color-amount: #30333b;
+  --font-color-general: red;
+  --header-color-1: #1a1a1a;
+  --header-color-2: #1a1a1a;
+  --header-font-color: white;
+  --header-border: rgba(255, 255, 255, 0.3);
+  --row-hover: #7bafd4;
+  --row-even: #b5c5a5;
+  --row-odd: #c8d0bf;
+  --font-color: #3498db;
+  --row-color-1st: #383838;
+  --row-color-2nd: #1a1a1a;
+  --row-color-1st: #383838;
+  --row-color-2nd: #1a1a1a;
 }
 
 a {
@@ -70,7 +70,7 @@ html, body {
   background-color: black;
 }
 
-.content-container{
+.content-container {
   background-color: var(--background-color);
 }
 
@@ -99,12 +99,12 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-.column{
+.column {
   display: flex;
   flex-direction: column;
 }
 
-.row{
+.row {
   display: flex;
   flex-direction: row;
 }

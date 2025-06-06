@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { createHandleSubmit, validateTransaction } from '../../utils/validation/validate_insertTransaction';
+import ProductGrid from '../ShoppingCart/ShoppingCart'; 
 
 const ProductItem = ({ index, style, data }) => (
     <div style={style} className="productDB">
@@ -307,26 +308,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
 
                         <div className="container">
                             <div className="container-wrapper">
-                                <div className="product">
-                                    <p> x1 </p>
-                                    <p> Producto A </p>
-                                    <p> $200 </p>
-                                </div>
-                                <div className="product">
-                                    <p> x2 </p>
-                                    <p> Producto B </p>
-                                    <p> $520 </p>
-                                </div>
-                                <div className="product">
-                                    <p> x1 </p>
-                                    <p> Producto A </p>
-                                    <p> $125 </p>
-                                </div>
-                                <div className="product">
-                                    <p> x1 </p>
-                                    <p> Producto A </p>
-                                    <p> $200 </p>
-                                </div>
+                                <ProductGrid productos={data}></ProductGrid>
                             </div>
                         </div>
                     </div>

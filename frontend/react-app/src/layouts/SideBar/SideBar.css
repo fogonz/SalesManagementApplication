@@ -1,42 +1,41 @@
 .sidebar {
-    position: relative;
-    top: var(--topbar-height);
-    width: var(--sidebar-width);
-    max-width: 226px;
-    height: calc(100vh - var(--topbar-height));
-    background-color: var(--sidebar-color);
-    color: white;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    overflow-x: hidden;
-    flex-shrink: 0;
+  position: relative;
+  top: var(--topbar-height);
+  height: calc(100vh - var(--topbar-height));
+  background-color: var(--sidebar-color);
+  color: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 2.5;
 }
 
 .sidebar-toggle {
-    display: none;
-    background: transparent;
-    border: none;
-    color: #555;
-    cursor: pointer;
-    font-size: 18px;
-    margin-right: auto;
+  display: none;
+  background: transparent;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 18px;
+  margin-right: auto;
 }
 
 .logo-section {
   display: flex;
-  align-items: center;  
-  gap: 15px;           
+  align-items: center;
+  gap: 15px;
 }
 
 
 .logo-img {
-  width: 60px;         
-  height: 60px;        
-  border-radius: 10%;  
-  object-fit: cover;   
+  width: 60px;
+  height: 60px;
+  border-radius: 10%;
+  object-fit: cover;
 }
 
 
@@ -49,59 +48,60 @@
 .logo-title {
   font-weight: bold;
   font-size: 18px;
-  margin: 0;           
+  margin: 0;
 }
 
 .logo-subtitle {
   font-size: 14px;
-  margin: 0;           
-  line-height: 1.3;    
+  margin: 0;
+  line-height: 1.3;
 }
 
 .sidebar-options {
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    row-gap: 1vh;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1vh;
 }
 
 .menu-button {
-    display: flex;
-    align-items: center;
-    padding: 15px 25px 15px 30px;
-	  margin-right: -6vh;
-    border: none;
-    border-radius: 25px;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  	width: 100%;
-    clip-path: inset(0 0 0 9%);
-    margin-left: -10%;
-    background-color: #272727;
-}	
+  display: flex;
+  align-items: center;
+  padding: 15px 25px 15px 30px;
+  margin-right: -6vh;
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  clip-path: inset(0 0 0 9%);
+  margin-left: -10%;
+  background-color: #272727;
+}
 
 .menu-button i {
-    margin-right: 15px;
-    margin-left: 10%;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    width: 20px;
-    text-align: center;
+  margin-right: 15px;
+  margin-left: 10%;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  width: 20px;
+  text-align: center;
 }
 
 .menu-button:hover {
-    background-color: #4a4a4a;
-    transform: translateX(3%);
-    clip-path: inset(0 0 0 6%);;
+  background-color: #4a4a4a;
+  transform: translateX(3%);
+  clip-path: inset(0 0 0 6%);
+  ;
 }
 
 .menu-button.active {
-    background-color: #3b3b3b;
-    transform: translateX(3%);
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
-    clip-path: inset(0 0 0 6%);
-    border: none;
-    outline: none;
+  background-color: #3b3b3b;
+  transform: translateX(3%);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  clip-path: inset(0 0 0 6%);
+  border: none;
+  outline: none;
 }
