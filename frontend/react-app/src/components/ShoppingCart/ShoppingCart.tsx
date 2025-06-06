@@ -117,7 +117,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ productos }) => {
 
   return (
     <div className="product-grid">
-      <div className="product-grid__container">
         {productosValidos.map(producto => {
           const cantidad = obtenerCantidad(producto.id);
           
@@ -163,15 +162,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ productos }) => {
           );
         })}
       </div>
-      
-      {/* Panel de debug */}
-      <div className="product-grid__debug">
-        <h3>Estado del carrito:</h3>
-        <pre>{JSON.stringify(carrito, null, 2)}</pre>
-        <p>Total de productos: {carrito.length}</p>
-        <p>Total de unidades: {carrito.reduce((total, item) => total + item.cantidad, 0)}</p>
-      </div>
-    </div>
   );
 };
 

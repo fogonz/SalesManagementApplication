@@ -139,7 +139,7 @@
   overflow-x: hidden;
   text-wrap: none;
   position: relative;
-  padding: 3%;
+  padding: 2%;
   padding-bottom: 80px;
   background-color: white;
 }
@@ -357,7 +357,6 @@
   box-sizing: border-box;
   overflow-y: hidden;
   overflow-x: hidden;
-  position: relative;
   padding-left: 1.25rem;
   padding-right: 0.5rem;
   padding-bottom: 80px;
@@ -366,13 +365,31 @@
   box-shadow: none;
   justify-content: flex-start;
   justify-items: center;
+
+  position: relative;
 }
 
-/*
-.scroll-container {
-  transition: all 0.3s ease;
+.container-wrapper-nopad::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 12vh;
+  pointer-events: none;
+  background: linear-gradient(to top,
+      white,
+      rgb(255, 255, 255),
+      rgba(255, 255, 255, 0.82),
+      rgba(255, 255, 255, 0));
+  z-index: 10;
 }
-*/
+
+.scroll-container {
+  display: flex;
+  height: 100%;
+  overflow-y: hidden;
+}
 
 .scroll-container::-webkit-scrollbar {
   width: 0.75rem;
@@ -390,9 +407,58 @@
   transition: background-color 0.3s;
 }
 
+.add_button {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.5s;
+  right: 2%;
+  background-color: #47b23e;
+  color: white;
+  width: 0%;
+  height: 0%;
+
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-items: center;
+}
+
+.add_button i {
+  visibility: hidden;
+  opacity: 0%;
+}
+
 .productDB {
-  border: 1px solid #bcc4c4;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   width: 100%;
+  position: relative;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.productDB:hover .wrapper {
+  width: 83%;
+}
+
+.productDB:hover .add_button {
+  visibility: visible;
+  opacity: 100;
+  display: block;
+  height: 90%;
+  aspect-ratio: 1 / 1;
+}
+
+.productDB:hover .add_button i {
+  visibility: visible;
+  opacity: 100%;
+}
+
+.productDB .wrapper {
+  width: 100%;
+  height: 90%;
   text-align: center;
   font-weight: 400;
   font-family: "Open Sans", sans-serif;
@@ -402,70 +468,45 @@
   justify-content: space-evenly;
   align-items: center;
   user-select: none;
+  position: relative;
+  transition: all 0.5s;
+  overflow: hidden;
+  column-gap: .5rem;
 }
 
-.productDB div {
-  width: 70%;
+.productDB .wrapper div {
   height: 1.5rem;
-  border-right: 1px solid lightgray;
+  border: 1px solid lightgray;
   align-items: center;
   justify-content: center;
   align-content: center;
   text-align: center;
-  overflow-x: scroll;
-  overflow-y: hidden;
   text-wrap: nowrap;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  overflow: hidden;
+  padding-left: 3%;
+  padding-right: 3%;
+  height: 100%;
+  width: 100%;
 }
 
-.productDB div:first-child {
-  width: 15%;
+.productDB .wrapper div:first-child {
+  max-width: 15%;
 }
 
-.productDB div:last-child {
-  border: none;
-  width: 15%;
+.productDB .wrapper :last-child {
+  width: 25%;
 }
 
-.productDB span {
+.productDB .wrapper span {
   color: black;
 }
 
-.productDB div:last-child span {
+.productDB .wrapper div:last-child span {
   color: gray;
 }
 
-.productDB div:first-child span {
+.productDB .wrapper :first-child span {
   color: gray;
-}
-
-/* Hide scrollbar by default (WebKit) */
-.productDB div::-webkit-scrollbar {
-  height: 0;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
-
-/* Show scrollbar on hover */
-.productDB div:hover::-webkit-scrollbar {
-  height: 6px;
-  /* Restore height */
-  opacity: 1;
-}
-
-/* Style the scrollbar track & thumb */
-.productDB div::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.productDB div::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 3px;
-}
-
-.productDB div::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.5);
 }
 
 .search {

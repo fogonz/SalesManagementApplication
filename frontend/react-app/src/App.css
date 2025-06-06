@@ -13,6 +13,7 @@
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -21,6 +22,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -52,12 +54,16 @@
 }
 
 .app-wrapper {
-  overflow: hidden; 
+  overflow: hidden;
+  max-height: 100vh;
+  overflow-y: hidden;
 }
 
 .app-content {
   transition: filter 0.2s ease;
   box-sizing: border-box;
+  max-height: var(--app-height);
+  overflow-y: hidden;
 }
 
 .app-content.blurred {
@@ -68,4 +74,28 @@
 
 .row {
   display: flex;
+}
+
+.scroll_content::-webkit-scrollbar {
+  height: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.scroll_content:hover::-webkit-scrollbar {
+  height: 6px;
+  opacity: 1;
+}
+
+.scroll_content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.scroll_content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+.scroll_content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
 }

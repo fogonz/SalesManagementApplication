@@ -7,9 +7,10 @@
   overflow-y: auto;
   box-sizing: border-box;
   background-color: #f9fafb;
+  position: relative;
 }
 
-.typeTag{
+.typeTag {
   outline: 1px lightgray solid;
   border-radius: 5%;
   padding: 1.5%;
@@ -23,7 +24,7 @@
   align-items: center;
 }
 
-.typeTag .tag{
+.typeTag .tag {
   display: flex;
   border-right: 1px lightgray solid;
   justify-self: left;
@@ -48,8 +49,8 @@
 
 .product-card {
   position: relative;
-  width: 18rem;       
-  height: min-content;     
+  width: 18rem;
+  height: min-content;
   border: 1px solid #c1c2c5;
   border-radius: 1rem;
   padding: 1rem;
@@ -59,7 +60,7 @@
   flex-direction: column;
   gap: 0.75rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  overflow: hidden;   
+  overflow: hidden;
 }
 
 .product-card:hover {
@@ -75,7 +76,7 @@
   color: rgb(0, 0, 0);
   width: 1rem;
   height: 1rem;
-  border-radius:600px;
+  border-radius: 600px;
   font-size: 0.85rem;
   display: flex;
   align-items: center;
@@ -131,7 +132,7 @@
   align-items: center;
   inline-size: 100%;
   padding: 0rem .5rem;
-  
+
 }
 
 .product-description {

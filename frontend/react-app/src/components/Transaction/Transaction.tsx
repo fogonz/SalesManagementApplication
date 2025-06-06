@@ -8,9 +8,12 @@ import ProductGrid from '../ShoppingCart/ShoppingCart';
 
 const ProductItem = ({ index, style, data }) => (
     <div style={style} className="productDB">
-        <div><span>{data[index]?.cantidad}</span></div>
-        <div><span>{data[index]?.tipo_producto}</span></div>
-        <div><span>${data[index]?.precio_venta_unitario}</span></div>
+        <div className='wrapper'>
+            <div><span>{data[index]?.cantidad}</span></div>
+            <div className='scroll_content'><span>{data[index]?.tipo_producto}</span></div>
+            <div><span>${data[index]?.precio_venta_unitario}</span></div>
+        </div>
+        <button className='add_button'> <i className='fas fa-plus'></i> </button>
     </div>
 );
 
@@ -282,7 +285,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                 <div><span>Precio</span></div>
                             </div>
 
-                            <div className="container-wrapper-nopad" style={{ height: '400px' }}>
+                            <div className="container-wrapper-nopad">
                                 <AutoSizer>
                                     {({ height, width }) => (
                                         <List

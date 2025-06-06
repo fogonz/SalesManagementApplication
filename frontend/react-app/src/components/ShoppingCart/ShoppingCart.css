@@ -2,16 +2,11 @@
 
 .product-grid {
 	width: 100%;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-}
-
-/* Grid Container */
-.product-grid__container {
+	max-width: 100%;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+	grid-template-columns: repeat(3, 1fr);
 	gap: 1rem;
-	background-color: red;
-	align-content: start;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
 /* Product Item */
@@ -21,13 +16,14 @@
 	border: 1px solid #e5e7eb;
 	border-radius: 0.5rem;
 	padding: 1.25rem;
-	min-height: 150px;
+	min-height: fit-content;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	text-align: center;
 	cursor: pointer;
 	transition: all 0.2s ease-in-out;
+	aspect-ratio: 1 / 1;
 }
 
 /* Product Item Hover State */
@@ -179,10 +175,11 @@
 
 /* ===== RESPONSIVE DESIGN ===== */
 
-/* Tablets */
+/* Tablets - Keep 3 columns but adjust spacing and size */
 @media (max-width: 768px) {
-	.product-grid__container {
-		grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+	.product-grid {
+		grid-template-columns: repeat(3, 1fr);
+		/* Still 3 columns */
 		gap: 0.75rem;
 		padding: 1rem;
 	}
@@ -197,10 +194,11 @@
 	}
 }
 
-/* Mobile */
+/* Mobile - Switch to 2 columns for better usability on very small screens */
 @media (max-width: 480px) {
-	.product-grid__container {
-		grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	.product-grid {
+		grid-template-columns: repeat(2, 1fr);
+		/* 2 columns on mobile for better usability */
 		gap: 0.5rem;
 		padding: 0.75rem;
 	}
@@ -232,6 +230,26 @@
 		font-size: 0.6875rem;
 	}
 }
+
+/* Alternative: If you want 3 columns even on mobile (might be too cramped) */
+/*
+@media (max-width: 480px) {
+	.product-grid {
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.25rem;
+		padding: 0.5rem;
+	}
+
+	.product-grid__item {
+		min-height: 80px;
+		padding: 0.5rem;
+	}
+
+	.product-grid__name {
+		font-size: 0.75rem;
+	}
+}
+*/
 
 /* ===== ACCESSIBILITY ===== */
 
