@@ -9,6 +9,26 @@
   flex: 1;
 }
 
+.dashboard-main-wrapper {
+ 
+  flex-direction: row;
+  gap: 1.5rem;
+  
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* Comportamiento en pantallas tipo celular */
+@media (max-width: 768px) {
+  .dashboard-main-wrapper {
+    flex-direction: column;
+    padding: 1rem;
+  }
+}
+
+
 .admin-container {
     width: 100%;
     overflow: hidden;
@@ -47,11 +67,11 @@
     background-color: white;
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
+    padding: 0.25rem;
     box-sizing: border-box;
     height: 21vh;
     min-height: 200px;
-    width: 100%;
+    width: 100%; /* Cambiado de 50% a 100% para que ocupen todo el ancho disponible */
     max-width: 100%;
     
     /* Add animation */
@@ -74,12 +94,73 @@
     animation: cardAppear 0.6s ease-out 0.1s both;
 }
 
+.sales-total {
+    display: block;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    padding: 0.25rem;
+    box-sizing: border-box;
+    height: 8vh;
+    width: 100%;
+    max-width: 100%;
+    
+    /* Add animation with slight delay */
+    animation: cardAppear 0.6s ease-out 0.1s both;
+}
+
+
+.total-sales-container {
+  padding: 3px;
+  text-align: center;
+}
+
+.total-sales-label {
+  font-size: 14px;
+  color: #666;
+ 
+}
+
+.total-sales-amount {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+
 .cards-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     flex: 2;
-    min-width: 0; 
+    min-width: 0;
+}
+
+/* Nuevo contenedor para las cards en fila */
+.cards-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+}
+
+/* Responsivo para pantallas pequeñas */
+@media (max-width: 768px) {
+    .cards-row {
+        flex-direction: column;
+    }
+}
+
+/* Animación de aparición inicial */
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (max-width: 400px) {
@@ -103,7 +184,7 @@
 
 .sales-chart-title {
   text-align: center;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: bold;
   color: #333;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
