@@ -1,77 +1,125 @@
 import React from "react";
 import {
-  Sankey,
-  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
   ResponsiveContainer,
-  Text,
-  Layer,
+  Tooltip,
+  Legend
 } from "recharts";
 
-// Sample data: Store spending breakdown
-const data = {
-  nodes: [
-    { name: "Total Spending" },
-    { name: "Inventory" },
-    { name: "Salaries" },
-    { name: "Utilities" },
-    { name: "Marketing" },
-    { name: "Maintenance" },
-    { name: "Suppliers" },
-  ],
-  links: [
-    { source: 0, target: 1, value: 40000, name: "Buy Inventory" },
-    { source: 0, target: 2, value: 25000, name: "Pay Salaries" },
-    { source: 0, target: 3, value: 8000, name: "Utilities Bill" },
-    { source: 0, target: 4, value: 5000, name: "Marketing Spend" },
-    { source: 1, target: 6, value: 15000, name: "Pay Suppliers" },
-  ],
-};
+// Datos de distribución de gastos
+const expenseData = [
+  { name: "Inventario", value: 40000, percentage: 51.3 },
+  { name: "Salarios", value: 25000, percentage: 32.1 },
+  { name: "Servicios", value: 8000, percentage: 10.3 },
+  { name: "Marketing", value: 5000, percentage: 6.4 }
+];
 
-const renderLink = ({ link, index }: any) => {
-  const { sourceX, targetX, sourceY, targetY, value, name } = link;
-  const midX = (sourceX + targetX) / 2;
-  const midY = (sourceY + targetY) / 2;
+// Colores para cada segmento
+const COLORS = [
+  "#0088FE", // Azul para Inventario
+  "#00C49F", // Verde para Salarios
+  "#FFBB28", // Amarillo para Servicios
+  "#FF8042"  // Naranja para Marketing
+];
+
+// Función para renderizar etiquetas personalizadas
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
   return (
-    <Layer key={`custom-link-${index}`}>
-      <path
-        d={`M${sourceX},${sourceY} C${midX},${sourceY} ${midX},${targetY} ${targetX},${targetY}`}
-        fill="none"
-        stroke="#d0e6f7"
-        strokeWidth={Math.max(value / 10000, 1)}
-        strokeOpacity={0.6}
-      />
-      <Text
-        x={midX}
-        y={midY - 5}
-        textAnchor="middle"
-        fontSize={12}
-        fill="#333"
-      >
-        {name}
-      </Text>
-    </Layer>
+    <text 
+      x={x} 
+      y={y} 
+      fill="white" 
+      textAnchor={x > cx ? 'start' : 'end'} 
+      dominantBaseline="central"
+      fontSize={10}
+      fontWeight={600}
+    >
+      {`${(percent * 100).toFixed(1)}%`}
+    </text>
   );
 };
 
-const SankeyChart: React.FC = () => {
+// Tooltip personalizado
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div style={{
+        backgroundColor: 'white',
+        padding: '10px',
+        border: '1px solid #ccc',
+        borderRadius: '5px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+      }}>
+        <p style={{ margin: '0 0 5px 0', fontWeight: 'bold', color: '#333' }}>
+          {data.name}
+        </p>
+        <p style={{ margin: '0', color: '#666' }}>
+          Valor: ${data.value.toLocaleString()}
+        </p>
+        <p style={{ margin: '0', color: '#666' }}>
+          Porcentaje: {data.percentage}%
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
+const PieChartExpenses = () => {
   return (
-    <div style={{ width: "100%", height: 400, }}>
-      <h3 style={{ textAlign: "center", marginBottom: "0px", fontSize: "20px", color: "#333", }}>
-        Distribucion del Gasto
+    <div style={{ 
+      width: "100%", 
+      height: 280,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }}>
+      <h3 style={{ 
+        textAlign: "center", 
+        marginBottom: "5px", 
+        fontSize: "16px", 
+        color: "#333",
+        fontWeight: "600"
+      }}>
+        Distribución de Gastos
       </h3>
+      
       <ResponsiveContainer width="100%" height={220}>
-        <Sankey
-          data={data}
-          nodePadding={20}
-          margin={{ top: 10, bottom: 70 }}
-          link={{ stroke: "#d0e6f7", strokeOpacity: 0.6, }}
-          node={{ stroke: "#005ea2", fill: "#cce5ff" }}
-        >
-          <Tooltip />
-        </Sankey>
+        <PieChart>
+          <Pie
+            data={expenseData}
+            cx="50%"
+            cy="35%"
+            labelLine={false}
+            label={renderCustomizedLabel}
+            outerRadius={70}
+            fill="#8884d8"
+            dataKey="value"
+            animationBegin={0}
+            animationDuration={800}
+          >
+            {expenseData.map((entry, index) => (
+              <Cell 
+                key={`cell-${index}`} 
+                fill={COLORS[index % COLORS.length]}
+                stroke="#fff"
+                strokeWidth={2}
+              />
+            ))}
+          </Pie>
+          <Tooltip content={<CustomTooltip active={undefined} payload={undefined} />} />
+        </PieChart>
       </ResponsiveContainer>
     </div>
   );
 };
 
-export default SankeyChart;
+export default PieChartExpenses;
