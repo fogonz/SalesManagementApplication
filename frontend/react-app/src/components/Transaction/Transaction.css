@@ -385,69 +385,58 @@
   z-index: 10;
 }
 
-.scroll-container {
-  display: flex;
-  height: 100%;
-  overflow-y: hidden;
-}
-
-.scroll-container::-webkit-scrollbar {
-  width: 0.75rem;
-}
-
-/* Scrollbar track (optional, can be transparent) */
-.scroll-container::-webkit-scrollbar-track {
-  background: none;
-}
-
-/* Scrollbar thumb */
-.scroll-container::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
 .add_button {
-  position: absolute;
-  visibility: hidden;
-  opacity: 0;
-  transition: all 0.5s;
-  right: 2%;
+  transition: all 0.3s;
   background-color: #47b23e;
   color: white;
-  width: 0%;
-  height: 0%;
-
-  display: flex;
   align-items: center;
   text-align: center;
   justify-items: center;
+
+  overflow: hidden;
+  width: 0%;
+  height: 0%;
+  opacity: 0;
+  border: none;
+  padding: 0;
 }
 
 .add_button i {
   visibility: hidden;
   opacity: 0%;
+  transition: all 0.5s;
 }
 
 .productDB {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  column-gap: .25rem;
   height: 100%;
   width: 100%;
   position: relative;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
+  transition: all 0.5s;
 }
 
-.productDB:hover .wrapper {
-  width: 83%;
+.productDB .wrapper span {
+  color: black;
+}
+
+.productDB .wrapper div:last-child span {
+  color: gray;
+}
+
+.productDB .wrapper :first-child span {
+  color: gray;
 }
 
 .productDB:hover .add_button {
-  visibility: visible;
-  opacity: 100;
-  display: block;
+  opacity: .5;
+  max-height: 90%;
   height: 90%;
+  min-width: 10%;
+  max-width: 20%;
   aspect-ratio: 1 / 1;
 }
 
@@ -459,19 +448,18 @@
 .productDB .wrapper {
   width: 100%;
   height: 90%;
-  text-align: center;
   font-weight: 400;
   font-family: "Open Sans", sans-serif;
   font-size: medium;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
   align-items: center;
+  justify-content: baseline;
   user-select: none;
   position: relative;
   transition: all 0.5s;
   overflow: hidden;
-  column-gap: .5rem;
+  column-gap: .25rem
 }
 
 .productDB .wrapper div {
@@ -495,18 +483,6 @@
 
 .productDB .wrapper :last-child {
   width: 25%;
-}
-
-.productDB .wrapper span {
-  color: black;
-}
-
-.productDB .wrapper div:last-child span {
-  color: gray;
-}
-
-.productDB .wrapper :first-child span {
-  color: gray;
 }
 
 .search {

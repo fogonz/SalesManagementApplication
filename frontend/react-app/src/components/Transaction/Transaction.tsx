@@ -9,9 +9,9 @@ import ProductGrid from '../ShoppingCart/ShoppingCart';
 const ProductItem = ({ index, style, data }) => (
     <div style={style} className="productDB">
         <div className='wrapper'>
-            <div><span>{data[index]?.cantidad}</span></div>
-            <div className='scroll_content'><span>{data[index]?.tipo_producto}</span></div>
-            <div><span>${data[index]?.precio_venta_unitario}</span></div>
+            <div className='hide'><span>{data[index]?.cantidad}</span></div>
+            <div className='scroll_content'><span className='show'>{data[index]?.tipo_producto}</span></div>
+            <div className='hide'><span>${data[index]?.precio_venta_unitario}</span></div>
         </div>
         <button className='add_button'> <i className='fas fa-plus'></i> </button>
     </div>
