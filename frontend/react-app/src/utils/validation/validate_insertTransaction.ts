@@ -8,7 +8,12 @@ export const createHandleSubmit = (
 	  descuento: string;
 	  abonado: string;
 	  concepto: string;
-	  // Add other form fields as needed
+	  carrito: {
+		id: number;
+		nombre: string;
+		precio: number;
+		cantidad: number;
+	  }[];
 	},
 	onSuccess: () => void,
 	onError: (error: string) => void
@@ -36,16 +41,14 @@ export const createHandleSubmit = (
   
 	  // If validation passes, prepare payload
 	  const payload = {
-		tipo: formState.tipo,
+		tipo: formState.tipo.replace(/ /g, "_"),
 		fecha: formState.fecha,
 		cuenta: parseInt(formState.cuenta, 10),
 		cantidad: validation.data?.cantidadNum || 1,
 		precio_venta: validation.data?.precioNum || 0,
 		total: validation.data?.precioNum || 0,
-		producto_id: null,
 		numero_comprobante: validation.data?.numeroComprobanteInt || null,
-		saldo_diferencia: null,
-		concepto: formState.concepto
+		concepto: formState.concepto,
 	  };
   
 	  // Apply discount if any
@@ -54,7 +57,10 @@ export const createHandleSubmit = (
 	  }
   
 	  // Send to API
+	  console.log("Transaction payload:", JSON.stringify(payload));
+
 	  try {
+		// Step 1: Create the main transaction
 		const response = await fetch("http://localhost:8000/api/movimientos/", {
 		  method: "POST",
 		  headers: {
@@ -62,20 +68,116 @@ export const createHandleSubmit = (
 		  },
 		  body: JSON.stringify(payload),
 		});
+		
   
 		if (!response.ok) {
-		  const errorText = await response.text().catch(() => "Error desconocido");
-		  throw new Error(`HTTP ${response.status}: ${errorText}`);
+		  	const errorText = await response.text().catch(() => "Error desconocido");
+		  	throw new Error(`HTTP ${response.status}: ${errorText}`);
 		}
   
-		const data = await response.json();
-		console.log("Transacción creada:", data);
+		const transactionData = await response.json();
+		const transactionId = transactionData.id;
+		console.log("Transacción creada:", transactionData, "ID:", transactionId);
+		
+		if (!transactionId) {
+		  throw new Error("No se pudo obtener el ID de la transacción creada");
+		}
+
+		// Step 3: Create transaction items for each product in the cart
+		if (formState.carrito && formState.carrito.length > 0) {
+		  await insertTransactionItems(transactionId, formState.carrito, validation.data?.descuentoPct || 0);
+		}
+
 		onSuccess();
 	  } catch (err) {
 		console.error("Error al crear transacción:", err);
 		onError(err instanceof Error ? err.message : "Error de conexión");
 	  }
 	};
+};
+
+// Helper function to insert transaction items
+const insertTransactionItems = async (
+	transactionId: number,
+	carrito: Array<{ id: number; nombre: string; precio: number; cantidad: number }>,
+	descuentoGeneral: number = 0,
+  ) => {
+	for (const item of carrito) {
+	  const itemPayload = {
+		transaccion: transactionId,      // coincide con tu PrimaryKeyRelatedField
+		producto: item.id,               // coincide con tu PrimaryKeyRelatedField
+		nombre_producto: item.nombre,
+		precio_unitario: item.precio,
+		cantidad: item.cantidad,
+		descuento_item: descuentoGeneral,
+	  };
+  
+	  console.log("Insertando item:", itemPayload);
+  
+	  const res = await fetch(
+		"http://localhost:8000/api/movimientos-items/",
+		{
+		  method: "POST",
+		  headers: { "Content-Type": "application/json" },
+		  body: JSON.stringify(itemPayload),
+		}
+	  );
+  
+	  const text = await res.text();
+	  if (!res.ok) {
+		console.error("Error al insertar item, body:", text);
+		throw new Error(
+		  `Error al insertar item "${item.nombre}": HTTP ${res.status}: ${text}`
+		);
+	  }
+  
+	  console.log("Item insertado correctamente:", await JSON.parse(text));
+	}
+};
+
+// Alternative approach: Insert items one by one (if batch insert is not supported)
+const insertTransactionItemsOneByOne = async (
+  transactionId: number, 
+  carrito: Array<{id: number; nombre: string; precio: number; cantidad: number}>,
+  descuentoGeneral: number = 0
+) => {
+  try {
+    const insertPromises = carrito.map(async (item) => {
+      const itemPayload = {
+        transaccion_id: transactionId,
+        producto_id: item.id,
+        nombre_producto: item.nombre,
+        precio_unitario: item.precio,
+        cantidad: item.cantidad,
+        descuento_item: descuentoGeneral
+      };
+
+      console.log("Inserting transaction item:", itemPayload);
+
+      const response = await fetch("http://localhost:8000/api/movimientos-items/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(itemPayload),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => "Error desconocido");
+        throw new Error(`Error al insertar item ${item.nombre}: HTTP ${response.status}: ${errorText}`);
+      }
+
+      return await response.json();
+    });
+
+    // Wait for all items to be inserted
+    const results = await Promise.all(insertPromises);
+    console.log("Todos los items insertados:", results);
+    
+  } catch (error) {
+    console.error("Error al insertar items individualmente:", error);
+    throw error;
+  }
 };
 
 export const validateTransaction = (formData: TransactionFormData): ValidationResult => {
@@ -129,13 +231,14 @@ export const validateTransaction = (formData: TransactionFormData): ValidationRe
 	numero?: number
   ): ValidationResult => {
 	const allowedWithNumber: Tipo[] = [
-	  'factura compra', 
-	  'factura venta', 
+	  'factura_compra', 
+	  'factura_venta', 
 	  'pago', 
 	  'cobranza'
 	];
 	
 	const lc = tipo.toLowerCase() as Tipo;
+
 	
 	// Types that never can have a number
 	if (!allowedWithNumber.includes(lc)) {
@@ -144,9 +247,10 @@ export const validateTransaction = (formData: TransactionFormData): ValidationRe
 	}
 	
 	// Invoices must be sequential (this would need API call to get previous numbers)
-	if (lc === 'factura compra' || lc === 'factura venta' || lc === 'factura c. varios') {
+	if (lc === 'factura_compra' || lc === 'factura_venta' || lc === 'factura c. varios') {
 	  // Note: In real implementation, you'd need to fetch previous numbers from API
 	  // For now, we'll just validate that if a number is provided, it's positive
+	  
 	  if (numero !== undefined && numero <= 0) {
 		return { isValid: false, error: "El número de comprobante debe ser mayor a 0" };
 	  }

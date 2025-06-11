@@ -3,7 +3,7 @@ import './Transaction.css';
 import { useEffect, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { createHandleSubmit, validateTransaction } from '../../utils/validation/validate_insertTransaction';
+import { createHandleSubmit } from '../../utils/validation/validate_insertTransaction';
 import ProductGrid from '../ShoppingCart/ShoppingCart'; 
 
 // Updated ProductItem with add functionality
@@ -178,7 +178,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                     descuento,
                     abonado,
                     concepto,
-                    carrito // Include cart data in submission
+                    carrito
                 },
                 () => {
                     // Success callback
