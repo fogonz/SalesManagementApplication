@@ -24,8 +24,8 @@ export interface ValidationResult {
 }
   
 export type Tipo = 
-	| 'factura compra' 
-	| 'factura venta' 
+	| 'factura_compra' 
+	| 'factura_venta' 
 	| 'pago' 
 	| 'cobranza' 
 	| 'factura c. varios';

@@ -65,7 +65,8 @@ class TransaccionItemsSerializer(serializers.ModelSerializer):
         required=False
     )
     transaccion = serializers.PrimaryKeyRelatedField(
-        queryset=Transacciones.objects.all()
+        queryset=Transacciones.objects.all(),
+        required=False  # <— ya no obligatorio aquí, lo pondemos desde el padre
     )
 
     class Meta:
@@ -82,13 +83,11 @@ class TransaccionItemsSerializer(serializers.ModelSerializer):
 
 
 class TransaccionesSerializer(serializers.ModelSerializer):
-    cuenta = serializers.PrimaryKeyRelatedField(
-        queryset=Cuentas.objects.all()
-    )
     items = TransaccionItemsSerializer(
         source='transaccionitems_set',
         many=True,
-        read_only=True
+        read_only=False,
+        required=False
     )
 
     class Meta:
@@ -103,3 +102,20 @@ class TransaccionesSerializer(serializers.ModelSerializer):
             'concepto',
             'items',
         ]
+
+    def create(self, validated_data):
+        # 1) Sacamos la lista de items del validated_data
+        items_data = validated_data.pop('transaccionitems_set', [])
+        # 2) Creamos la cabecera
+        transaccion = Transacciones.objects.create(**validated_data)
+        # 3) Para cada item, asociamos la FK y lo creamos
+        for item_data in items_data:
+            TransaccionItems.objects.create(
+                transaccion=transaccion,
+                producto=item_data.get('producto'),
+                nombre_producto=item_data['nombre_producto'],
+                precio_unitario=item_data['precio_unitario'],
+                cantidad=item_data['cantidad'],
+                descuento_item=item_data.get('descuento_item', 0)
+            )
+        return transaccion
