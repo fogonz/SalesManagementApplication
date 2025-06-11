@@ -65,7 +65,18 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({toggleActive}) => {
 					<i className="fas fa-boxes"></i> STOCK
 					<i className="fas fa-pen"></i>
 				</button>
-				
+			</div>
+
+			<div className="sidebar-options">
+				<button
+					className="menu-button"
+					data-view="movimientos"
+					onClick={(e) => {
+						toggleActive(e);
+						}
+				}>
+					<i className="fas fa-file-excel"></i> EXPORTAR EXCEL
+				</button>
 			</div>
 		</div>
 	);

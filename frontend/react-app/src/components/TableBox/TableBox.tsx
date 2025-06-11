@@ -244,13 +244,13 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
       <div className="content-box">
         <div className="toolbar">
           <div className="toolbar-nav">
-            <button className={`toolbar-icon ${activeView === 'movimientos' ? 'active' : ''}`}>
+            <button className={`toolbar-icon ${activeView === 'movimientos' ? 'active' : ''}`} onClick={(e) => {setActiveView("movimientos")}}>
               <i className="fas fa-home" title="Movimientos"></i>
             </button>
-            <button className={`toolbar-icon ${activeView === 'cuentas' ? 'active' : ''}`}>
+            <button className={`toolbar-icon ${activeView === 'cuentas' ? 'active' : ''}`} onClick={(e) => {setActiveView("cuentas")}}>
               <i className="fas fa-circle-user" title="Cuentas"></i>
             </button>
-            <button className={`toolbar-icon ${activeView === 'productos' ? 'active' : ''}`}>
+            <button className={`toolbar-icon ${activeView === 'productos' ? 'active' : ''}`} onClick={(e) => {setActiveView("productos")}}>
               <i className="fas fa-boxes" title="Productos"></i>
             </button>
           </div>
