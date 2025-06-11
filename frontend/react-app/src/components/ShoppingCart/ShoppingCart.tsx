@@ -165,32 +165,4 @@ const ProductGrid: React.FC<ProductGridProps> = ({ productos }) => {
   );
 };
 
-// Componente de ejemplo para mostrar el uso
-const App: React.FC = () => {
-  const productosEjemplo: Producto[] = [
-    { id: 1, tipo_producto: "Laptop Dell", precio_venta_unitario: 1200.50 },
-    { id: 2, tipo_producto: "Mouse Inalámbrico", precio_venta_unitario: 25.99 },
-    { id: 3, tipo_producto: "Teclado Mecánico", precio_venta_unitario: 89.99 },
-    { id: 4, tipo_producto: "Monitor 24\"", precio_venta_unitario: 299.99 },
-    { id: 5, tipo_producto: "Auriculares", precio_venta_unitario: 79.99 },
-    { id: 6, tipo_producto: "Webcam HD", precio_venta_unitario: 45.00 }
-  ];
-
-  return (
-    <div>
-      <h2>Con productos:</h2>
-      <ProductGrid productos={productosEjemplo} />
-      
-      <h2>Sin productos:</h2>
-      <ProductGrid productos={null} />
-      
-      <h2>Array vacío:</h2>
-      <ProductGrid productos={[]} />
-      
-      <h2>Sin prop:</h2>
-      <ProductGrid />
-    </div>
-  );
-};
-
 export default ProductGrid;
