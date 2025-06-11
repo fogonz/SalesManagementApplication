@@ -1,4 +1,4 @@
-/* Dashboard Container */
+
 .dashboard-container {
   background-color: #838282c9;
   width: calc(100% - var(--sidebar-width));
@@ -20,7 +20,7 @@
   margin: 0 auto;
 }
 
-/* Comportamiento en pantallas tipo celular */
+
 @media (max-width: 768px) {
   .dashboard-main-wrapper {
     flex-direction: column;
@@ -41,14 +41,14 @@
   width: 100%;
 }
 
-/* Main and Sidebar Wrapper */
+
 .content-and-sidebar {
   display: flex;
   gap: 1rem;
   padding: 1rem;
 }
 
-/* Main Content */
+
 .main-content {
   flex: 1 1 auto;
 }
@@ -71,10 +71,10 @@
     box-sizing: border-box;
     height: 21vh;
     min-height: 200px;
-    width: 100%; /* Cambiado de 50% a 100% para que ocupen todo el ancho disponible */
+    width: 100%; 
     max-width: 100%;
     
-    /* Add animation */
+    
     animation: cardAppear 0.6s ease-out;
 }
 
@@ -90,7 +90,7 @@
     width: 100%;
     max-width: 100%;
     
-    /* Add animation with slight delay */
+    
     animation: cardAppear 0.6s ease-out 0.1s both;
 }
 
@@ -105,7 +105,7 @@
     width: 100%;
     max-width: 100%;
     
-    /* Add animation with slight delay */
+    
     animation: cardAppear 0.6s ease-out 0.1s both;
 }
 
@@ -136,7 +136,7 @@
     min-width: 0;
 }
 
-/* Nuevo contenedor para las cards en fila */
+
 .cards-row {
     display: flex;
     flex-direction: row;
@@ -144,14 +144,14 @@
     width: 100%;
 }
 
-/* Responsivo para pantallas pequeñas */
+
 @media (max-width: 768px) {
     .cards-row {
         flex-direction: column;
     }
 }
 
-/* Animación de aparición inicial */
+
 @keyframes cardAppear {
     from {
         opacity: 0;
@@ -189,3 +189,4 @@
   color: #333;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
