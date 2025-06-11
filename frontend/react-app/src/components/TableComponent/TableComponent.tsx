@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import './TableComponent.css';
+import { getCellColorClass } from '../../config/rowColors';
 
 export interface MovimientoRow {
   id: number;
@@ -41,10 +42,12 @@ type ColumnDefinition = {
 interface TableProps {
   columns: ColumnDefinition[];
   rows: MovimientoRow[] | CuentaRow[] | ProductoRow[];
+  tableType: 'movimientos' | 'cuentas' | 'productos';
 }
 
-const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
+const TableComponent: React.FC<TableProps> = ({ rows, columns, tableType }) => {
   const tableRef = useRef<HTMLDivElement>(null);
+  console.log(tableType)
 
   const [hoveredCell, setHoveredCell] = useState<{
     content: React.ReactNode;
@@ -53,6 +56,7 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
     width: number;
     height: number;
     opacity: number;
+    background: string;
   } | null>(null);
 
   if (!rows || rows.length === 0) {
@@ -77,6 +81,7 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
   return (
     <div className="table_wrapper" ref={tableRef}>
       <div className="table_container">
+        
         {/* Table Header */}
         <div className="table_header">
           {columns.map((col) => (
@@ -88,26 +93,35 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
 
         {/* Table Body */}
         <div className="table_body">
-          {rows.map((row, index) => (
+          {rows.map((row, index) => {
+            const tipoCol: ColumnDefinition | undefined = tableType === "movimientos"
+            ? columns.find(col => col.key === 'tipo')
+            : columns.find(col => col.key === 'tipo_cuenta');
+
+            const tipoContent = tipoCol
+              ? (tipoCol.format ? tipoCol.format((row as any)[tipoCol.key]) : (row as any)[tipoCol.key])
+              : '';
+
+            const color = getCellColorClass(tipoContent, tableType);
+
+            return(
             <div
               key={row.id}
-              className={`table_row ${index % 2 === 0 ? 'table_row--even' : 'table_row--odd'}`}
+              className="table_row"
+              style={{ backgroundColor: color}}
             >
               {columns.map((col) => {
-                const content =
-                  col.format?.((row as any)[col.key]) ?? (row as any)[col.key] ?? '-';
-
+                const content = col.format?.((row as any)[col.key]) ?? (row as any)[col.key] ?? '-';
                 return (
                   <div
                     key={col.key}
-
                     className="table_cell"
 
                     onMouseEnter={(e) => {
                       const rect = e.currentTarget.getBoundingClientRect();
                       const wrapperRect = tableRef.current?.getBoundingClientRect();
                     
-                      if (!wrapperRect) return;
+                      if (!wrapperRect || content==='') return;
                     
                       setHoveredCell({
                         content,
@@ -116,6 +130,7 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
                         width: rect.width,
                         height: rect.height,
                         opacity: 1,
+                        background: color
                       });
                       }}
 
@@ -131,6 +146,7 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
                       width: 0,
                       height: 0,
                       opacity: 0,
+                      background: 'white'
 
                       });
                     }}
@@ -139,8 +155,9 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
                   </div>
                 );
               })}
+
             </div>
-          ))}
+          )})}
         </div>
 
         {/* Floating Cell */}
@@ -150,10 +167,11 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
             style={{
               left: hoveredCell.x,
               top: hoveredCell.y,
-              width: hoveredCell.width,
+              width: 'max-content',
               height: hoveredCell.height,
               position: 'absolute', 
-              opacity: hoveredCell.opacity
+              opacity: hoveredCell.opacity,
+              backgroundColor: hoveredCell.background
 
             }}
           >

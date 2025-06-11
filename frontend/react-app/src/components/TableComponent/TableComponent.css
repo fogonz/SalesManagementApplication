@@ -92,11 +92,6 @@
   border-bottom: none;
 }
 
-.table_row:hover {
-  background-color: var(--row-hover) !important;
-  color: #ffffff;
-}
-
 /* Filas alternadas */
 .table_row--even {
   background-color: var(--row-even);
@@ -175,7 +170,7 @@
   transform: scale(1.2);
   transform-origin: center center;
   background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 14px 28px, rgba(0, 0, 0, 0.12) 0px 10px 10px;
+  box-shadow: rgba(0, 0, 0, 0.20) 0px 14px 28px, rgba(0, 0, 0, 0.18) 0px 10px 10px;
   z-index: 9999;
   pointer-events: none;
   transition: all 0.3s;
@@ -184,8 +179,9 @@
   display: flex;
   justify-content: left;
   align-items: center;
-  padding: 1%;
+  padding: 0 1% 0 1%;
   overflow: hidden;
+  min-width: 10vw;
 }
 
 

@@ -330,7 +330,7 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
           {activeView === 'productos' ? (
             <ProductDisplay ref={productDisplayRef} searchTerm={searchTerm} />
           ) : (
-            <TableComponent rows={filteredData} columns={getColumnsForActiveView()} />
+            <TableComponent rows={filteredData} columns={getColumnsForActiveView()} tableType={activeView}/>
           )}
         </div>
       </div>
