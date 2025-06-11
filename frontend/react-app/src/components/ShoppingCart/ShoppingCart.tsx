@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// In ShoppingCart.tsx - Updated ProductGrid component
+import React from 'react';
 import './ShoppingCart.css';
 
 interface Producto {
@@ -16,11 +17,11 @@ interface ItemCarrito {
 
 interface ProductGridProps {
   productos?: Producto[] | null;
+  carrito: ItemCarrito[];
+  onCarritoUpdate: (carrito: ItemCarrito[]) => void;
 }
 
-const ProductGrid: React.FC<ProductGridProps> = ({ productos }) => {
-  const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
-
+const ProductGrid: React.FC<ProductGridProps> = ({ productos, carrito, onCarritoUpdate }) => {
   // Manejo seguro de productos con múltiples verificaciones
   const productosSeguro = productos ?? [];
   const productosValidos = Array.isArray(productosSeguro) ? productosSeguro : [];
@@ -33,21 +34,22 @@ const ProductGrid: React.FC<ProductGridProps> = ({ productos }) => {
   const actualizarCantidad = (producto: Producto, nuevaCantidad: number): void => {
     const cantidad = Math.max(0, parseInt(String(nuevaCantidad)) || 0);
     
-    setCarrito(prevCarrito => {
-      const carritoSinItem = prevCarrito.filter(item => item.id !== producto.id);
-      
-      if (cantidad > 0) {
-        const nuevoItem: ItemCarrito = {
-          id: producto.id,
-          nombre: producto.tipo_producto,
-          precio: producto.precio_venta_unitario,
-          cantidad
-        };
-        return [...carritoSinItem, nuevoItem];
-      }
-      
-      return carritoSinItem;
-    });
+    const carritoSinItem = carrito.filter(item => item.id !== producto.id);
+    
+    let nuevoCarrito: ItemCarrito[];
+    if (cantidad > 0) {
+      const nuevoItem: ItemCarrito = {
+        id: producto.id,
+        nombre: producto.tipo_producto,
+        precio: producto.precio_venta_unitario,
+        cantidad
+      };
+      nuevoCarrito = [...carritoSinItem, nuevoItem];
+    } else {
+      nuevoCarrito = carritoSinItem;
+    }
+    
+    onCarritoUpdate(nuevoCarrito);
   };
 
   const incrementarCantidad = (producto: Producto): void => {
@@ -115,9 +117,26 @@ const ProductGrid: React.FC<ProductGridProps> = ({ productos }) => {
     );
   }
 
+  // Filter products to only show those in the cart
+  const productosEnCarrito = productosValidos.filter(producto => {
+    const cantidad = obtenerCantidad(producto.id);
+    return cantidad > 0;
+  });
+
+  // If no products in cart, show empty message
+  if (productosEnCarrito.length === 0) {
+    return (
+      <div className="product-grid">
+        <div className="product-grid__empty">
+          <p>No hay productos en el carrito</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="product-grid">
-        {productosValidos.map(producto => {
+        {productosEnCarrito.map(producto => {
           const cantidad = obtenerCantidad(producto.id);
           
           return (
@@ -161,7 +180,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ productos }) => {
             </div>
           );
         })}
-      </div>
+    </div>
   );
 };
 

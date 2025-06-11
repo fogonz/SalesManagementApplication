@@ -6,20 +6,34 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { createHandleSubmit, validateTransaction } from '../../utils/validation/validate_insertTransaction';
 import ProductGrid from '../ShoppingCart/ShoppingCart'; 
 
-const ProductItem = ({ index, style, data }) => (
+// Updated ProductItem with add functionality
+const ProductItem = ({ index, style, data, onAddProduct }) => (
     <div style={style} className="productDB">
         <div className='wrapper'>
             <div className='hide'><span>{data[index]?.cantidad}</span></div>
             <div className='scroll_content'><span className='show'>{data[index]?.tipo_producto}</span></div>
             <div className='hide'><span>${data[index]?.precio_venta_unitario}</span></div>
         </div>
-        <button className='add_button'> <i className='fas fa-plus'></i> </button>
+        <button 
+            className='add_button' 
+            onClick={() => onAddProduct(data[index])}
+            disabled={!data[index]}
+        > 
+            <i className='fas fa-plus'></i> 
+        </button>
     </div>
 );
 
 interface TransactionProps {
     onClose: () => void;
     onAccept: () => void;
+}
+
+interface ItemCarrito {
+    id: number;
+    nombre: string;
+    precio: number;
+    cantidad: number;
 }
 
 export interface ProductoRow {
@@ -53,6 +67,56 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     const [filteredData, setFilteredData] = useState<ProductoRow[]>([]);
     const [data, setData] = useState<ProductoRow[] | null>(null);
     const [options, setOptions] = useState<CuentaOption[]>([]);
+    const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
+
+    const handleCarritoUpdate = (nuevoCarrito: ItemCarrito[]) => {
+        setCarrito(nuevoCarrito);
+        console.log('Cart updated:', nuevoCarrito);
+        
+        // Calculate totals if needed
+        const totalItems = nuevoCarrito.reduce((sum, item) => sum + item.cantidad, 0);
+        const totalAmount = nuevoCarrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+        
+        console.log('Total items:', totalItems);
+        console.log('Total amount:', totalAmount);
+    };
+
+    // Function to add product to cart from the product list
+    const handleAddProduct = (producto: ProductoRow) => {
+        if (!producto) return;
+
+        console.log('Adding product to cart:', producto);
+
+        // Check if product is already in cart
+        const existingItem = carrito.find(item => item.id === producto.id);
+        
+        let nuevoCarrito: ItemCarrito[];
+        
+        if (existingItem) {
+            // If product exists, increment quantity
+            nuevoCarrito = carrito.map(item => 
+                item.id === producto.id 
+                    ? { ...item, cantidad: item.cantidad + 1 }
+                    : item
+            );
+        } else {
+            // If product doesn't exist, add new item
+            const nuevoItem: ItemCarrito = {
+                id: producto.id,
+                nombre: producto.tipo_producto,
+                precio: producto.precio_venta_unitario,
+                cantidad: 1
+            };
+            nuevoCarrito = [...carrito, nuevoItem];
+        }
+        
+        handleCarritoUpdate(nuevoCarrito);
+    };
+
+    // Create a wrapper component for ProductItem to pass the onAddProduct function
+    const ProductItemWithAdd = (props) => (
+        <ProductItem {...props} onAddProduct={handleAddProduct} />
+    );
 
     // Fetch: Table Cuentas
     useEffect(() => {
@@ -98,7 +162,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
             }
         }
     }, [searchTerm, data]);
-
+    
     // handleSubmit with validation
     const handleSubmit = async () => {
         setError(""); 
@@ -113,7 +177,8 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                     tipo,
                     descuento,
                     abonado,
-                    concepto
+                    concepto,
+                    carrito // Include cart data in submission
                 },
                 () => {
                     // Success callback
@@ -296,7 +361,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                             itemData={filteredData}
                                             className="scroll-container"
                                         >
-                                            {ProductItem}
+                                            {ProductItemWithAdd}
                                         </List>
                                     )}
                                 </AutoSizer>
@@ -309,11 +374,13 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                             <div className="text open-sans"> CARRITO </div>
                         </div>
 
+                        {/* CARRITO */}
                         <div className="container">
                             <div className="container-wrapper">
-                                <ProductGrid productos={data}></ProductGrid>
+                                <ProductGrid productos={data} carrito={carrito} onCarritoUpdate={handleCarritoUpdate}></ProductGrid>
                             </div>
                         </div>
+
                     </div>
                 </div>
                 
