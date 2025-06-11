@@ -44,11 +44,17 @@ interface TableProps {
 }
 
 const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
-  const [trackerPosition, setTrackerPosition] = useState({ x: 0, y: 0 });
-  const [isTrackerVisible, setIsTrackerVisible] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
 
-  // Si no hay filas, mostrar mensaje
+  const [hoveredCell, setHoveredCell] = useState<{
+    content: React.ReactNode;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    opacity: number;
+  } | null>(null);
+
   if (!rows || rows.length === 0) {
     return (
       <div className="table_wrapper" ref={tableRef}>
@@ -61,9 +67,7 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
             ))}
           </div>
           <div className="table_body">
-            <div className="no-data-message">
-              No hay datos disponibles
-            </div>
+            <div className="no-data-message">No hay datos disponibles</div>
           </div>
         </div>
       </div>
@@ -81,7 +85,7 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
             </div>
           ))}
         </div>
-        
+
         {/* Table Body */}
         <div className="table_body">
           {rows.map((row, index) => (
@@ -89,36 +93,74 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns }) => {
               key={row.id}
               className={`table_row ${index % 2 === 0 ? 'table_row--even' : 'table_row--odd'}`}
             >
-              {columns.map((col) => (
-                <div
-                  key={col.key}
-                  className="table_cell"
-                  onMouseMove={(e) => {
-                    setTrackerPosition({
-                      x: e.clientX,
-                      y: e.clientY
-                    });
-                    setIsTrackerVisible(true);
-                  }}
-                  onMouseLeave={() => setIsTrackerVisible(false)}
-                >
-                  {col.format ? col.format((row as any)[col.key]) : (row as any)[col.key] ?? '-'}
-                </div>
-              ))}
+              {columns.map((col) => {
+                const content =
+                  col.format?.((row as any)[col.key]) ?? (row as any)[col.key] ?? '-';
+
+                return (
+                  <div
+                    key={col.key}
+
+                    className="table_cell"
+
+                    onMouseEnter={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const wrapperRect = tableRef.current?.getBoundingClientRect();
+                    
+                      if (!wrapperRect) return;
+                    
+                      setHoveredCell({
+                        content,
+                        x: rect.left - wrapperRect.left,
+                        y: rect.top - wrapperRect.top,
+                        width: rect.width,
+                        height: rect.height,
+                        opacity: 1,
+                      });
+                      }}
+
+                    onMouseLeave={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const wrapperRect = tableRef.current?.getBoundingClientRect();
+                    
+                      if (!wrapperRect) return;
+                      setHoveredCell({
+                      content,
+                      x: rect.left - wrapperRect.left,
+                      y: rect.top - wrapperRect.top,
+                      width: 0,
+                      height: 0,
+                      opacity: 0,
+
+                      });
+                    }}
+                  >
+                    {content}
+                  </div>
+                );
+              })}
             </div>
           ))}
         </div>
+
+        {/* Floating Cell */}
+        {hoveredCell && (
+          <div
+            className="floating-cell"
+            style={{
+              left: hoveredCell.x,
+              top: hoveredCell.y,
+              width: hoveredCell.width,
+              height: hoveredCell.height,
+              position: 'absolute', 
+              opacity: hoveredCell.opacity
+
+            }}
+          >
+            {hoveredCell.content}
+          </div>
+        )}
       </div>
-      
-      <div
-        id="mouse-tracker"
-        className="mouse-tracker"
-        style={{
-          left: `${trackerPosition.x}px`,
-          top: `${trackerPosition.y}px`,
-          opacity: isTrackerVisible ? 1 : 0
-        }}
-      />
     </div>
   );
 };

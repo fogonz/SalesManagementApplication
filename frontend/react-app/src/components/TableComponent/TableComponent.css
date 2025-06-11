@@ -7,6 +7,7 @@
   padding: 1rem;
   box-sizing: border-box;
   background: white;
+  position: relative;
 }
 
 .table_container {
@@ -28,7 +29,7 @@
   background: linear-gradient(135deg, var(--header-color-1) 0%, var(--header-color-2) 100%);
   text-transform: uppercase;
   font-weight: 600;
-  letter-spacing: 0.05em; 
+  letter-spacing: 0.05em;
   align-items: center;
   height: 4.5vh;
 }
@@ -92,7 +93,7 @@
 }
 
 .table_row:hover {
-  background-color: var(--row-hover)!important;
+  background-color: var(--row-hover) !important;
   color: #ffffff;
 }
 
@@ -102,7 +103,7 @@
 }
 
 .table_row--odd {
-  background-color: var(--row-odd );
+  background-color: var(--row-odd);
 }
 
 /* Celdas de la tabla */
@@ -126,14 +127,16 @@
 
 /* Hide scrollbar by default (WebKit) */
 .table_cell::-webkit-scrollbar {
-  height: 0; /* Hide horizontal scrollbar initially */
+  height: 0;
+  /* Hide horizontal scrollbar initially */
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
 
 /* Show scrollbar on hover */
 .table_cell:hover::-webkit-scrollbar {
-  height: 6px; /* Restore height */
+  height: 6px;
+  /* Restore height */
   opacity: 1;
 }
 
@@ -155,36 +158,55 @@
   position: fixed;
   width: 10px;
   height: 10px;
-  background-color: none/*var(--row-hover)*/;
+  background-color: red;
   border-radius: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.5s ease;
 }
 
-.table_cell:hover ~ .mouse-tracker {
+.table_cell:hover~.mouse-tracker {
   opacity: 1;
 }
+
+.floating-cell {
+  position: absolute;
+  transform: scale(1.2);
+  transform-origin: center center;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 14px 28px, rgba(0, 0, 0, 0.12) 0px 10px 10px;
+  z-index: 9999;
+  pointer-events: none;
+  transition: all 0.3s;
+  color: black;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding: 1%;
+  overflow: hidden;
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .table_wrapper {
     padding: 0.5rem;
   }
-  
+
   .table_container {
-    min-width: 100%; 
+    min-width: 100%;
     font-size: 0.75rem;
   }
-  
+
   .table_header__cell,
   .table_cell {
     padding: 0.5rem;
     box-sizing: border-box;
     display: flex;
   }
-  
+
   .table_header__cell--movement,
   .table_cell--movement,
   .table_header__cell--product,
