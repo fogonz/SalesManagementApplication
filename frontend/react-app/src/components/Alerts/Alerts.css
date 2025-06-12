@@ -1,13 +1,13 @@
 .dashboard-header {
   background: #292929;
   color: white;
-  padding: 1rem 1rem;
+  padding: 1rem 2rem;
   border-radius: 8px;
   width: 100%;
   box-sizing: border-box;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  
-  /* Header entrance animation */
+  margin-top: var(--topbar-height);
+ 
   animation: slideInHeader 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -44,7 +44,7 @@
   min-width: 20px;
   flex-shrink: 0;
   
-  /* Label animation */
+  
   animation: fadeInLeft 0.6s ease-out 0.3s both;
 }
 
@@ -72,7 +72,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   max-width: calc(100vw - 120px);
-  padding: 1.5rem 2rem;
+  padding: 1.5rem 1rem;
   position: relative;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -101,11 +101,11 @@
   position: relative;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   
-  /* Initial state for animation */
+  
   opacity: 0;
   transform: translateX(100px) scale(0.8);
   
-  /* Slide in from right animation */
+  
   animation: slideInFromRight 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
@@ -135,7 +135,7 @@
 .alert-badge:nth-child(8) { animation-delay: 1.2s; }
 .alert-badge:nth-child(n+9) { animation-delay: 1.3s; }
 
-/* Enhanced hover effects with entrance consideration */
+
 .alert-badge:hover {
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
@@ -214,7 +214,7 @@
   }
 }
 
-/* Simple hover effect without disappearing */
+
 .alert-badge::before {
   content: '';
   position: absolute;
@@ -233,7 +233,7 @@
   opacity: 1;
 }
 
-/* Dynamic entrance for newly added badges */
+
 .alert-badge.new-badge {
   animation: slideInFromRightFast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
@@ -306,7 +306,7 @@
   );
 }
 
-/* Scroll indicator animation */
+
 .alert-badges::after {
   content: '→';
   position: absolute;
@@ -362,7 +362,7 @@
     width: 50px;
   }
   
-  /* Faster animations on mobile */
+
   .alert-badge {
     animation-duration: 0.4s;
   }
@@ -376,7 +376,7 @@
   }
 }
 
-/* Reduced motion support */
+
 @media (prefers-reduced-motion: reduce) {
   .alert-badge,
   .dashboard-header,

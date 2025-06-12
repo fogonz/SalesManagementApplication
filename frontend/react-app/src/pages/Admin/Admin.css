@@ -1,23 +1,57 @@
+.admin-container {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+}
 
 .dashboard-container {
   background-color: #838282c9;
   width: calc(100% - var(--sidebar-width));
-  min-height: 100vh;       
+  min-height: 100vh;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
+.content-and-sidebar {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+
 .dashboard-main-wrapper {
- 
   flex-direction: row;
   gap: 1.5rem;
-  
   box-sizing: border-box;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
+}
+
+.main-content {
+  flex: 1 1 auto;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 2;
+  min-width: 0;
+}
+
+.cards-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
 
@@ -26,121 +60,40 @@
     flex-direction: column;
     padding: 1rem;
   }
-}
 
-
-.admin-container {
-    width: 100%;
-    overflow: hidden;
-    display: flex;
-}
-
-.row{
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-}
-
-
-.content-and-sidebar {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-}
-
-
-.main-content {
-  flex: 1 1 auto;
-}
-
-
-
-.sales-total {
-    display: block;
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    padding: 0.25rem;
-    box-sizing: border-box;
-    height: 8vh;
-    width: 100%;
-    max-width: 100%;
-    
-    
-    animation: cardAppear 0.6s ease-out 0.1s both;
-}
-
-
-.total-sales-container {
-  padding: 3px;
-  text-align: center;
-}
-
-.total-sales-label {
-  font-size: 14px;
-  color: #666;
- 
-}
-
-.total-sales-amount {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-}
-
-
-.cards-container {
-    display: flex;
+  .cards-row {
     flex-direction: column;
-    gap: 1rem;
-    flex: 2;
-    min-width: 0;
+  }
 }
 
+@media (max-width: 400px) {
+  .card-chart,
+  .card-chart2 {
+    padding: 0.5rem;
+    min-height: 120px;
+  }
 
-.cards-row {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    width: 100%;
-}
+  .sales-chart-title {
+    font-size: 0.65rem;
+  }
 
+  .chart-svg {
+    height: 100px;
+  }
 
-@media (max-width: 768px) {
-    .cards-row {
-        flex-direction: column;
-    }
+  .axis-label {
+    font-size: 4px;
+  }
 }
 
 
 @keyframes cardAppear {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
-@media (max-width: 400px) {
-    .card-chart, .card-chart2 {
-        padding: 0.5rem;
-        min-height: 120px;
-    }
-    
-    .sales-chart-title {
-        font-size: 0.65rem;
-    }
-    
-    .chart-svg {
-        height: 100px;
-    }
-    
-    .axis-label {
-        font-size: 4px;
-    }
-}
-
-

@@ -17,10 +17,10 @@ const Alerts = (Alerts) => {
     if (containerRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
       
-      // Show left fade if scrolled from the beginning
+      
       setShowLeftFade(scrollLeft > 10);
       
-      // Show right fade if not at the end
+      
       setShowRightFade(scrollLeft < scrollWidth - clientWidth - 10);
     }
   };
@@ -34,7 +34,7 @@ const Alerts = (Alerts) => {
     setVelocity(0);
     containerRef.current.style.cursor = 'grabbing';
     
-    // Cancel any ongoing momentum
+    
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
     }
@@ -49,15 +49,15 @@ const Alerts = (Alerts) => {
     const deltaX = currentX - startX;
     const deltaTime = currentTime - lastTime;
     
-    // Calculate velocity for momentum
+    
     if (deltaTime > 0) {
-      setVelocity((currentX - lastX) / deltaTime * 16); // Normalize to 60fps
+      setVelocity((currentX - lastX) / deltaTime * 16); 
     }
     
     setLastX(currentX);
     setLastTime(currentTime);
     
-    // Apply drag movement
+    
     containerRef.current.scrollLeft = scrollLeft - deltaX;
     checkScrollPosition();
   };
@@ -65,7 +65,7 @@ const Alerts = (Alerts) => {
   const applyMomentum = () => {
     if (Math.abs(velocity) > 0.1) {
       containerRef.current.scrollLeft -= velocity;
-      setVelocity(velocity * 0.95); // Friction
+      setVelocity(velocity * 0.95); 
       checkScrollPosition();
       animationRef.current = requestAnimationFrame(applyMomentum);
     }
@@ -89,7 +89,7 @@ const Alerts = (Alerts) => {
 
   const handleWheel = (e) => {
     e.preventDefault();
-    const scrollAmount = e.deltaY * 0.5; // Smooth wheel scrolling
+    const scrollAmount = e.deltaY * 0.5; 
     containerRef.current.scrollLeft += scrollAmount;
     checkScrollPosition();
   };
@@ -99,7 +99,7 @@ const Alerts = (Alerts) => {
   };
 
   const handleAlertClick = (alertText, e) => {
-    // Prevent click if we were dragging
+    
     if (Math.abs(velocity) > 0.1 || isDragging) {
       e.preventDefault();
       return;
@@ -110,16 +110,14 @@ const Alerts = (Alerts) => {
   useEffect(() => {
     const container = containerRef.current;
     if (container) {
-      // Initial check
+      
       checkScrollPosition();
       
-      // Mouse events
+      
       container.addEventListener('mousemove', handleMouseMove);
       container.addEventListener('mouseup', handleMouseUp);
       container.addEventListener('mouseleave', handleMouseLeave);
       container.addEventListener('scroll', handleScroll);
-      
-      // Wheel event for horizontal scrolling
       container.addEventListener('wheel', handleWheel, { passive: false });
 
       return () => {
@@ -136,7 +134,7 @@ const Alerts = (Alerts) => {
     }
   }, [isDragging, startX, scrollLeft, velocity, lastX, lastTime]);
 
-  // Check scroll position on window resize
+ 
   useEffect(() => {
     const handleResize = () => {
       setTimeout(checkScrollPosition, 100);
@@ -190,7 +188,7 @@ const Alerts = (Alerts) => {
               
             </div>
             
-            {/* Fade overlays */}
+           
             <div 
               className={`fade-overlay fade-left ${showLeftFade ? 'fade-visible' : ''}`}
             />

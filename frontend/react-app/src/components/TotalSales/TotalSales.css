@@ -1,0 +1,32 @@
+.sales-total {
+    display: block;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    padding: 0.25rem;
+    box-sizing: border-box;
+    height: 8vh;
+    width: 100%;
+    max-width: 100%;
+    
+    
+    animation: cardAppear 0.6s ease-out 0.1s both;
+}
+
+
+.total-sales-container {
+  padding: 3px;
+  text-align: center;
+}
+
+.total-sales-label {
+  font-size: 14px;
+  color: #666;
+ 
+}
+
+.total-sales-amount {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}

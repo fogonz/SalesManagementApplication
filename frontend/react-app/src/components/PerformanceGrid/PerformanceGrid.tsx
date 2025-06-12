@@ -24,7 +24,7 @@ const PerformanceGrid: React.FC<PerformanceGridProps> = ({ performanceData }) =>
           float: true,
           margin: 10,
           cellHeight: 160,
-          resizable: { handles: '' },
+          
           draggable: {
             handle: '.performance-card',
           },

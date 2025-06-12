@@ -9,66 +9,57 @@ import PerformanceGrid from '../../components/PerformanceGrid/PerformanceGrid';
 import Alerts from '../../components/Alerts/Aletrs';
 import SidebarPanel from '../../components/SidebarPanel/SidebarPanel';
 import FilterButton from '../../components/FilterButton/FilterButton';
+import TotalSales from '../../components/TotalSales/TotalSales';
 
 const Admin = () => {
   const [selectedFilter, setSelectedFilter] = useState('Esta Semana');
   const ingreso = 400000;
   const egreso = 100000;
-         
+
   const performanceData = [
     { label: 'Rendimiento de Ventas', value: 11, type: 'negative' },
     { label: 'Rentabilidad Neta', value: 22, type: 'positive' },
     { label: 'Nivel de Satisfacción', value: 92, type: 'positive' }
   ];
-     
+
   const filterOptions = ['Esta Semana', 'Este Mes', 'Este Año'];
-     
+
   const handleFilterChange = (filter: string) => {
     setSelectedFilter(filter);
-    //lógica para filtrar los datos
     console.log('Filtro seleccionado:', filter);
   };
-     
+
   return (
     <div className='app-wrapper'>
       <div className='admin-container'>
-        <SideBar currentSection='admin' />
+        <SideBar currentSection='admin' activeView={''} />
         <div className="dashboard-container">
-          {/* Header */}
           <div>
-            <Alerts Alerts={Alerts}/>
+            <Alerts Alerts={Alerts} />
           </div>
-                     
-          {/* Filter Button */}
-          <FilterButton selectedFilter={selectedFilter} filterOptions={filterOptions} onFilterChange={handleFilterChange}/>
-                     
-          {/* Main Content */}
+
+          <FilterButton
+            selectedFilter={selectedFilter}
+            filterOptions={filterOptions}
+            onFilterChange={handleFilterChange}
+          />
+
           <div className="content-and-sidebar">
             <div className="dashboard-main-wrapper">
               <Datachart ingreso={ingreso} egreso={egreso} />
-              <PerformanceGrid performanceData={performanceData}/>
+              <PerformanceGrid performanceData={performanceData} />
             </div>
-                         
-            {/* Container for Charts and New Container */}
+
             <div className="right-side-wrapper">
-              {/* Charts Container */}
               <div className='cards-container'>
-                {/* Contenedor para las cards en fila */}
                 <div className='cards-row'>
                   <SalesChart />
                   <ProductChart />
                 </div>
-                <ROIChart />      
-                {/* contenedor de Ventas Totales */}
-                <div className="sales-total">
-                  <div className="total-sales-container">
-                    <div className="total-sales-label">Total sales</div>
-                    <div className="total-sales-amount">$137,142.33</div>
-                  </div>
-                </div>
+                <ROIChart />
+                <TotalSales />
               </div>
-                             
-              {/* Sidebar Panel Component */}
+
               <SidebarPanel title="Panel de Control" />
             </div>
           </div>

@@ -73,5 +73,11 @@
 }
 
 .grid-stack-item {
-  min-width: 100px; /* Ensures cards don't get too narrow */ 
+  min-width: 100px; 
+}
+
+
+.grid-stack-item .ui-resizable-handle {
+  display: none !important;
+  pointer-events: none;
 }
