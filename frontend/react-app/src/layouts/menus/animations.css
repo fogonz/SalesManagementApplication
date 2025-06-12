@@ -1,0 +1,23 @@
+@keyframes slide-in {
+	0% {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes wideUp {
+	0% {
+		clip-path: inset(0 90% 0 90%);
+		opacity: 0;
+	}
+
+	100% {
+		clip-path: inset(0);
+		opacity: 1;
+	}
+}

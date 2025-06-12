@@ -1,5 +1,5 @@
 import * as React from 'react';
-import './Transaction.css';
+import './placeholder.css';
 import { useEffect, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -53,7 +53,7 @@ interface CuentaOption {
     tipo_cuenta: string;
 }
 
-const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
+const NewProduct: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     const [fecha, setFecha] = useState<string>("");
     const [cuenta, setCuenta] = useState<string>("");
     const [tipo, setTipo] = useState<string>("");
@@ -409,4 +409,4 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     );
 };
 
-export default Transaction;
+export default NewProduct;

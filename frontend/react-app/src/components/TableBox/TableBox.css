@@ -53,6 +53,7 @@
 	border-radius: 6px;
 	font-size: 16px;
 	border: none;
+	outline: none;
 	opacity: 30%;
 }
 
@@ -135,7 +136,7 @@
 	transform: scale(1.05);
 }
 
-.add-movement-btn {
+.add-button {
 	background: transparent;
 	border: none;
 	padding: 8px;
@@ -149,8 +150,11 @@
 	box-shadow: none;
 }
 
+.add-button:hover {
+	transform: rotate(90deg);
+}
 
-.add-movement-btn:focus {
+.add-button:focus {
 	outline: none;
 	box-shadow: none;
 }

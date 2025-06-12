@@ -1,0 +1,24 @@
+.floating-cell {
+	position: absolute;
+	transform: scale(0);
+	opacity: 0;
+	transform-origin: center;
+	transition: transform 0.3s ease, opacity 0.3s ease;
+	background-color: white;
+	box-shadow: rgba(0, 0, 0, 0.20) 0px 14px 28px, rgba(0, 0, 0, 0.18) 0px 10px 10px;
+	z-index: 9999;
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	padding: 0 1%;
+	color: black;
+	text-wrap: nowrap;
+	width: max-content;
+	max-width: max-content;
+	min-width: fit-content;
+}
+
+.floating-cell.visible {
+	transform: scale(1.2);
+	opacity: 1;
+}

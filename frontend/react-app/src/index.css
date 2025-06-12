@@ -27,6 +27,8 @@
   --toolbar-height: 70px;
   --topbar-height: 4vh;
   --app-height: calc(100vh - var(--topbar-height));
+  --newTransaction-width: 70vw;
+  --newAccount-width: 35vw;
 
   /* COLORES COMPONENTS */
   --sidebar-color: #1a1a1a;
@@ -36,7 +38,7 @@
 
   /* COLORES TABLA */
   --font-color-amount: #30333b;
-  --font-color-general: red;
+  --font-color-general: black;
   --header-color-1: #1a1a1a;
   --header-color-2: #1a1a1a;
   --header-font-color: white;
@@ -112,6 +114,31 @@ button:focus-visible {
 }
 
 .blurred {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+
+button:focus,
+input[type=button]:focus {
+  outline: none;
+  border: none;
+}
+
+.app-wrapper {
+  overflow: hidden;
+  max-height: 100vh;
+  overflow-y: hidden;
+}
+
+.app-content {
+  transition: filter 0.2s ease;
+  box-sizing: border-box;
+  overflow-y: hidden;
+  display: flex;
+}
+
+.app-content.blurred {
   filter: blur(8px);
   pointer-events: none;
   user-select: none;

@@ -3,14 +3,15 @@ import './TableBox.css';
 import TableComponent from '../TableComponent/TableComponent';
 import Calendar from '../Calendar/Calendar';
 import ProductDisplay from '../ProductDisplay/ProductDisplay';
+import AddButton from '../../assets/icons/AddButton';
 
 type Tabla = 'movimientos' | 'cuentas' | 'productos';
 
 interface TableBoxProps {
-  onOpenTransaction: () => void;
+  onOpenMenu: () => void;
   activeView: 'movimientos' | 'cuentas' | 'productos';
   setActiveView: (view: 'movimientos' | 'cuentas' | 'productos') => void;
-  refreshTrigger?: number; // Add this prop
+  refreshTrigger?: number;
 }
 
 interface MovimientoRow {
@@ -39,7 +40,7 @@ interface ProductoRow {
   precio: number | null;
 }
 
-const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setActiveView, refreshTrigger }) => {
+const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveView, refreshTrigger }) => {
   const [data, setData] = useState<MovimientoRow[] | CuentaRow[] | ProductoRow[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
@@ -108,14 +109,16 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
     }
   };
 
-  const handleAddMovement = () => {
-    onOpenTransaction();
-  };
-
   const handleAddProduct = () => {
     if (productDisplayRef.current) {
       productDisplayRef.current.addProduct();
     }
+  };
+
+  const handleAdd = () => {
+    if (activeView === 'movimientos') return onOpenMenu();
+    if (activeView === 'cuentas') return onOpenMenu();
+    if (activeView === 'productos') return handleAddProduct();
   };
 
   const normalizeText = (text: any): string => {
@@ -279,42 +282,21 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenTransaction, activeView, setA
           <div className="toolbar-actions">
             {activeView !== 'productos' && (
               <button
-                title={activeView === 'movimientos' ? 'Add New Transaction' : 'Add New Product'}
-                className="add-movement-btn"
-                onClick={activeView === 'movimientos' ? handleAddMovement : handleAddProduct}
-                onMouseEnter={e => {
-                  e.currentTarget.style.transform = 'rotate(90deg)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.transform = 'rotate(0deg)';
-                }}
+              title={
+                activeView === 'movimientos'
+                  ? 'Agregar Movimiento'
+                  : activeView === 'cuentas'
+                  ? 'Agregar Cuenta'
+                  : 'Agregar Producto'
+              }
+              className="add-button"
+              onClick={handleAdd}
               >
-                <svg
-                  width="40px"
-                  height="40px"
-                  viewBox="0 0 24 24"
-                  style={{
-                    stroke: '#13a813',
-                    fill: 'none',
-                    strokeWidth: '1.5',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.fill = '#13a813';
-                    e.currentTarget.style.stroke = '#374151';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.fill = 'none';
-                    e.currentTarget.style.stroke = '#13a813';
-                  }}
-                >
-                  <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"></path>
-                  <path d="M8 12H16"></path>
-                  <path d="M12 16V8"></path>
-                </svg>
+                <AddButton />
               </button>
             )}
           </div>
+          
         </div>
 
         {selectedDates.length > 0 && activeView === 'movimientos' && (

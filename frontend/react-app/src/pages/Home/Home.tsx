@@ -2,44 +2,65 @@ import { useState } from "react";
 import TopBar from "../../layouts/TopBar/TopBar";
 import SideBar from "../../layouts/SideBar/SideBar";
 import TableBox from "../../components/TableBox/TableBox";
-import Transaction from "../../components/Transaction/Transaction";
+import Transaction from "../../layouts/menus/NewTransaction/NewTransaction";
+import NewAccount from "../../layouts/menus/NewAccount/NewAccount";
 
 type Tabla = "movimientos" | "cuentas" | "productos";
+type Menu = 'transaction' | 'account' | 'product' | null;
 
 const Home = () => {
-  const [isTransactionOpen, setIsTransactionOpen] = useState(false);
-  const [activeView, setActiveView] = useState<Tabla>("movimientos");
-  const [refreshTrigger, setRefreshTrigger] = useState(0); 
+  const [openMenu, setOpenMenu] = useState<Menu>(null);
+  const [activeView, setActiveView] = useState<Tabla>('movimientos');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const handleOpenTransaction = () => setIsTransactionOpen(true);
-  const handleCloseTransaction = () => setIsTransactionOpen(false);
+  const open = (menu: Exclude<Menu, null>) => setOpenMenu(menu);
+  const close = () => setOpenMenu(null);
+
   const handleAcceptTransaction = () => {
     console.log("Transacción aceptada");
-    setIsTransactionOpen(false);
+    close();
     setRefreshTrigger(prev => prev + 1);
   };
 
   return (
     <div className="app-wrapper">
-      <div className={`app-content ${isTransactionOpen ? "blurred" : ""}`}>
-        <div className="row">
-          <SideBar activeView={activeView} setActiveView={setActiveView} currentSection="home"/>
-          <TableBox
-            onOpenTransaction={handleOpenTransaction}
-            activeView={activeView}
-            setActiveView={setActiveView}
-            refreshTrigger={refreshTrigger} 
-          />
-        </div>
-      </div>
-      {isTransactionOpen && (
-        <Transaction
-          onClose={handleCloseTransaction}
-          onAccept={handleAcceptTransaction}
+      <div className={`app-content ${openMenu ? "blurred" : ""}`}>
+        <SideBar
+          activeView={activeView}
+          setActiveView={setActiveView}
+          currentSection="home"
         />
+        <TableBox
+          activeView={activeView}
+          setActiveView={setActiveView}
+          refreshTrigger={refreshTrigger}
+          onOpenMenu={() => open(
+            activeView === 'movimientos'
+              ? 'transaction'
+              : activeView === 'cuentas'
+              ? 'account'
+              : 'product'
+          )}
+        />
+      </div>
+
+      {/* Renderizas cada modal según openMenu */}
+      {openMenu === 'transaction' && (
+        <Transaction onClose={close} onAccept={handleAcceptTransaction} />
+      )}
+      {openMenu === 'account' && (
+        <NewAccount onClose={close} onAccept={handleAcceptTransaction} />
+      )}
+      {openMenu === 'product' && (
+        <Transaction onClose={close} onAccept={() => {
+          console.log("Producto creado");
+          close();
+          setRefreshTrigger(prev => prev + 1);
+        }} />
       )}
     </div>
   );
 };
+
 
 export default Home;

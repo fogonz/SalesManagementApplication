@@ -1,71 +1,65 @@
-import React, { useState, useRef } from 'react';
-import './TableComponent.css';
-import { getCellColorClass } from '../../config/rowColors';
+import React, { useState, useRef } from 'react'
+import './TableComponent.css'
+import FloatingCell from '../FloatingCell/FloatingCell'
+import { getCellColorClass } from '../../config/rowColors'
+
+export interface ColumnDefinition {
+  key: string
+  label: string
+  width?: number | string
+  format?: (value: any) => string
+}
 
 export interface MovimientoRow {
-  id: number;
-  fecha: string;
-  tipo: string;
-  cuenta_id: number;
-  producto_id: number;
-  total: string | number | null;
-  name?: string;
-  producto?: string;
-  cuenta?: string;
-  tipoMovimiento?: string;
-  abonado?: number | null;
+  id: number
+  fecha: string
+  tipo: string
+  cuenta_id: number
+  producto_id: number
+  total: string | number | null
+  name?: string
+  producto?: string
+  cuenta?: string
+  tipoMovimiento?: string
+  abonado?: number | null
 }
 
 export interface CuentaRow {
-  id: number;
-  nombre: string;
-  contacto_mail: string;
-  contacto_telefono: string;
-  tipo_cuenta: string;
-  saldo?: number | null;
-  tipo?: string;
+  id: number
+  nombre: string
+  contacto_mail: string
+  contacto_telefono: string
+  tipo_cuenta: string
+  saldo?: number | null
+  tipo?: string
 }
 
 export interface ProductoRow {
-  id: number;
-  descripcion: string;
-  stock: number | null;
-  precio: number | null;
+  id: number
+  descripcion: string
+  stock: number | null
+  precio: number | null
 }
 
-type ColumnDefinition = {
-  key: string;
-  label: string;
-  format?: (value: any) => string;
-};
+type TableRow = MovimientoRow | CuentaRow | ProductoRow
 
-interface TableProps {
-  columns: ColumnDefinition[];
-  rows: MovimientoRow[] | CuentaRow[] | ProductoRow[];
-  tableType: 'movimientos' | 'cuentas' | 'productos';
+type TableProps = {
+  columns: ColumnDefinition[]
+  rows: TableRow[]
+  tableType: 'movimientos' | 'cuentas' | 'productos'
 }
 
-const TableComponent: React.FC<TableProps> = ({ rows, columns, tableType }) => {
-  const tableRef = useRef<HTMLDivElement>(null);
-  console.log(tableType)
+const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
+  const tableRef = useRef<HTMLDivElement>(null)
+  const [hoveredCell, setHoveredCell] = useState<any>(null)
 
-  const [hoveredCell, setHoveredCell] = useState<{
-    content: React.ReactNode;
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    opacity: number;
-    background: string;
-  } | null>(null);
-
-  if (!rows || rows.length === 0) {
+  if (!rows.length) {
     return (
       <div className="table_wrapper" ref={tableRef}>
         <div className="table_container">
           <div className="table_header">
-            {columns.map((col) => (
-              <div key={col.key} className="table_header__cell">
+            {columns.map(col => (
+              <div key={col.key} className="table_header__cell" style={{ width: col.width }}>
                 {col.label}
               </div>
             ))}
@@ -75,112 +69,75 @@ const TableComponent: React.FC<TableProps> = ({ rows, columns, tableType }) => {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
     <div className="table_wrapper" ref={tableRef}>
       <div className="table_container">
-        
-        {/* Table Header */}
         <div className="table_header">
-          {columns.map((col) => (
-            <div key={col.key} className="table_header__cell">
+          {columns.map(col => (
+            <div key={col.key} className="table_header__cell" style={{ width: col.width }}>
               {col.label}
             </div>
           ))}
         </div>
 
-        {/* Table Body */}
         <div className="table_body">
-          {rows.map((row, index) => {
-            const tipoCol: ColumnDefinition | undefined = tableType === "movimientos"
-            ? columns.find(col => col.key === 'tipo')
-            : columns.find(col => col.key === 'tipo_cuenta');
+          {rows.map(row => {
+            const tipoKey = tableType === 'movimientos' ? 'tipo' : 'tipo_cuenta'
+            const tipoValue = (row as any)[tipoKey]
+            const tipoContent = columns.find(c => c.key === tipoKey)?.format?.(tipoValue) ?? tipoValue
+            const bgColor = getCellColorClass(tipoContent, tableType)
 
-            const tipoContent = tipoCol
-              ? (tipoCol.format ? tipoCol.format((row as any)[tipoCol.key]) : (row as any)[tipoCol.key])
-              : '';
+            return (
+              <div key={(row as any).id} className="table_row" style={{ backgroundColor: bgColor }}>
+                {columns.map(col => {
+                  const raw = (row as any)[col.key]
+                  const content = col.format ? col.format(raw) : raw ?? '-'
+                  const symbol = ['total', 'monto', 'estado'].includes(col.key) ? '$' : ''
 
-            const color = getCellColorClass(tipoContent, tableType);
-
-            return(
-            <div
-              key={row.id}
-              className="table_row"
-              style={{ backgroundColor: color}}
-            >
-              {columns.map((col) => {
-                const content = col.format?.((row as any)[col.key]) ?? (row as any)[col.key] ?? '-';
-                return (
-                  <div
-                    key={col.key}
-                    className="table_cell"
-
-                    onMouseEnter={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      const wrapperRect = tableRef.current?.getBoundingClientRect();
-                    
-                      if (!wrapperRect || content==='') return;
-                    
-                      setHoveredCell({
-                        content,
-                        x: rect.left - wrapperRect.left,
-                        y: rect.top - wrapperRect.top,
-                        width: rect.width,
-                        height: rect.height,
-                        opacity: 1,
-                        background: color
-                      });
+                  return (
+                    <div
+                      key={col.key}
+                      className="table_cell"
+                      style={{ width: col.width }}
+                      onMouseEnter={e => {
+                        const rect = e.currentTarget.getBoundingClientRect()
+                        const wrap = tableRef.current?.getBoundingClientRect()
+                        if (!wrap) return
+                        setHoveredCell({
+                          x: rect.left - wrap.left,
+                          y: rect.top - wrap.top,
+                          width: rect.width,
+                          height: rect.height,
+                          opacity: 1,
+                          background: bgColor,
+                          symbol,
+                          content,
+                          currentCol: col.key
+                        })
                       }}
-
-                    onMouseLeave={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      const wrapperRect = tableRef.current?.getBoundingClientRect();
-                    
-                      if (!wrapperRect) return;
-                      setHoveredCell({
-                      content,
-                      x: rect.left - wrapperRect.left,
-                      y: rect.top - wrapperRect.top,
-                      width: 0,
-                      height: 0,
-                      opacity: 0,
-                      background: 'white'
-
-                      });
-                    }}
-                  >
-                    {content}
-                  </div>
-                );
-              })}
-
-            </div>
-          )})}
+                      onMouseLeave={e => {
+                        const rect = e.currentTarget.getBoundingClientRect()
+                        const wrap = tableRef.current?.getBoundingClientRect()
+                        if (!wrap) return
+                        setHoveredCell({ x: 0, y: 0, width: 0, height: 0, opacity: 0, background: '#fff' })
+                      }}
+                    >
+                      {symbol}{content}
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })}
         </div>
 
-        {/* Floating Cell */}
-        {hoveredCell && (
-          <div
-            className="floating-cell"
-            style={{
-              left: hoveredCell.x,
-              top: hoveredCell.y,
-              width: 'max-content',
-              height: hoveredCell.height,
-              position: 'absolute', 
-              opacity: hoveredCell.opacity,
-              backgroundColor: hoveredCell.background
-
-            }}
-          >
-            {hoveredCell.content}
-          </div>
-        )}
+        {hoveredCell && <FloatingCell hoveredCell={hoveredCell} isGray={hoveredCell.currentCol === 'id'} />}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TableComponent;
+export default TableComponent
