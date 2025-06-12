@@ -1,4 +1,7 @@
 import React from "react";
+import '../ProductChart/Chart.css';
+
+
 import {
   PieChart,
   Pie,
@@ -8,7 +11,6 @@ import {
   Legend
 } from "recharts";
 
-// Datos de distribución de gastos
 const expenseData = [
   { name: "Inventario", value: 40000, percentage: 51.3 },
   { name: "Salarios", value: 25000, percentage: 32.1 },
@@ -16,15 +18,13 @@ const expenseData = [
   { name: "Marketing", value: 5000, percentage: 6.4 }
 ];
 
-// Colores para cada segmento
 const COLORS = [
-  "#0088FE", // Azul para Inventario
-  "#00C49F", // Verde para Salarios
-  "#FFBB28", // Amarillo para Servicios
-  "#FF8042"  // Naranja para Marketing
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042"
 ];
 
-// Función para renderizar etiquetas personalizadas
 const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
   const RADIAN = Math.PI / 180;
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
@@ -46,7 +46,6 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
   );
 };
 
-// Tooltip personalizado
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
@@ -75,49 +74,36 @@ const CustomTooltip = ({ active, payload }) => {
 
 const PieChartExpenses = () => {
   return (
-    <div style={{ 
-      width: "100%", 
-      height: 280,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center'
-    }}>
-      <h3 style={{ 
-        textAlign: "center", 
-        marginBottom: "5px", 
-        fontSize: "16px", 
-        color: "#333",
-        fontWeight: "600"
-      }}>
-        Distribución de Gastos
-      </h3>
-      
-      <ResponsiveContainer width="100%" height={220}>
-        <PieChart>
-          <Pie
-            data={expenseData}
-            cx="50%"
-            cy="35%"
-            labelLine={false}
-            label={renderCustomizedLabel}
-            outerRadius={70}
-            fill="#8884d8"
-            dataKey="value"
-            animationBegin={0}
-            animationDuration={800}
-          >
-            {expenseData.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`} 
-                fill={COLORS[index % COLORS.length]}
-                stroke="#fff"
-                strokeWidth={2}
-              />
-            ))}
-          </Pie>
-          <Tooltip content={<CustomTooltip active={undefined} payload={undefined} />} />
-        </PieChart>
-      </ResponsiveContainer>
+    <div className="expense-chart-container">
+      <div className="expense-chart-title">Distribución de Gastos</div>
+      <div className="chart-content">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={expenseData}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              label={renderCustomizedLabel}
+              outerRadius={70}
+              fill="#8884d8"
+              dataKey="value"
+              animationBegin={0}
+              animationDuration={800}
+            >
+              {expenseData.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={COLORS[index % COLORS.length]}
+                  stroke="#fff"
+                  strokeWidth={2}
+                />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip active={undefined} payload={undefined} />} />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

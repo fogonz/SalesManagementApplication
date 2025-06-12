@@ -17,7 +17,7 @@ const Datachart: React.FC<DatachartProps> = ({ ingreso, egreso }) => {
       const grid = GridStack.init(
         {
           float: true,
-          margin: 10,
+          margin: '0px 10px 0px 20px',
           cellHeight: 160,
           resizable: { handles: '' },
           draggable: {

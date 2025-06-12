@@ -53,46 +53,7 @@
   flex: 1 1 auto;
 }
 
-.chart-svg {
-    display: block;
-    overflow: visible;
-    margin: 0 auto;
-    max-width: 100%;
-    height: auto;
-}
 
-
-.card-chart {
-    display: block;
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    padding: 0.25rem;
-    box-sizing: border-box;
-    height: 21vh;
-    min-height: 200px;
-    width: 100%; 
-    max-width: 100%;
-    
-    
-    animation: cardAppear 0.6s ease-out;
-}
-
-.card-chart2 {
-    display: block;
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    box-sizing: border-box;
-    height: 32vh;
-    min-height: 250px;
-    width: 100%;
-    max-width: 100%;
-    
-    
-    animation: cardAppear 0.6s ease-out 0.1s both;
-}
 
 .sales-total {
     display: block;
@@ -182,11 +143,4 @@
     }
 }
 
-.sales-chart-title {
-  text-align: center;
-  font-size: 15px;
-  font-weight: bold;
-  color: #333;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
 
