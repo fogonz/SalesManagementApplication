@@ -48,7 +48,7 @@ const FloatingCell: React.FC<FloatingCellProps> = ({
 		minWidth: width,
         height,
         backgroundColor: isGray ? "var(--background-color)" : background,
-        color: isGray ? "white" : "black",
+        color: isGray ? "white" : "var(--font-color-table)",
       }}
     >
       {symbol}

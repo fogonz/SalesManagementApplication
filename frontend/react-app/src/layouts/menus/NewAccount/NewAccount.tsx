@@ -75,7 +75,7 @@ const NewAccount: React.FC<AccountProps> = ({ onClose, onAccept, editingAccount 
 
             const url = editingAccount 
                 ? `http://localhost:8000/api/cuentas/${editingAccount.id}`
-                : `http://localhost:8000/api/cuentas`;
+                : `http://localhost:8000/api/cuentas/`;
             
             const method = editingAccount ? 'PUT' : 'POST';
 

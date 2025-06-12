@@ -10,8 +10,6 @@
 
 .popup {
   position: fixed;
-  top: 10%;
-  left: 10%;
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
   z-index: 1000;
 }
@@ -23,26 +21,32 @@
 
 .menu_newTransaction {
   background: #f4f5f8;
-  width: var(--newTransaction-width);
-  height: 78%;
   border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   color: black;
   animation: wideUp 0.5s forwards;
+  width: var(--newTransaction-width);
+  height: var(--newTransaction-height);
+
+  left: calc(50vw - var(--newTransaction-width)/2);
+  top: calc(50vh - var(--newTransaction-height)/2);
 }
 
 .menu_newAccount {
   background: #f4f5f8;
-  width: var(--newAccount-width);
-  height: 78%;
   border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   color: black;
   animation: wideUp 0.5s forwards;
+  width: var(--newAccount-width);
+  height: var(--newAccount-width);
+
+  left: calc(50vw - var(--newAccount-width)/2);
+  top: calc(50vh - var(--newAccount-height)/2);
 }
 
 .menu_newTransaction_topBar {

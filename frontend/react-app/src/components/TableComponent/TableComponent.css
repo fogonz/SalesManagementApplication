@@ -106,7 +106,7 @@
   display: flex;
   align-items: center;
   font-size: 0.875rem;
-  color: #023059;
+  color: var(--font-color-table);
   box-sizing: border-box;
   flex: 1;
   width: 0;

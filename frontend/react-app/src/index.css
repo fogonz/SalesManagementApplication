@@ -28,7 +28,9 @@
   --topbar-height: 4vh;
   --app-height: calc(100vh - var(--topbar-height));
   --newTransaction-width: 70vw;
+  --newTransaction-height: 78vh;
   --newAccount-width: 35vw;
+  --newAccount-height: 78vh;
 
   /* COLORES COMPONENTS */
   --sidebar-color: #1a1a1a;
@@ -39,6 +41,7 @@
   /* COLORES TABLA */
   --font-color-amount: #30333b;
   --font-color-general: black;
+  --font-color-table: #023059;
   --header-color-1: #1a1a1a;
   --header-color-2: #1a1a1a;
   --header-font-color: white;
