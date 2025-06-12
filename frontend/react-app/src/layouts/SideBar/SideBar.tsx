@@ -7,11 +7,12 @@ import Options_Admin from './SideBarOptions/Options_Admin';
 type Tabla = 'movimientos' | 'cuentas' | 'productos';
 
 interface SideBarProps {
+  activeView: string;
   setActiveView?: React.Dispatch<React.SetStateAction<Tabla>>;
   currentSection: string;
 }
 
-const SideBar: React.FC<SideBarProps> = ({setActiveView, currentSection="home"}) => {
+const SideBar: React.FC<SideBarProps> = ({activeView ,setActiveView, currentSection="home"}) => {
   const toggleActive = (event) => {
     const buttons = document.querySelectorAll('.menu-button');
     buttons.forEach(btn => btn.classList.remove('active'));
@@ -45,7 +46,7 @@ const SideBar: React.FC<SideBarProps> = ({setActiveView, currentSection="home"})
       </div>
 
       {currentSection === "home" && (
-          <Options_Home setActiveView={setActiveView} toggleActive={toggleActive} />
+          <Options_Home activeView={activeView} setActiveView={setActiveView} toggleActive={toggleActive} />
       )}
       {currentSection === "admin" && (
           <Options_Admin setActiveView={setActiveView} toggleActive={toggleActive} />
