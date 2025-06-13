@@ -62,7 +62,7 @@ const HelpMenu: React.FC = () => {
   ]
 
   return (
-    <div className="container">
+    <div className="container-help">
       <div className="logo-section">
         <img
           src="https://images.steamusercontent.com/ugc/1298675651395030773/1490E7F605879E8E6336535DE2F282BE766BF930/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"

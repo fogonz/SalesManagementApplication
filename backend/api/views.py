@@ -1,5 +1,8 @@
 from rest_framework import viewsets, permissions
-from .serializers import TransaccionesSerializer, CuentasSerializer, ProductosSerializer, TransaccionItemsSerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.db.models import Sum
+from .serializers import TransaccionesSerializer, CuentasSerializer, ProductosSerializer, TransaccionItemsSerializer, VentaProductoSerializer
 from .models import Transacciones, Cuentas, Productos, TransaccionItems
 
 class TransaccionesViewSet(viewsets.ModelViewSet):
@@ -33,3 +36,18 @@ class ProductosViewSet(viewsets.ModelViewSet):
     queryset = Productos.objects.all()
     serializer_class = ProductosSerializer
     permission_classes = [permissions.AllowAny]
+
+
+class VentasPorProductoAPIView(APIView):
+    permission_classes = [permissions.AllowAny]  # o el permiso que necesites
+
+    def get(self, request, *args, **kwargs):
+        qs = (
+            TransaccionItems.objects
+            .filter(transaccion__tipo='factura_venta')
+            .values('nombre_producto')
+            .annotate(total_vendido=Sum('cantidad'))
+            .order_by('-total_vendido')
+        )
+        serializer = VentaProductoSerializer(qs, many=True)
+        return Response(serializer.data)

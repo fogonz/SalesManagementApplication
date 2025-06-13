@@ -47,6 +47,10 @@ class ProductosSerializer(serializers.ModelSerializer):
             'costo_unitario', 'cantidad'
         ]
 
+class VentaProductoSerializer(serializers.Serializer):
+    nombre_producto = serializers.CharField()
+    total_vendido    = serializers.DecimalField(max_digits=20, decimal_places=2)
+
 
 class SaldoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -66,7 +70,7 @@ class TransaccionItemsSerializer(serializers.ModelSerializer):
     )
     transaccion = serializers.PrimaryKeyRelatedField(
         queryset=Transacciones.objects.all(),
-        required=False  # <— ya no obligatorio aquí, lo pondemos desde el padre
+        required=False
     )
 
     class Meta:

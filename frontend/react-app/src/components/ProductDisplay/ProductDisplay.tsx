@@ -56,12 +56,11 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
       ...products,
       {
         id: newId,
-        title: "Nuevo Producto",
-        description: "Descripción aquí",
-        price: "$0.00",
+        tipo_producto: "Nuevo Producto",
+        descripcion: "Descripción aquí",
+        precio_venta_unitario: 0,
         image: "https://via.placeholder.com/200x200.png?text=Nuevo+Producto",
-        stockAmount: 0,
-        stockUnit: "uds",
+        cantidad: 0,
       },
     ]);
   };
@@ -70,9 +69,15 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
     setProducts(products.filter(product => product.id !== id));
   };
 
-  // Función para normalizar texto (igual que en TableBox)
+  // Función para normalizar texto
   const normalizeText = (text: string): string => {
     return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  };
+
+  // Función para convertir valor a string de forma segura
+  const safeStringify = (value: any): string => {
+    if (value === null || value === undefined) return '';
+    return String(value);
   };
 
   // Filtrar productos basado en el término de búsqueda
@@ -80,12 +85,18 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
     if (!searchTerm) return true;
     
     const normalizedSearchTerm = normalizeText(searchTerm);
-    return (
-      normalizeText(product.title).includes(normalizedSearchTerm) ||
-      normalizeText(product.description).includes(normalizedSearchTerm) ||
-      normalizeText(product.price).includes(normalizedSearchTerm) ||
-      normalizeText(product.stockUnit).includes(normalizedSearchTerm) ||
-      normalizeText(product.stockAmount.toString()).includes(normalizedSearchTerm)
+    
+    // Buscar en todos los campos relevantes del producto
+    const searchableFields = [
+      safeStringify(product.tipo_producto),
+      safeStringify(product.descripcion),
+      safeStringify(product.precio_venta_unitario),
+      safeStringify(product.cantidad),
+      safeStringify(product.id)
+    ];
+    
+    return searchableFields.some(field => 
+      normalizeText(field).includes(normalizedSearchTerm)
     );
   });
 
@@ -93,6 +104,26 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
   useImperativeHandle(ref, () => ({
     addProduct
   }));
+
+  if (loading) {
+    return (
+      <div className="product-container">
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+          Cargando productos...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="product-container">
+        <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
+          Error: {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="product-container">
@@ -107,12 +138,12 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
         }}>
           Mostrando {filteredProducts.length} de {products.length} productos que coinciden con "{searchTerm}"
           {filteredProducts.length === 0 && (
-            <span style={{ color: '#999', fontStyle: 'italic' }}> - No se encontraron productos</span>
+            <span style={{ color: '#e74c3c', fontStyle: 'italic' }}> - No se encontraron productos</span>
           )}
         </div>
       )}
 
-      <div className="product-grid">
+      <div className="product-grid2">
         {filteredProducts.map((product) => (
           <div key={product.id} className="product-card">
             <button
@@ -124,29 +155,44 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
               ×
             </button>
 
-            <img src={product.image} alt={product.title} className="product-image" />
+            <img 
+              src={product.image || "https://via.placeholder.com/200x200.png?text=Sin+Imagen"} 
+              alt={product.tipo_producto || 'Producto'} 
+              className="product-image" 
+            />
 
             <div className="product-title">
-              {product.tipo_producto}
+              {product.tipo_producto || 'Sin nombre'}
             </div>
 
             <div className="typeTag">
               <div className="tag">PRECIO</div>
               <div className="product-price">
-                ${product.precio_venta_unitario}
+                ${product.precio_venta_unitario || 0}
               </div>
             </div>
 
             <div className="typeTag">
               <div className="tag">CANTIDAD</div>
               <div className="product-text">
-                {product.cantidad}
+                {product.cantidad || 0}
               </div>
             </div>
 
           </div>
         ))}
       </div>
+
+      {filteredProducts.length === 0 && !searchTerm && (
+        <div style={{ 
+          padding: '40px', 
+          textAlign: 'center', 
+          color: '#666',
+          fontSize: '16px'
+        }}>
+          No hay productos disponibles
+        </div>
+      )}
     </div>
   );
 });
