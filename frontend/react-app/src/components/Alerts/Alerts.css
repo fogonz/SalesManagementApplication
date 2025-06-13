@@ -7,9 +7,15 @@
   box-sizing: border-box;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   margin-top: var(--topbar-height);
- 
+
   animation: slideInHeader 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* This makes it sticky! 👇 */
+  position: sticky;
+  top: var(--topbar-height, 0); /* adjust depending on your layout */
+  z-index: 10;
 }
+
 
 @keyframes slideInHeader {
   0% {

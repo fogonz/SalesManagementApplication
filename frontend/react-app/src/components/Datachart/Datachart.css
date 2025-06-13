@@ -25,17 +25,22 @@
 }
 
 .metric-label {
-  font-size: 0.875rem;
-  color: #6b7280;
+  font-size: 1,5rem;
+  color: #262727;
   margin-bottom: 0.25rem;
   text-align: center;
+  
 }
 
 .metric-value {
   font-size: 1.5rem;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }
+
 
 .metric-value--positive {
   color: #059669;
