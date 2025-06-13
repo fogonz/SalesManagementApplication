@@ -158,16 +158,19 @@ const ProductGrid: React.FC<ProductGridProps> = ({ productos, carrito, onCarrito
                 >
                   -
                 </button>
-                
-                <input
-                  type="number"
-                  min="0"
-                  value={cantidad}
-                  onChange={(e) => manejarCambioInput(e, producto)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="product-grid__input"
-                  aria-label="Cantidad del producto"
-                />
+
+                <div className='itemInput'>
+                  <span> × </span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={cantidad}
+                    onChange={(e) => manejarCambioInput(e, producto)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="product-grid__input"
+                    aria-label="Cantidad del producto"
+                  />
+                </div>
                 
                 <button
                   className="product-grid__button product-grid__button--increment"

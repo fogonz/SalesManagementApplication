@@ -40,7 +40,8 @@
 
   /* COLORES TABLA */
   --font-color-amount: #30333b;
-  --font-color-general: black;
+  --font-color-general: #374151;
+  --font-color-secondary: #8a8f9c;
   --font-color-table: #023059;
   --header-color-1: #1a1a1a;
   --header-color-2: #1a1a1a;
@@ -87,7 +88,7 @@ h1 {
 }
 
 button {
-  border: 1px solid transparent;
+  border: 0px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
