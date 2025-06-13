@@ -1,34 +1,30 @@
-
 .header-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: var(--sidebar-color);
-    border-bottom: 1px solid #2d3748;
+    background: #272727;
+    border-bottom: 1px solid #3a3a3a;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
     z-index: 100;
     width: 100%;
-    height: var(--topbar-height -8px);
     position: fixed;
     top: 0;
     padding: 0 4px;
     overflow: visible;
 }
 
-
 .header-icons .row {
     gap: 4px;
     align-items: center;
     height: calc(var(--topbar-height) - 8px);
-    max-width:18vh;
+    max-width: 18vh;
 }
-
 
 .topbar-button {
     position: relative;
     padding: 8px 16px;
-    color: #9ca3af;
-    background: #374151;
+    color: #d1d5db;
+    background: #333333;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -48,22 +44,22 @@
 }
 
 .topbar-button:hover {
-    background: #4b5563;
+    background: #3d3d3d;
     color: #f3f4f6;
 }
 
 .topbar-button:active {
-    background: #374151;
+    background: #2e2e2e;
 }
 
 .topbar-button.active {
-    background: #1f2937;
+    background: #1e1e1e;
     color: #ffffff;
     z-index: 10;
 }
 
 .topbar-button.active:hover {
-    background: #111827;
+    background: #151515;
 }
 
 .topbar-button.active::before {
@@ -73,9 +69,8 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: #6b7280;
+    background: #444;
 }
-
 
 .topbar-button p {
     margin: 0;
@@ -89,7 +84,6 @@
     font-size: 11px;
     letter-spacing: 0.05em;
 }
-
 
 .topbar-button .close {
     width: 16px;
@@ -105,14 +99,13 @@
     align-items: center;
     justify-content: center;
     font-size: 10px;
-    color: #a0aec0;
+    color: #bbb;
     font-family: monospace;
 }
 
 .topbar-button:hover .close { opacity: 0.6; }
 .topbar-button .close:hover { opacity: 1; background: #e53e3e; color: #ffffff; }
-.topbar-button.active .close { color: #cbd5e0; }
-
+.topbar-button.active .close { color: #d1d5db; }
 
 .header-icons {
     display: flex;
@@ -128,8 +121,8 @@
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.15s ease;
-    color: #9ca3af;
-    background: #ffffff;
+    color: #d1d5db;
+    background: #dddbdb;
     border: none;
     display: flex;
     align-items: center;
@@ -137,12 +130,12 @@
 }
 
 .header-icon:hover {
-    background: #9b9b9b;
-    color: #f3f4f6;
+    background: #807f7f;
+    color: #ffffff;
 }
 
 .header-icon:active {
-    background: #374151;
+    background: #1e1e1e;
 }
 
 .header-icon i {
