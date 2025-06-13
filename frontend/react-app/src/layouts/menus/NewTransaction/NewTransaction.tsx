@@ -5,6 +5,7 @@ import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { createHandleSubmit } from '../../../utils/validation/validate_insertTransaction';
 import ProductGrid from '../../../components/ShoppingCart/ShoppingCart'; 
+import { AnimatePresence, motion } from "framer-motion";
 
 const ProductItem = ({ index, style, data, onAddProduct, carrito }) => {
     // Check if the current product is in the cart
@@ -125,6 +126,11 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
         <ProductItem {...props} onAddProduct={handleAddProduct} carrito={carrito} />
     );
 
+    // Function to check if current type requires cart
+    const shouldShowCart = () => {
+        return tipo === "factura venta" || tipo === "factura compra";
+    };
+
     // Fetch: Table Cuentas
     useEffect(() => {
         const fetchAccounts = async () => {
@@ -169,6 +175,13 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
             }
         }
     }, [searchTerm, data]);
+
+    // Clear cart when type changes to non-invoice type
+    useEffect(() => {
+        if (!shouldShowCart() && carrito.length > 0) {
+            setCarrito([]);
+        }
+    }, [tipo]);
     
     // handleSubmit with validation
     const handleSubmit = async () => {
@@ -209,212 +222,253 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
 
     return(
         <div className="page">
-            <div className="menu_newTransaction popup">
-                <div className="menu_newTransaction_topBar">
-                    <div className="text open-sans"> Agregando Movimiento </div>
-                </div>
-
-                <div className="menu_newTransaction_main">
-                    <div className="entries">
-                        {/* Show error message */}
-                        {error && (
-                            <div className="error-message" style={{
-                                color: 'red',
-                                padding: '10px',
-                                backgroundColor: '#ffe6e6',
-                                border: '1px solid #ff9999',
-                                borderRadius: '4px',
-                                marginBottom: '10px'
-                            }}>
-                                {error}
-                            </div>
-                        )}
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Fecha</div>
-                            </div>
-                            <input 
-                                type="date" 
-                                className="custom_input" 
-                                value={fecha} 
-                                onChange={(e) => setFecha(e.target.value)}
-                                disabled={isSubmitting}
-                            />
+            <div className='popup'>
+                <div className='content'>
+                    <motion.div
+                        className="menu_newTransaction"
+                        transition={{ 
+                            duration: 0.3,
+                            ease: "easeInOut"
+                        }}
+                    >
+                        <div className="menu_newTransaction_topBar">
+                            <div className="text open-sans"> Agregando Movimiento </div>
                         </div>
-
-                        <div className="entry">
-                            <div className="entry_label">                                    
-                                <div className="text open-sans">Cuenta</div>    
-                            </div>
-                            <select 
-                                className="custom_input" 
-                                value={cuenta} 
-                                onChange={(e) => setCuenta(e.target.value)}
-                                disabled={isSubmitting}
-                            >
-                                <option value="">-- Selecciona una cuenta --</option>
-                                {options.map((item) => (
-                                    <option key={item.id} value={item.id}>
-                                        {item.nombre} ({item.tipo_cuenta})
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Tipo</div>
-                            </div>
-                            <select 
-                                className="custom_input" 
-                                value={tipo} 
-                                onChange={(e) => setTipo(e.target.value)}
-                                disabled={isSubmitting}
-                            >
-                                <option value="">-- Selecciona un tipo de movimiento --</option>
-                                <option value="factura venta">Factura Venta</option>
-                                <option value="factura compra">Factura Compra</option>
-                                <option value="pago">Pago</option>
-                                <option value="cobranza">Cobranza</option>
-                                <option value="jornal">Jornal</option>
-                                <option value="alquiler">Alquiler</option>
-                                <option value="impuestos">Impuestos</option>
-                                <option value="sueldo">Sueldo</option>
-                                <option value="aguinaldo">Aguinaldo</option>
-                            </select>
-                        </div>
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Detalle</div>
-                            </div>
-                            <input 
-                                type="text" 
-                                className="custom_input" 
-                                placeholder="(OPCIONAL) Describir movimiento..."
-                                value={concepto} 
-                                onChange={(e) => setConcepto(e.target.value)}
-                                disabled={isSubmitting}
-                            />
-                        </div>
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Descuento (%)</div>
-                            </div>
-                            <input 
-                                type="number" 
-                                className="custom_input" 
-                                placeholder="(OPCIONAL) Ingresar descuento..."
-                                value={descuento} 
-                                onChange={(e) => setDescuento(e.target.value)}
-                                disabled={isSubmitting}
-                                min="0"
-                                max="100"
-                                step="0.1"
-                            />
-                        </div>
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Cantidad Abonada</div>
-                            </div>
-                            <input 
-                                type="number" 
-                                className="custom_input" 
-                                placeholder="Ingresar total abonado al registrar..."
-                                value={abonado} 
-                                onChange={(e) => setAbonado(e.target.value)}
-                                disabled={isSubmitting}
-                                min="0"
-                                step="0.01"
-                            />
-                        </div>
-                    </div>
-
-                    <div className='carrito'>
-                        <div className="topbar">
-                            <div className="text open-sans"> PRODUCTOS </div>
-                        </div>
-
-                        <div className="search">
-                            <input 
-                                type="text" 
-                                className="searchTerm" 
-                                placeholder="¿Qué producto estás buscando?"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                disabled={isSubmitting}
-                            />
-                            {searchTerm && (
-                                <div className="search-results">
-                                    {filteredData.length} producto{filteredData.length !== 1 ? 's' : ''} encontrado{filteredData.length !== 1 ? 's' : ''}
+    
+                        <div className="menu_newTransaction_main">
+                            <div className="entries">
+                                {/* Show error message */}
+                                {error && (
+                                    <div className="error-message" style={{
+                                        color: 'red',
+                                        padding: '10px',
+                                        backgroundColor: '#ffe6e6',
+                                        border: '1px solid #ff9999',
+                                        borderRadius: '4px',
+                                        marginBottom: '10px'
+                                    }}>
+                                        {error}
+                                    </div>
+                                )}
+    
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Fecha</div>
+                                    </div>
+                                    <input 
+                                        type="date" 
+                                        className="custom_input" 
+                                        value={fecha} 
+                                        onChange={(e) => setFecha(e.target.value)}
+                                        disabled={isSubmitting}
+                                    />
                                 </div>
-                            )}
-                        </div>
-
-                        <div className='container-box'>
-                            <div className='borderless-header'>
-                                <div><span>Stock</span></div>
-                                <div><span>Nombre</span></div>
-                                <div><span>Precio</span></div>
+    
+                                <div className="entry">
+                                    <div className="entry_label">                                    
+                                        <div className="text open-sans">Cuenta</div>    
+                                    </div>
+                                    <select 
+                                        className="custom_input" 
+                                        value={cuenta} 
+                                        onChange={(e) => setCuenta(e.target.value)}
+                                        disabled={isSubmitting}
+                                    >
+                                        <option value="">-- Selecciona una cuenta --</option>
+                                        {options.map((item) => (
+                                            <option key={item.id} value={item.id}>
+                                                {item.nombre} ({item.tipo_cuenta})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+    
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Tipo</div>
+                                    </div>
+                                    <select 
+                                        className="custom_input" 
+                                        value={tipo} 
+                                        onChange={(e) => setTipo(e.target.value)}
+                                        disabled={isSubmitting}
+                                    >
+                                        <option value="">-- Selecciona un tipo de movimiento --</option>
+                                        <option value="factura venta">Factura Venta</option>
+                                        <option value="factura compra">Factura Compra</option>
+                                        <option value="pago">Pago</option>
+                                        <option value="cobranza">Cobranza</option>
+                                        <option value="jornal">Jornal</option>
+                                        <option value="alquiler">Alquiler</option>
+                                        <option value="impuestos">Impuestos</option>
+                                        <option value="sueldo">Sueldo</option>
+                                        <option value="aguinaldo">Aguinaldo</option>
+                                    </select>
+                                </div>
+    
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Detalle</div>
+                                    </div>
+                                    <input 
+                                        type="text" 
+                                        className="custom_input" 
+                                        placeholder="(OPCIONAL) Describir movimiento..."
+                                        value={concepto} 
+                                        onChange={(e) => setConcepto(e.target.value)}
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+    
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Descuento (%)</div>
+                                    </div>
+                                    <input 
+                                        type="number" 
+                                        className="custom_input" 
+                                        placeholder="(OPCIONAL) Ingresar descuento..."
+                                        value={descuento} 
+                                        onChange={(e) => setDescuento(e.target.value)}
+                                        disabled={isSubmitting}
+                                        min="0"
+                                        max="100"
+                                        step="0.1"
+                                    />
+                                </div>
+    
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Cantidad Abonada</div>
+                                    </div>
+                                    <input 
+                                        type="number" 
+                                        className="custom_input" 
+                                        placeholder="Ingresar total abonado al registrar..."
+                                        value={abonado} 
+                                        onChange={(e) => setAbonado(e.target.value)}
+                                        disabled={isSubmitting}
+                                        min="0"
+                                        step="0.01"
+                                    />
+                                </div>
                             </div>
-
-                            <div className="container-wrapper-nopad">
-                                <AutoSizer>
-                                    {({ height, width }) => (
-                                        <List
-                                            height={height}
-                                            width={width}
-                                            itemCount={filteredData?.length || 0}
-                                            itemSize={60}
-                                            itemData={filteredData}
-                                            className="scroll-content"
-                                        >
-                                            {ProductItemWithAdd}
-                                        </List>
-                                    )}
-                                </AutoSizer>
-                            </div>
                         </div>
-                    </div>
-                    
-                    <div className="carrito">
-                        <div className="topbar">
-                            <div className="text open-sans"> CARRITO </div>
+                        
+                        <div className="menu_newTransaction_bottomBar">
+                            <button 
+                                className="bigButton button-shadow gray" 
+                                onClick={onClose}
+                                disabled={isSubmitting}
+                            >
+                                <div className="text open-sans">CANCELAR</div>  
+                            </button>
+                            <button 
+                                className="bigButton button-shadow green" 
+                                onClick={handleSubmit}
+                                disabled={isSubmitting}
+                            >
+                                <div className="text open-sans">
+                                    {isSubmitting ? 'PROCESANDO...' : 'ACEPTAR'}
+                                </div>
+                            </button>
                         </div>
-
-                        {/* CARRITO */}
-                        <div className="container">
-                            <div className="container-wrapper">
-                                <ProductGrid productos={data} carrito={carrito} onCarritoUpdate={handleCarritoUpdate}></ProductGrid>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                
-                <div className="menu_newTransaction_bottomBar">
-                    <button 
-                        className="bigButton button-shadow gray" 
-                        onClick={onClose}
-                        disabled={isSubmitting}
-                    >
-                        <div className="text open-sans">CANCELAR</div>
-                    </button>
-                    <button 
-                        className="bigButton button-shadow green" 
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                    >
-                        <div className="text open-sans">
-                            {isSubmitting ? 'PROCESANDO...' : 'ACEPTAR'}
-                        </div>
-                    </button>
+                    </motion.div>
+    
+                    {/* SOLO PARA FACTURAS DE VENTA / FACTURAS DE COMPRA */}
+                    <AnimatePresence>
+                        {shouldShowCart() && (
+                            <motion.div
+                                initial={{ 
+                                    opacity: 1, 
+                                    x: "0",
+                                    clipPath: "inset(0 0 0 0)"
+                                }}
+                                animate={{ 
+                                    opacity: 1, 
+                                    x: "0%",
+                                    clipPath: "inset(0 0 0 0)"
+                                }}
+                                exit={{ 
+                                    opacity: 1, 
+                                    x: "-100%", 
+                                    clipPath: "inset(0 0 0 100%)"
+                                }}
+                                transition={{ duration: 0.3 }}
+                                className='motion'
+                                >
+                                <div className='productSection'>
+                                    <div className="menu_newTransaction_topBar">
+                                        <div className="text open-sans"> Seleccionar Items </div>
+                                    </div>
+                                    <div className='row'>
+                                        <div className='carrito'>
+                                            <div className="topbar">
+                                                <div className="text open-sans"> PRODUCTOS </div>
+                                            </div>
+    
+                                            <div className="search">
+                                                <input 
+                                                    type="text" 
+                                                    className="searchTerm" 
+                                                    placeholder="¿Qué producto estás buscando?"
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                    disabled={isSubmitting}
+                                                />
+                                                {searchTerm && (
+                                                    <div className="search-results">
+                                                        {filteredData.length} producto{filteredData.length !== 1 ? 's' : ''} encontrado{filteredData.length !== 1 ? 's' : ''}
+                                                    </div>
+                                                )}
+                                            </div>
+    
+                                            <div className='container-box'>
+                                                <div className='borderless-header'>
+                                                    <div><span>Stock</span></div>
+                                                    <div><span>Nombre</span></div>
+                                                    <div><span>Precio</span></div>
+                                                </div>
+    
+                                                <div className="container-wrapper-nopad">
+                                                    <AutoSizer>
+                                                        {({ height, width }) => (
+                                                            <List
+                                                                height={height}
+                                                                width={width}
+                                                                itemCount={filteredData?.length || 0}
+                                                                itemSize={60}
+                                                                itemData={filteredData}
+                                                                className="scroll-content"
+                                                            >
+                                                                {ProductItemWithAdd}
+                                                            </List>
+                                                        )}
+                                                    </AutoSizer>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="carrito">
+                                            <div className="topbar">
+                                                <div className="text open-sans"> CARRITO </div>
+                                            </div>
+    
+                                            {/* CARRITO */}
+                                            <div className="container">
+                                                <div className="container-wrapper">
+                                                    <ProductGrid productos={data} carrito={carrito} onCarritoUpdate={handleCarritoUpdate}></ProductGrid>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </div>
-
+    
             <div className="blur-layer"></div>
         </div>
     );

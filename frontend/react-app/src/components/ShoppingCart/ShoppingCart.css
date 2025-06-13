@@ -36,6 +36,10 @@
 	border-color: #d1d5db;
 }
 
+.product-grid__item:hover .itemInput {
+	border: 1px solid gray;
+}
+
 .product-grid__item:hover .itemInput span {
 	opacity: 0;
 }
@@ -158,8 +162,15 @@
 }
 
 .itemInput:focus-within {
-	border: 1px solid gray;
 	transform: translateY(-10%);
+}
+
+.product-grid__item:hover .product-grid__input, .product-grid__item:focus-within .product-grid__input {
+	text-align: center;
+}
+
+.itemInput:hover .product-grid__input, .itemInput:focus-within .product-grid__input {
+	text-align: center;
 }
 
 .product-grid__input {
