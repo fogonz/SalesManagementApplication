@@ -277,7 +277,11 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                 <option value="factura compra">Factura Compra</option>
                                 <option value="pago">Pago</option>
                                 <option value="cobranza">Cobranza</option>
-                                <option value="factura c. varios">Factura C. Varios</option>
+                                <option value="jornal">Jornal</option>
+                                <option value="alquiler">Alquiler</option>
+                                <option value="impuestos">Impuestos</option>
+                                <option value="sueldo">Sueldo</option>
+                                <option value="aguinaldo">Aguinaldo</option>
                             </select>
                         </div>
 

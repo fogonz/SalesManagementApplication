@@ -234,7 +234,12 @@ export const validateTransaction = (formData: TransactionFormData): ValidationRe
 	  'factura_compra', 
 	  'factura_venta', 
 	  'pago', 
-	  'cobranza'
+	  'cobranza',
+	  'jornal', 
+	  'alquiler',
+	  'impuestos', 
+	  'sueldo', 
+	  'aguinaldo',
 	];
 	
 	const lc = tipo.toLowerCase() as Tipo;
@@ -247,7 +252,7 @@ export const validateTransaction = (formData: TransactionFormData): ValidationRe
 	}
 	
 	// Invoices must be sequential (this would need API call to get previous numbers)
-	if (lc === 'factura_compra' || lc === 'factura_venta' || lc === 'factura c. varios') {
+	if (lc === 'factura_compra' || lc === 'factura_venta') {
 	  // Note: In real implementation, you'd need to fetch previous numbers from API
 	  // For now, we'll just validate that if a number is provided, it's positive
 	  

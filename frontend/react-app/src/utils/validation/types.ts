@@ -28,4 +28,8 @@ export type Tipo =
 	| 'factura_venta' 
 	| 'pago' 
 	| 'cobranza' 
-	| 'factura c. varios';
+	| 'jornal' 
+	| 'alquiler' 
+	| 'impuestos' 
+	| 'sueldo' 
+	| 'aguinaldo';
