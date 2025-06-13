@@ -96,6 +96,7 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
                   const raw = (row as any)[col.key]
                   const content = col.format ? col.format(raw) : raw ?? '-'
                   const symbol = ['total', 'monto', 'estado'].includes(col.key) ? '$' : ''
+                  const symbolAfter = ['descuento', 'descuento_total'].includes(col.key) ? '%' : ''
 
                   return (
                     <div
@@ -125,7 +126,7 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
                         setHoveredCell({ x: 0, y: 0, width: 0, height: 0, opacity: 0, background: '#fff' })
                       }}
                     >
-                      {symbol}{content}
+                      {symbol}{content}{symbolAfter}
                     </div>
                   )
                 })}

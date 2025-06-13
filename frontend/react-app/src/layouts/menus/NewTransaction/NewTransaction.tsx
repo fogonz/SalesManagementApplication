@@ -6,23 +6,30 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { createHandleSubmit } from '../../../utils/validation/validate_insertTransaction';
 import ProductGrid from '../../../components/ShoppingCart/ShoppingCart'; 
 
-// Updated ProductItem with add functionality
-const ProductItem = ({ index, style, data, onAddProduct }) => (
-    <div style={style} className="productDB">
-        <div className='wrapper'>
-            <div className='hide'><span>{data[index]?.cantidad}</span></div>
-            <div className='scroll_content'><span className='show'>{data[index]?.tipo_producto}</span></div>
-            <div className='hide'><span>${data[index]?.precio_venta_unitario}</span></div>
+const ProductItem = ({ index, style, data, onAddProduct, carrito }) => {
+    // Check if the current product is in the cart
+    const isSelected = carrito.some(item => item.id === data[index]?.id);
+    
+    return (
+        <div 
+            style={style} 
+            className={`productDB ${isSelected ? 'selected' : 'hoverable'}`}
+        >
+            <div className='wrapper'>
+                <div className='hide'><span>{data[index]?.cantidad}</span></div>
+                <div className='scroll_content'><span className='show'>{data[index]?.tipo_producto}</span></div>
+                <div className='hide'><span>${data[index]?.precio_venta_unitario}</span></div>
+            </div>
+            <button 
+                className={`add_button ${isSelected ? 'selected-button' : ''}`}
+                onClick={() => onAddProduct(data[index])}
+                disabled={!data[index] || isSelected}
+            > 
+                <i className={`fas ${isSelected ? 'fa-check' : 'fa-plus'}`}></i> 
+            </button>
         </div>
-        <button 
-            className='add_button' 
-            onClick={() => onAddProduct(data[index])}
-            disabled={!data[index]}
-        > 
-            <i className='fas fa-plus'></i> 
-        </button>
-    </div>
-);
+    );
+};
 
 interface TransactionProps {
     onClose: () => void;
@@ -54,7 +61,7 @@ interface CuentaOption {
 }
 
 const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
-    const [fecha, setFecha] = useState<string>("");
+    const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
     const [cuenta, setCuenta] = useState<string>("");
     const [tipo, setTipo] = useState<string>("");
     const [descuento, setDescuento] = useState<string>("");
@@ -115,7 +122,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
 
     // Create a wrapper component for ProductItem to pass the onAddProduct function
     const ProductItemWithAdd = (props) => (
-        <ProductItem {...props} onAddProduct={handleAddProduct} />
+        <ProductItem {...props} onAddProduct={handleAddProduct} carrito={carrito} />
     );
 
     // Fetch: Table Cuentas

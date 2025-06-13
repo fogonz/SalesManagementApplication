@@ -95,7 +95,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 20vw;
+  max-width: 25vw;
   min-width: none;
   height: 95%;
   background-color: white;
@@ -447,6 +447,50 @@
   overflow: hidden;
 }
 
+.productDB.selected {
+  background-color: lightgray;
+  border: none;
+  outline: none;
+}
+
+.productDB.selected .wrapper div {
+  border: none;
+  outline: none;
+}
+
+.add_button.selected-button {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: #4caf50;
+  color: white;
+}
+
+.add_button.selected-button:hover {
+  background-color: #4caf50 !important;
+  transform: none !important;
+}
+
+.productDB.selected:hover .add_button {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.productDB.selected:hover .add_button i {
+  visibility: hidden;
+  opacity: 0%;
+}
+
+.productDB.selected:hover .wrapper div {
+  padding-left: 3%;
+  padding-right: 3%;
+}
+
+.productDB.selected:hover {
+  background-color: lightgray;
+}
+
 .productDB .wrapper span {
   color: black;
 }
@@ -459,33 +503,33 @@
   color: gray;
 }
 
-.productDB:hover .add_button {
+.productDB.hoverable:hover .add_button {
   opacity: 1;
   aspect-ratio: 1 / 1;
   height: 90%;
   width: auto;
 }
 
-.productDB:hover .add_button i {
+.productDB.hoverable:hover .add_button i {
   visibility: visible;
   opacity: 100%;
 }
 
-.productDB:hover .wrapper div {
+.productDB.hoverable:hover .wrapper div {
   padding: 0;
 }
 
-.productDB:hover .wrapper div:first-child {
+.productDB.hoverable:hover .wrapper div:first-child {
   width: 0;
   border: 0px solid lightgray;
 }
 
-.productDB:hover .wrapper div:last-child {
+.productDB.hoverable:hover .wrapper div:last-child {
   width: 0;
   border: 0px solid lightgray;
 }
 
-.productDB:hover {
+.productDB.hoverable:hover {
   background-color: rgba(71, 178, 62, 0.05);
 }
 

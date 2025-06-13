@@ -17,15 +17,16 @@
 	border-radius: 0.5rem;
 	padding: 1.25rem;
 	display: flex;
-	align-items: center;
-	justify-content: center;
 	text-align: center;
+	user-select: none;
 	cursor: pointer;
 	transition: all 0.2s ease-in-out;
 	box-sizing: border-box;
 	max-width: 100%;
 	aspect-ratio: 1 / 1;
 	overflow: hidden;
+	align-items: center;
+	justify-content: center;
 }
 
 /* Product Item Hover State */
@@ -49,16 +50,12 @@
 /* Controls Container */
 .product-grid__controls {
 	position: absolute;
-	top: 0.625rem;
-	right: 0.625rem;
+	top: 0;
 	display: flex;
 	gap: 0.25rem;
 	align-items: center;
 	background-color: rgba(255, 255, 255, 0.95);
-	padding: 0.375rem;
-	border-radius: 0.375rem;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-	border: 1px solid #f3f4f6;
+	padding: 10%;
 	opacity: 0;
 	visibility: hidden;
 	transform: translateY(-4px);
@@ -69,14 +66,12 @@
 .product-grid__controls--visible {
 	opacity: 1;
 	visibility: visible;
-	transform: translateY(0);
 }
 
 /* Control Buttons */
 .product-grid__button {
 	width: 1.75rem;
 	height: 1.75rem;
-	border: 1px solid #d1d5db;
 	background-color: #ffffff;
 	color: #374151;
 	cursor: pointer;
