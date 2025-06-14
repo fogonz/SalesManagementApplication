@@ -20,20 +20,21 @@
   background-color: white;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  padding: 1rem 0.75rem; 
-  height: fit-content;
-  min-height: 17vh; 
+  padding: 1rem 0.75rem;
+  height: auto; 
+  max-height: 200px; 
   width: auto;
   max-width: 100%;
-  min-width: 60px; 
+  min-width: 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  aspect-ratio: 0.8 / 1; 
   box-sizing: border-box;
   container-type: size;
+  overflow: hidden; 
 }
+
 
 .performance-label {
   font-size: 0.75rem;

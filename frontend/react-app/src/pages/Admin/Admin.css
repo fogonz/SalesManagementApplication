@@ -47,7 +47,6 @@
 }
 
 .dashboard-main-wrapper {
-  display: flex;
   flex-direction: row;
   gap: 1.5rem;
   box-sizing: border-box;
