@@ -75,17 +75,18 @@
 
 .menu_newAccount {
   background: #f4f5f8;
-  border-radius: 12px;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   color: black;
   animation: wideUp 0.5s forwards;
-  width: var(--newAccount-width);
-  height: var(--newAccount-width);
-
-  left: calc(50vw - var(--newAccount-width)/2);
-  top: calc(50vh - var(--newAccount-height)/2);
+  width: var(--newTransaction-width);
+  max-width: var(--newTransaction-width);
+  min-width: var(--newTransaction-width);
+  height: 100%;
+  z-index: 4;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .menu_newTransaction_topBar {

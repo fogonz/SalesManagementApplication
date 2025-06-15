@@ -98,110 +98,114 @@ const NewProduct: React.FC<ProductProps> = ({ onClose, onAccept, editingProduct 
     
     return(
         <div className="page">
-            <div className="menu_newAccount popup">
-                <div className="menu_newTransaction_topBar">
-                    <div className="text open-sans">
-                        {editingProduct ? 'Editando Producto' : 'Nuevo Producto'}
+            <div className='popup'>
+                <div className='content'>
+                    <div className="menu_newAccount">
+                        <div className="menu_newTransaction_topBar">
+                            <div className="text open-sans">
+                                {editingProduct ? 'Editando Producto' : 'Nuevo Producto'}
+                            </div>
+                        </div>
+
+                        <div className="menu_newTransaction_main">
+                            <div className="entries">
+                                {/* Show error message */}
+                                {error && (
+                                    <div className="error-message" style={{
+                                        color: 'red',
+                                        padding: '10px',
+                                        backgroundColor: '#ffe6e6',
+                                        border: '1px solid #ff9999',
+                                        borderRadius: '4px',
+                                        marginBottom: '10px'
+                                    }}>
+                                        {error}
+                                    </div>
+                                )}
+
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Nombre del Producto</div>
+                                    </div>
+                                    <input 
+                                        type="text" 
+                                        className="custom_input" 
+                                        placeholder="Ingrese el nombre del producto..."
+                                        value={tipoProducto} 
+                                        onChange={(e) => setTipoProducto(e.target.value)}
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Precio de Venta Unitario</div>
+                                    </div>
+                                    <input 
+                                        type="number" 
+                                        className="custom_input" 
+                                        placeholder="Ingrese el precio de venta por unidad..."
+                                        value={precioVentaUnitario} 
+                                        onChange={(e) => setPrecioVentaUnitario(e.target.value)}
+                                        disabled={isSubmitting}
+                                        step="0.01"
+                                        min="0"
+                                    />
+                                </div>
+
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Costo Unitario</div>
+                                    </div>
+                                    <input 
+                                        type="number" 
+                                        className="custom_input" 
+                                        placeholder="Ingrese el costo unitario..."
+                                        value={costoUnitario} 
+                                        onChange={(e) => setCostoUnitario(e.target.value)}
+                                        disabled={isSubmitting}
+                                        step="0.01"
+                                        min="0"
+                                    />
+                                </div>
+
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Cantidad</div>
+                                    </div>
+                                    <input 
+                                        type="number" 
+                                        className="custom_input" 
+                                        placeholder="Ingrese la cantidad disponible..."
+                                        value={cantidad} 
+                                        onChange={(e) => setCantidad(e.target.value)}
+                                        disabled={isSubmitting}
+                                        step="1"
+                                        min="0"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="menu_newTransaction_bottomBar">
+                            <button 
+                                className="bigButton button-shadow gray" 
+                                onClick={onClose}
+                                disabled={isSubmitting}
+                            >
+                                <div className="text open-sans">CANCELAR</div>
+                            </button>
+                            <button 
+                                className="bigButton button-shadow green"
+                                onClick={handleSubmit}
+                                disabled={isSubmitting}
+                            >
+                                <div className="text open-sans">
+                                    {isSubmitting ? 'PROCESANDO...' : 'ACEPTAR'}
+                                </div>
+                            </button>
+                        </div>
                     </div>
-                </div>
-
-                <div className="menu_newTransaction_main">
-                    <div className="entries">
-                        {/* Show error message */}
-                        {error && (
-                            <div className="error-message" style={{
-                                color: 'red',
-                                padding: '10px',
-                                backgroundColor: '#ffe6e6',
-                                border: '1px solid #ff9999',
-                                borderRadius: '4px',
-                                marginBottom: '10px'
-                            }}>
-                                {error}
-                            </div>
-                        )}
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Nombre del Producto</div>
-                            </div>
-                            <input 
-                                type="text" 
-                                className="custom_input" 
-                                placeholder="Ingrese el nombre del producto..."
-                                value={tipoProducto} 
-                                onChange={(e) => setTipoProducto(e.target.value)}
-                                disabled={isSubmitting}
-                            />
-                        </div>
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Precio de Venta Unitario</div>
-                            </div>
-                            <input 
-                                type="number" 
-                                className="custom_input" 
-                                placeholder="Ingrese el precio de venta por unidad..."
-                                value={precioVentaUnitario} 
-                                onChange={(e) => setPrecioVentaUnitario(e.target.value)}
-                                disabled={isSubmitting}
-                                step="0.01"
-                                min="0"
-                            />
-                        </div>
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Costo Unitario</div>
-                            </div>
-                            <input 
-                                type="number" 
-                                className="custom_input" 
-                                placeholder="Ingrese el costo unitario..."
-                                value={costoUnitario} 
-                                onChange={(e) => setCostoUnitario(e.target.value)}
-                                disabled={isSubmitting}
-                                step="0.01"
-                                min="0"
-                            />
-                        </div>
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Cantidad</div>
-                            </div>
-                            <input 
-                                type="number" 
-                                className="custom_input" 
-                                placeholder="Ingrese la cantidad disponible..."
-                                value={cantidad} 
-                                onChange={(e) => setCantidad(e.target.value)}
-                                disabled={isSubmitting}
-                                step="1"
-                                min="0"
-                            />
-                        </div>
-                    </div>
-                </div>
-                
-                <div className="menu_newTransaction_bottomBar">
-                    <button 
-                        className="bigButton button-shadow gray" 
-                        onClick={onClose}
-                        disabled={isSubmitting}
-                    >
-                        <div className="text open-sans">CANCELAR</div>
-                    </button>
-                    <button 
-                        className="bigButton button-shadow green"
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                    >
-                        <div className="text open-sans">
-                            {isSubmitting ? 'PROCESANDO...' : 'ACEPTAR'}
-                        </div>
-                    </button>
                 </div>
             </div>
 

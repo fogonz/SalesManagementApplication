@@ -103,122 +103,126 @@ const NewAccount: React.FC<AccountProps> = ({ onClose, onAccept, editingAccount 
     
     return(
         <div className="page">
-            <div className="menu_newAccount popup">
-                <div className="menu_newTransaction_topBar">
-                    <div className="text open-sans">
-                        {editingAccount ? 'Editando Cuenta' : 'Nueva Cuenta'}
-                    </div>
-                </div>
-
-                <div className="menu_newTransaction_main">
-                    <div className="entries">
-                        {/* Show error message */}
-                        {error && (
-                            <div className="error-message" style={{
-                                color: 'red',
-                                padding: '10px',
-                                backgroundColor: '#ffe6e6',
-                                border: '1px solid #ff9999',
-                                borderRadius: '4px',
-                                marginBottom: '10px'
-                            }}>
-                                {error}
+            <div className='popup'>
+                <div className='content'>
+                    <div className="menu_newAccount">
+                        <div className="menu_newTransaction_topBar">
+                            <div className="text open-sans">
+                                {editingAccount ? 'Editando Cuenta' : 'Nueva Cuenta'}
                             </div>
-                        )}
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Nombre *</div>
-                            </div>
-                            <input 
-                                type="text" 
-                                className="custom_input" 
-                                placeholder="Ingrese el nombre de la cuenta..."
-                                value={nombre} 
-                                onChange={(e) => setNombre(e.target.value)}
-                                disabled={isSubmitting}
-                            />
                         </div>
 
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Tipo de Cuenta *</div>
+                        <div className="menu_newTransaction_main">
+                            <div className="entries">
+                                {/* Show error message */}
+                                {error && (
+                                    <div className="error-message" style={{
+                                        color: 'red',
+                                        padding: '10px',
+                                        backgroundColor: '#ffe6e6',
+                                        border: '1px solid #ff9999',
+                                        borderRadius: '4px',
+                                        marginBottom: '10px'
+                                    }}>
+                                        {error}
+                                    </div>
+                                )}
+
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Nombre *</div>
+                                    </div>
+                                    <input 
+                                        type="text" 
+                                        className="custom_input" 
+                                        placeholder="Ingrese el nombre de la cuenta..."
+                                        value={nombre} 
+                                        onChange={(e) => setNombre(e.target.value)}
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Tipo de Cuenta *</div>
+                                    </div>
+                                    <select 
+                                        className="custom_input" 
+                                        value={tipoCuenta} 
+                                        onChange={(e) => setTipoCuenta(e.target.value)}
+                                        disabled={isSubmitting}
+                                    >
+                                        <option value="">-- Selecciona un tipo de cuenta --</option>
+                                        <option value="proveedor">Proveedor</option>
+                                        <option value="cliente">Cliente</option>
+                                        <option value="empleado">Empleado</option>
+                                    </select>
+                                </div>
+
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Monto *</div>
+                                    </div>
+                                    <input 
+                                        type="number" 
+                                        className="custom_input" 
+                                        placeholder="Ingrese el monto inicial..."
+                                        value={monto} 
+                                        onChange={(e) => setMonto(e.target.value)}
+                                        disabled={isSubmitting}
+                                        step="0.01"
+                                    />
+                                </div>
+
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Email de Contacto</div>
+                                    </div>
+                                    <input 
+                                        type="email" 
+                                        className="custom_input" 
+                                        placeholder="(OPCIONAL) Ingrese email de contacto..."
+                                        value={contactoMail} 
+                                        onChange={(e) => setContactoMail(e.target.value)}
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+
+                                <div className="entry">
+                                    <div className="entry_label">
+                                        <div className="text open-sans">Teléfono de Contacto</div>
+                                    </div>
+                                    <input 
+                                        type="tel" 
+                                        className="custom_input" 
+                                        placeholder="(OPCIONAL) Ingrese teléfono de contacto..."
+                                        value={contactoTelefono} 
+                                        onChange={(e) => setContactoTelefono(e.target.value)}
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
                             </div>
-                            <select 
-                                className="custom_input" 
-                                value={tipoCuenta} 
-                                onChange={(e) => setTipoCuenta(e.target.value)}
+                        </div>
+                        
+                        <div className="menu_newTransaction_bottomBar">
+                            <button 
+                                className="bigButton button-shadow gray" 
+                                onClick={onClose}
                                 disabled={isSubmitting}
                             >
-                                <option value="">-- Selecciona un tipo de cuenta --</option>
-                                <option value="proveedor">Proveedor</option>
-                                <option value="cliente">Cliente</option>
-                                <option value="empleado">Empleado</option>
-                            </select>
-                        </div>
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Monto *</div>
-                            </div>
-                            <input 
-                                type="number" 
-                                className="custom_input" 
-                                placeholder="Ingrese el monto inicial..."
-                                value={monto} 
-                                onChange={(e) => setMonto(e.target.value)}
+                                <div className="text open-sans">CANCELAR</div>
+                            </button>
+                            <button 
+                                className="bigButton button-shadow green"
+                                onClick={handleSubmit}
                                 disabled={isSubmitting}
-                                step="0.01"
-                            />
-                        </div>
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Email de Contacto</div>
-                            </div>
-                            <input 
-                                type="email" 
-                                className="custom_input" 
-                                placeholder="(OPCIONAL) Ingrese email de contacto..."
-                                value={contactoMail} 
-                                onChange={(e) => setContactoMail(e.target.value)}
-                                disabled={isSubmitting}
-                            />
-                        </div>
-
-                        <div className="entry">
-                            <div className="entry_label">
-                                <div className="text open-sans">Teléfono de Contacto</div>
-                            </div>
-                            <input 
-                                type="tel" 
-                                className="custom_input" 
-                                placeholder="(OPCIONAL) Ingrese teléfono de contacto..."
-                                value={contactoTelefono} 
-                                onChange={(e) => setContactoTelefono(e.target.value)}
-                                disabled={isSubmitting}
-                            />
+                            >
+                                <div className="text open-sans">
+                                    {isSubmitting ? 'PROCESANDO...' : 'ACEPTAR'}
+                                </div>
+                            </button>
                         </div>
                     </div>
-                </div>
-                
-                <div className="menu_newTransaction_bottomBar">
-                    <button 
-                        className="bigButton button-shadow gray" 
-                        onClick={onClose}
-                        disabled={isSubmitting}
-                    >
-                        <div className="text open-sans">CANCELAR</div>
-                    </button>
-                    <button 
-                        className="bigButton button-shadow green"
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                    >
-                        <div className="text open-sans">
-                            {isSubmitting ? 'PROCESANDO...' : 'ACEPTAR'}
-                        </div>
-                    </button>
                 </div>
             </div>
 
