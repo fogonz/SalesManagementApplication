@@ -108,17 +108,11 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveVi
         return [];
     }
   };
-
-  const handleAddProduct = () => {
-    if (productDisplayRef.current) {
-      productDisplayRef.current.addProduct();
-    }
-  };
-
+  
   const handleAdd = () => {
     if (activeView === 'movimientos') return onOpenMenu();
     if (activeView === 'cuentas') return onOpenMenu();
-    if (activeView === 'productos') return handleAddProduct();
+    if (activeView === 'productos') return onOpenMenu();
   };
 
   const normalizeText = (text: any): string => {
@@ -192,10 +186,6 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveVi
     try {
       const res = await fetch(`http://localhost:8000/api/${activeView}`);
       const json = await res.json();
-      if (activeView === "movimientos"){ // Fixed syntax error here
-        console.log("MOVIMIENTOS:")
-        console.log(json)
-      }
       setData(json);
     } catch (err) {
       console.error(`Error al cargar ${activeView}:`, err);
@@ -218,12 +208,18 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveVi
     fetchData();
   }, [activeView, cuentas]); 
 
-  // Effect for refreshing data when refreshTrigger changes
   useEffect(() => {
     if (refreshTrigger && refreshTrigger > 0) {
-      fetchData();
+      if (activeView === 'productos') {
+        // Trigger refresh on ProductDisplay component
+        if (productDisplayRef.current && productDisplayRef.current.refreshData) {
+          productDisplayRef.current.refreshData();
+        }
+      } else {
+        fetchData();
+      }
     }
-  }, [refreshTrigger]);
+  }, [refreshTrigger, activeView]);
   
   // Close calendar when clicking outside
   useEffect(() => {
@@ -280,14 +276,10 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveVi
           </div>
 
           <div className="toolbar-actions">
-            {activeView !== 'productos' && (
+            {(
               <button
               title={
-                activeView === 'movimientos'
-                  ? 'Agregar Movimiento'
-                  : activeView === 'cuentas'
-                  ? 'Agregar Cuenta'
-                  : 'Agregar Producto'
+                activeView === 'movimientos' ? 'Agregar Movimiento' : activeView === 'cuentas' ? 'Agregar Cuenta' : activeView === 'productos' ? 'Agregar Producto' : 'Agregar Movimiento'
               }
               className="add-button"
               onClick={handleAdd}
@@ -310,7 +302,7 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveVi
 
         <div id="table-container">
           {activeView === 'productos' ? (
-            <ProductDisplay ref={productDisplayRef} searchTerm={searchTerm} />
+            <ProductDisplay ref={productDisplayRef} searchTerm={searchTerm} refreshTrigger={refreshTrigger}/>
           ) : (
             <TableComponent rows={filteredData} columns={getColumnsForActiveView()} tableType={activeView}/>
           )}

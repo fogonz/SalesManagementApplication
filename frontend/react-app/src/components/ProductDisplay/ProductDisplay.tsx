@@ -3,36 +3,48 @@ import "./ProductDisplay.css";
 
 export interface ProductDisplayRef {
   addProduct: () => void;
+  refreshData: () => void; // Add this method
 }
 
 interface ProductDisplayProps {
   searchTerm?: string;
+  refreshTrigger?: number;
 }
 
-const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ searchTerm = '' }, ref) => {
+const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ searchTerm = '', refreshTrigger }, ref) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Extract fetch function so it can be reused
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:8000/api/productos/');
+      if (!response.ok) throw new Error('Error al obtener productos');
+
+      const data = await response.json();
+      setProducts(data);
+      console.log(data);
+      setError(null); // Clear any previous errors
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial fetch on component mount
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('http://localhost:8000/api/productos/');
-        if (!response.ok) throw new Error('Error al obtener productos');
-
-        const data = await response.json();
-        setProducts(data);
-        console.log(data)
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProducts();
-
   }, []);
+
+  // Handle refreshTrigger prop changes
+  useEffect(() => {
+    if (refreshTrigger && refreshTrigger > 0) {
+      fetchProducts();
+    }
+  }, [refreshTrigger]);
 
   const handleChange = (id, key, value) => {
     setProducts((prev) =>
@@ -100,9 +112,10 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
     );
   });
 
-  // Exponer la función addProduct al componente padre
+  // Exponer las funciones al componente padre
   useImperativeHandle(ref, () => ({
-    addProduct
+    addProduct,
+    refreshData: fetchProducts // Expose the refresh function
   }));
 
   if (loading) {

@@ -4,6 +4,7 @@ import SideBar from "../../layouts/SideBar/SideBar";
 import TableBox from "../../components/TableBox/TableBox";
 import Transaction from "../../layouts/menus/NewTransaction/NewTransaction";
 import NewAccount from "../../layouts/menus/NewAccount/NewAccount";
+import NewProduct from "../../layouts/menus/NewProduct/NewProduct";
 
 type Tabla = "movimientos" | "cuentas" | "productos";
 type Menu = 'transaction' | 'account' | 'product' | null;
@@ -22,6 +23,18 @@ const Home = () => {
     setRefreshTrigger(prev => prev + 1);
   };
 
+  const handleAcceptAccount = () => {
+    console.log("Cuenta guardada");
+    close();
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleAcceptProduct = () => {
+    console.log("Producto guardado");
+    close();
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   return (
     <div className="app-wrapper">
       <div className={`app-content ${openMenu ? "blurred" : ""}`}>
@@ -35,11 +48,10 @@ const Home = () => {
           setActiveView={setActiveView}
           refreshTrigger={refreshTrigger}
           onOpenMenu={() => open(
-            activeView === 'movimientos'
-              ? 'transaction'
-              : activeView === 'cuentas'
-              ? 'account'
-              : 'product'
+            activeView === 'movimientos' ? 'transaction' : 
+            activeView === 'cuentas' ? 'account' : 
+            activeView === 'productos' ? 'product' :
+            'transaction'
           )}
         />
       </div>
@@ -49,18 +61,13 @@ const Home = () => {
         <Transaction onClose={close} onAccept={handleAcceptTransaction} />
       )}
       {openMenu === 'account' && (
-        <NewAccount onClose={close} onAccept={handleAcceptTransaction} />
+        <NewAccount onClose={close} onAccept={handleAcceptAccount} />
       )}
       {openMenu === 'product' && (
-        <Transaction onClose={close} onAccept={() => {
-          console.log("Producto creado");
-          close();
-          setRefreshTrigger(prev => prev + 1);
-        }} />
+        <NewProduct onClose={close} onAccept={handleAcceptProduct} />
       )}
     </div>
   );
 };
-
 
 export default Home;
