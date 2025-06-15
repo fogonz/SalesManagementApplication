@@ -7,7 +7,7 @@
 }
 
 .dashboard-container {
-  background-color: #838282c9;
+  background-color: #646464c9;
   width: calc(100% - var(--sidebar-width));
   min-width: 0;
   min-height: 100vh;

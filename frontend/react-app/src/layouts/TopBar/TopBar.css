@@ -142,3 +142,11 @@
     font-size: 14px;
     line-height: 1;
 }
+
+/* Header Right Controls - Contenedor para Dark Mode y Help Button */
+.header-right-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+}

@@ -1,29 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import './help.css'
 
 const HelpMenu: React.FC = () => {
   const [openIndexes, setOpenIndexes] = useState<number[]>([])
-  const [darkMode, setDarkMode] = useState(false)
-
-  // Cargar preferencia de modo oscuro desde localStorage
-  useEffect(() => {
-    const savedMode = localStorage.getItem('darkMode')
-    if (savedMode === 'enabled') {
-      setDarkMode(true)
-      document.body.classList.add('dark-mode')
-    }
-  }, [])
-
-  // Actualizar clase del body cada vez que cambia darkMode
-  useEffect(() => {
-    if (darkMode) {
-      document.body.classList.add('dark-mode')
-      localStorage.setItem('darkMode', 'enabled')
-    } else {
-      document.body.classList.remove('dark-mode')
-      localStorage.setItem('darkMode', 'disabled')
-    }
-  }, [darkMode])
 
   // Alternar visibilidad de una respuesta
   const toggleAnswer = (index: number) => {
@@ -91,18 +70,6 @@ const HelpMenu: React.FC = () => {
           </div>
         </React.Fragment>
       ))}
-
-      <div className="dark-mode-container">
-        <span>Modo Oscuro</span>
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={darkMode}
-            onChange={() => setDarkMode((prev) => !prev)}
-          />
-          <span className="slider"></span>
-        </label>
-      </div>
     </div>
   )
 }
