@@ -6,6 +6,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { createHandleSubmit } from '../../../utils/validation/validate_insertTransaction';
 import ProductGrid from '../../../components/ShoppingCart/ShoppingCart'; 
 import { AnimatePresence, motion } from "framer-motion";
+import ShoppingCartTotal from '../../../components/ShoppingCart/ShoppingCartTotal';
 
 const ProductItem = ({ index, style, data, onAddProduct, carrito }) => {
     // Check if the current product is in the cart
@@ -52,6 +53,12 @@ export interface ProductoRow {
     costo_unitario: any;
 }
 
+interface Producto {
+    id: number;
+    tipo_producto: string;
+    precio_venta_unitario: number;
+}
+
 interface CuentaOption {
     id: number;
     nombre: string;
@@ -76,6 +83,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     const [data, setData] = useState<ProductoRow[] | null>(null);
     const [options, setOptions] = useState<CuentaOption[]>([]);
     const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
+    const totalCarrito = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
     const handleCarritoUpdate = (nuevoCarrito: ItemCarrito[]) => {
         setCarrito(nuevoCarrito);
@@ -460,6 +468,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                                     <ProductGrid productos={data} carrito={carrito} onCarritoUpdate={handleCarritoUpdate}></ProductGrid>
                                                 </div>
                                             </div>
+                                            <ShoppingCartTotal total={totalCarrito}></ShoppingCartTotal>
                                         </div>
                                     </div>
                                 </div>

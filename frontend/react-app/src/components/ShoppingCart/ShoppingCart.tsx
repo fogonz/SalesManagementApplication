@@ -52,6 +52,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ productos, carrito, onCarrito
     onCarritoUpdate(nuevoCarrito);
   };
 
+  const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+
   const incrementarCantidad = (producto: Producto): void => {
     const cantidadActual = obtenerCantidad(producto.id);
     actualizarCantidad(producto, cantidadActual + 1);
@@ -179,9 +181,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ productos, carrito, onCarrito
                 >
                   +
                 </button>
+
               </div>
             </div>
-          );
+          )
         })}
     </div>
   );
