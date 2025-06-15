@@ -4,21 +4,68 @@
 	opacity: 0;
 	transform-origin: center;
 	transition: transform 0.3s ease, opacity 0.3s ease;
-	background-color: white;
 	box-shadow: rgba(0, 0, 0, 0.20) 0px 14px 28px, rgba(0, 0, 0, 0.18) 0px 10px 10px;
 	z-index: 9999;
 	pointer-events: none;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	padding: 0 1%;
+	justify-content: center;
 	color: var(--font-color-table);
 	text-wrap: nowrap;
-	width: max-content;
-	max-width: max-content;
-	min-width: fit-content;
 }
 
 .floating-cell.visible {
 	transform: scale(1.2);
 	opacity: 1;
+}
+
+/*.floating-cell .content {}*/
+
+@keyframes drop {
+	0% {
+		clip-path: inset(0 0 100% 0);
+	}
+
+	100% {
+		clip-path: inset(0 0 0 0);
+	}
+}
+
+
+.floating-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.9rem;
+}
+
+.floating-list li {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	padding: 4px 8px;
+	align-items: center;
+	gap: 8px;
+	border-bottom: 1px solid #ddd;
+	white-space: nowrap;
+	background-color: white;
+}
+
+.floating-list li span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 2px 4px;
+}
+
+.floating-cell .list-header {
+	font-weight: bold;
+	background-color: #333;
+	color: white;
+	border-bottom: 2px solid #111;
+}
+
+.list-header span {
+	font-weight: bold;
 }

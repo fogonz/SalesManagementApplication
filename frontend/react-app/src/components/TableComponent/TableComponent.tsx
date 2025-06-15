@@ -22,6 +22,7 @@ export interface MovimientoRow {
   cuenta?: string
   tipoMovimiento?: string
   abonado?: number | null
+  items?: { nombre_producto: string }[]
 }
 
 export interface CuentaRow {
@@ -105,7 +106,14 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
                 {columns.map(col => {
                   const raw = (row as any)[col.key]
                   let content = col.format ? col.format(raw) : raw ?? '-'
-                  
+
+                  if (
+                    col.key === 'concepto' &&
+                    (row as any).items &&
+                    ['factura_venta', 'factura_compra'].includes((row as any).tipo)
+                  ) {
+                    content = `${(row as any).items.length} producto/s`
+                  }
                   
                   if (col.key === 'tipo' || col.key === 'tipo_cuenta' || col.key === 'tipoMovimiento') {
                     content = content !== '-' ? formatTipoValue(content) : content
@@ -122,7 +130,17 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
                       onMouseEnter={e => {
                         const rect = e.currentTarget.getBoundingClientRect()
                         const wrap = tableRef.current?.getBoundingClientRect()
+
+                        // Don't show anything in case there's no cell being hovered
                         if (!wrap) return
+
+                        const items =
+                          col.key === 'concepto' &&
+                          tableType === 'movimientos' &&
+                          (row as MovimientoRow).items
+                            ? (row as MovimientoRow).items
+                            : undefined
+
                         setHoveredCell({
                           x: rect.left - wrap.left,
                           y: rect.top - wrap.top,
@@ -132,6 +150,7 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
                           background: bgColor,
                           symbol,
                           content,
+                          items,
                           currentCol: col.key
                         })
                       }}

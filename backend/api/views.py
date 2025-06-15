@@ -1,14 +1,18 @@
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from .serializers import TransaccionesSerializer, CuentasSerializer, ProductosSerializer, TransaccionItemsSerializer, VentaProductoSerializer
 from .models import Transacciones, Cuentas, Productos, TransaccionItems
 
 class TransaccionesViewSet(viewsets.ModelViewSet):
-    queryset = Transacciones.objects.all()
     serializer_class = TransaccionesSerializer
     permission_classes = [permissions.AllowAny]
+    
+    def get_queryset(self):
+        return Transacciones.objects.annotate(
+            cantidad_productos=Count('transaccionitems')
+        )
 
 class TransaccionItemsViewSet(viewsets.ModelViewSet):
     queryset = TransaccionItems.objects.all()

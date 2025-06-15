@@ -87,6 +87,8 @@ class TransaccionItemsSerializer(serializers.ModelSerializer):
 
 
 class TransaccionesSerializer(serializers.ModelSerializer):
+    cantidad_productos = serializers.IntegerField(read_only=True)
+    
     items = TransaccionItemsSerializer(
         source='transaccionitems_set',
         many=True,
@@ -96,16 +98,7 @@ class TransaccionesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transacciones
-        fields = [
-            'id',
-            'tipo',
-            'fecha',
-            'cuenta',
-            'total',
-            'descuento_total',
-            'concepto',
-            'items',
-        ]
+        fields = '__all__'
 
     def create(self, validated_data):
         # 1) Sacamos la lista de items del validated_data
