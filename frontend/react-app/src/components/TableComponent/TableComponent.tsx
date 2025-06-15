@@ -49,6 +49,16 @@ type TableProps = {
   tableType: 'movimientos' | 'cuentas' | 'productos'
 }
 
+// Helper function to format tipo values
+const formatTipoValue = (value: string): string => {
+  if (!value) return value
+  
+  // Replace underscores with spaces and capitalize first letter
+  return value
+    .replace(/_/g, ' ')
+    .charAt(0).toUpperCase() + value.replace(/_/g, ' ').slice(1)
+}
+
 const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
   const tableRef = useRef<HTMLDivElement>(null)
   const [hoveredCell, setHoveredCell] = useState<any>(null)
@@ -94,7 +104,13 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
               <div key={(row as any).id} className="table_row" style={{ backgroundColor: bgColor }}>
                 {columns.map(col => {
                   const raw = (row as any)[col.key]
-                  const content = col.format ? col.format(raw) : raw ?? '-'
+                  let content = col.format ? col.format(raw) : raw ?? '-'
+                  
+                  
+                  if (col.key === 'tipo' || col.key === 'tipo_cuenta' || col.key === 'tipoMovimiento') {
+                    content = content !== '-' ? formatTipoValue(content) : content
+                  }
+                  
                   const symbol = ['total', 'monto', 'estado'].includes(col.key) ? '$' : ''
                   const symbolAfter = ['descuento', 'descuento_total'].includes(col.key) ? '%' : ''
 
