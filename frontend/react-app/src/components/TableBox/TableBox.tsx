@@ -125,18 +125,33 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveVi
     setSearchTerm(event.target.value);
   };
 
+  // Helper function to extract dates from search term
+  const extractDatesFromSearchTerm = (term: string): string[] => {
+    const datePattern = /\b\d{4}-\d{2}-\d{2}\b/g;
+    const matches = term.match(datePattern);
+    return matches || [];
+  };
+
+  // Helper function to get non-date search terms
+  const getNonDateSearchTerm = (term: string): string => {
+    return term.replace(/\b\d{4}-\d{2}-\d{2}\b/g, '').replace(/\s+/g, ' ').trim();
+  };
+
   const filteredData = (data as any[]).filter(item => {
-    const normalizedSearchTerm = normalizeText(searchTerm);
+    const nonDateSearchTerm = getNonDateSearchTerm(searchTerm);
+    const datesInSearchTerm = extractDatesFromSearchTerm(searchTerm);
+    const normalizedSearchTerm = normalizeText(nonDateSearchTerm);
     
-    // Date filter logic
+    // Date filter logic - check both selected dates and dates in search term
+    const allDatesToFilter = [...selectedDates, ...datesInSearchTerm];
     const dateMatch =
-      selectedDates.length === 0 ||
-      (activeView === 'movimientos' && selectedDates.includes(item.fecha));
+      allDatesToFilter.length === 0 ||
+      (activeView === 'movimientos' && allDatesToFilter.includes(item.fecha));
 
     if (!dateMatch) return false;
 
-    // If no search term, return items that pass date filter
-    if (!searchTerm.trim()) return true;
+    // If no non-date search term, return items that pass date filter
+    if (!nonDateSearchTerm) return true;
 
     // Search logic based on active view
     if (activeView === 'movimientos') {
@@ -194,10 +209,18 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveVi
 
   const handleDateSelect = (dates: string[]) => {
     setSelectedDates(dates);
+    
+    
+    const nonDateSearchTerm = getNonDateSearchTerm(searchTerm);
+    const datesString = dates.length > 0 ? dates.join(' ') : '';
+    const newSearchTerm = [nonDateSearchTerm, datesString].filter(Boolean).join(' ');
+    setSearchTerm(newSearchTerm);
   };
 
   const clearDateFilter = () => {
     setSelectedDates([]);
+    const nonDateSearchTerm = getNonDateSearchTerm(searchTerm);
+    setSearchTerm(nonDateSearchTerm);
   };
 
   useEffect(() => {
@@ -211,7 +234,6 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveVi
   useEffect(() => {
     if (refreshTrigger && refreshTrigger > 0) {
       if (activeView === 'productos') {
-        // Trigger refresh on ProductDisplay component
         if (productDisplayRef.current && productDisplayRef.current.refreshData) {
           productDisplayRef.current.refreshData();
         }
@@ -258,7 +280,7 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveVi
             <div className="toolbar-icon" onClick={() => setShowCalendar(!showCalendar)} style={{ position: 'relative' }}>
               <i className="fas fa-table"></i>
               {showCalendar && (
-                <div className="calendar-popup" ref={calendarRef}>
+                <div className="calendar-popup-left" ref={calendarRef}>
                   <Calendar onDateSelect={handleDateSelect} />
                 </div>
               )}
@@ -273,32 +295,30 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveVi
             <button className="search-button">
               <i className="fas fa-search"></i>
             </button>
+            
+            {selectedDates.length > 0 && (
+              <button 
+                className="clear-dates-btn" 
+                onClick={clearDateFilter}
+                title="Limpiar fechas seleccionadas"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            )}
           </div>
 
           <div className="toolbar-actions">
-            {(
-              <button
+            <button
               title={
                 activeView === 'movimientos' ? 'Agregar Movimiento' : activeView === 'cuentas' ? 'Agregar Cuenta' : activeView === 'productos' ? 'Agregar Producto' : 'Agregar Movimiento'
               }
               className="add-button"
               onClick={handleAdd}
-              >
-                <AddButton />
-              </button>
-            )}
-          </div>
-          
-        </div>
-
-        {selectedDates.length > 0 && activeView === 'movimientos' && (
-          <div className="date-filter-info">
-            Filtrado por fechas: {selectedDates.join(', ')}
-            <button onClick={clearDateFilter} className="clear-filter-btn">
-              Limpiar filtro
+            >
+              <AddButton />
             </button>
-            </div>
-        )}
+          </div>
+        </div>
 
         <div id="table-container">
           {activeView === 'productos' ? (

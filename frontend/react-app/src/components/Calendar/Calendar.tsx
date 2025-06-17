@@ -25,28 +25,17 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect }) => {
   const firstDayWeekday = firstDayOfMonth.getDay();
   const daysInMonth = lastDayOfMonth.getDate();
   
-  // Fixed navigation functions to properly update the state and prevent event bubbling
-  const prevMonth = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newDate = new Date(currentYear, currentMonth - 1, 1);
+  const navigateMonth = (direction: 'prev' | 'next', e: React.MouseEvent) => {
+    e.stopPropagation(); 
+    const newMonth = direction === 'prev' ? currentMonth - 1 : currentMonth + 1;
+    const newDate = new Date(currentYear, newMonth, 1);
     setCurrentDate(newDate);
   };
   
-  const nextMonth = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newDate = new Date(currentYear, currentMonth + 1, 1);
-    setCurrentDate(newDate);
-  };
-  
-  const prevYear = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newDate = new Date(currentYear - 1, currentMonth, 1);
-    setCurrentDate(newDate);
-  };
-  
-  const nextYear = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newDate = new Date(currentYear + 1, currentMonth, 1);
+  const navigateYear = (direction: 'prev' | 'next', e: React.MouseEvent) => {
+    e.stopPropagation(); 
+    const newYear = direction === 'prev' ? currentYear - 1 : currentYear + 1;
+    const newDate = new Date(newYear, currentMonth, 1);
     setCurrentDate(newDate);
   };
   
@@ -91,7 +80,9 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect }) => {
     
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDayWeekday; i++) {
-      calendarDays.push(<div key={`empty-${i}`} className="calendar-day-empty"></div>);
+      calendarDays.push(
+        <div key={`empty-${i}`} className="calendar-day-empty"></div>
+      );
     }
     
     // Add all days of the current month
@@ -105,7 +96,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect }) => {
       
       calendarDays.push(
         <div
-          key={`${currentYear}-${currentMonth}-${day}`} // More specific key
+          key={`${currentYear}-${currentMonth}-${day}`}
           className={dayClass}
           onClick={(e) => toggleDaySelection(day, e)}
         >
@@ -118,89 +109,88 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect }) => {
   };
   
   return (
-    <>
-      <div className="calendar-container">
-        <div className="calendar-header">
-          <div className="calendar-nav">
-            <button
-              onClick={prevYear}
-              className="calendar-nav-btn"
-              title="Año anterior"
-            >
-              <span className="calendar-nav-icon"><i className="fas fa-angle-double-left"></i></span>
-            </button>
-            <button
-              onClick={prevMonth}
-              className="calendar-nav-btn"
-              title="Mes anterior"
-            >
-              <span className="calendar-nav-icon">◀</span>
-            </button>
-          </div>
-          
-          <h2 className="calendar-title">
-            {months[currentMonth]} {currentYear}
-          </h2>
-          
-          <div className="calendar-nav">
-            <button
-              onClick={nextMonth}
-              className="calendar-nav-btn"
-              title="Mes siguiente"
-            >
-              <span className="calendar-nav-icon">▶</span>
-            </button>
-            <button
-              onClick={nextYear}
-              className="calendar-nav-btn"
-              title="Año siguiente"
-            >
-              <span className="calendar-nav-icon"><i className="fas fa-angle-double-right"></i></span>
-            </button>
-          </div>
+    <div className="calendar-container">
+      <div className="calendar-header">
+        <div className="calendar-nav">
+          <button
+            onClick={(e) => navigateYear('prev', e)}
+            className="calendar-nav-btn"
+            title="Año anterior"
+          >
+            <span className="nav-icon">«</span>
+          </button>
+          <button
+            onClick={(e) => navigateMonth('prev', e)}
+            className="calendar-nav-btn"
+            title="Mes anterior"
+          >
+            <span className="nav-icon">‹</span>
+          </button>
         </div>
         
-        <div className="calendar-weekdays">
-          {days.map(day => (
-            <div key={day} className="calendar-weekday">
-              <span>{day}</span>
-            </div>
-          ))}
-        </div>
+        <h2 className="calendar-title">
+          {months[currentMonth]} {currentYear}
+        </h2>
         
-        <div className="calendar-days">
-          {renderCalendarDays()}
-        </div>
-        
-        {selectedDays.size > 0 && (
-          <div className="calendar-selection">
-            <div className="calendar-selection-header">
-              <span className="calendar-selection-text">
-                {selectedDays.size} día{selectedDays.size !== 1 ? 's' : ''} seleccionado{selectedDays.size !== 1 ? 's' : ''}
-              </span>
-              <button
-                onClick={clearSelection}
-                className="calendar-clear-btn"
-              >
-                Limpiar
-              </button>
-            </div>
-          </div>
-        )}
-        
-        <div className="calendar-footer">
-          <p className="calendar-today-label">Hoy es</p>
-          <p className="calendar-today-date">
-            {today.toLocaleDateString('es-ES', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}
-          </p>
+        <div className="calendar-nav">
+          <button
+            onClick={(e) => navigateMonth('next', e)}
+            className="calendar-nav-btn"
+            title="Mes siguiente"
+          >
+            <span className="nav-icon">›</span>
+          </button>
+          <button
+            onClick={(e) => navigateYear('next', e)}
+            className="calendar-nav-btn"
+            title="Año siguiente"
+          >
+            <span className="nav-icon">»</span>
+          </button>
         </div>
       </div>
-    </>
+      
+      <div className="calendar-weekdays">
+        {days.map(day => (
+          <div key={day} className="calendar-weekday">
+            {day}
+          </div>
+        ))}
+      </div>
+      
+      <div className="calendar-days">
+        {renderCalendarDays()}
+      </div>
+      
+      {selectedDays.size > 0 && (
+        <div className="calendar-selection">
+          <div className="calendar-selection-content">
+            <span className="calendar-selection-text">
+              {selectedDays.size} día{selectedDays.size !== 1 ? 's' : ''} seleccionado{selectedDays.size !== 1 ? 's' : ''}
+            </span>
+            <button
+              onClick={clearSelection}
+              className="calendar-clear-btn"
+            >
+              Limpiar
+            </button>
+          </div>
+        </div>
+      )}
+      
+      <div className="calendar-footer">
+        <div className="calendar-today-info">
+          <span className="today-label">Hoy:</span>
+          <span className="today-date">
+            {today.toLocaleDateString('es-ES', { 
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric'
+            })}
+          </span>
+        </div>
+      </div>
+    </div>
   );
 };
 
