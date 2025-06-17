@@ -166,7 +166,7 @@ const Admin = () => {
                   />
                 </div>
                 <ROIChart data={[]} />
-                <TotalSales />
+                <TotalSales amount={0} />
               </div>
 
               <SidebarPanel title="Panel de Control" />
