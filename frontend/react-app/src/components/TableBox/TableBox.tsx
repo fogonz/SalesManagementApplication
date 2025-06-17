@@ -90,8 +90,8 @@ const TableBox: React.FC<TableBoxProps> = ({ onOpenMenu, activeView, setActiveVi
             }
           },
           { key: 'concepto', label: 'CONCEPTO' },
-          { key: 'total', label: 'TOTAL', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')},
-          { key: 'descuento_total', label: 'DESCUENTO', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')}
+          { key: 'descuento_total', label: 'DESCUENTO', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')},
+          { key: 'total', label: 'TOTAL', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')}
         ];
       case 'cuentas':
         return [

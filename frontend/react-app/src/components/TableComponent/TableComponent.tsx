@@ -60,9 +60,21 @@ const formatTipoValue = (value: string): string => {
     .charAt(0).toUpperCase() + value.replace(/_/g, ' ').slice(1)
 }
 
+
 const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
   const tableRef = useRef<HTMLDivElement>(null)
   const [hoveredCell, setHoveredCell] = useState<any>(null)
+  const [modalVisible, setModalVisible] = useState(false)
+  const [selectedCuentaId, setSelectedCuentaId] = useState<number | null>(null)
+
+  const openModal = (cuentaId: number) => {
+    setSelectedCuentaId(cuentaId)
+    setModalVisible(true)
+  }
+  const closeModal = () => {
+    setSelectedCuentaId(null)
+    setModalVisible(false)
+  }
 
   if (!rows.length) {
     return (
@@ -160,6 +172,11 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
                         if (!wrap) return
                         setHoveredCell({ x: 0, y: 0, width: 0, height: 0, opacity: 0, background: '#fff' })
                       }}
+                      onClick={e => {
+                        if (tableType === 'cuentas' && col.key === 'nombre') {
+                          openModal((row as CuentaRow).id)
+                        }
+                      }}
                     >
                       {symbol}{content}{symbolAfter}
                     </div>
@@ -171,6 +188,20 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
         </div>
 
         {hoveredCell && <FloatingCell hoveredCell={hoveredCell} isGray={hoveredCell.currentCol === 'id'} />}
+        {modalVisible && (
+          <>
+            <div className="modal-overlay" onClick={closeModal} />
+            <div className="modal">
+              <button className="modal-close" onClick={closeModal}>×</button>
+              <h2>Movimientos de la cuenta #{selectedCuentaId}</h2>
+              <TableComponent
+                columns={columns!}
+                rows={(rows as MovimientoRow[]).filter(m => m.cuenta_id === selectedCuentaId!)}
+                tableType="movimientos"
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
