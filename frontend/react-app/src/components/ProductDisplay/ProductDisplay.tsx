@@ -1,9 +1,10 @@
 import React, { useState, forwardRef, useImperativeHandle, useEffect } from "react";
 import "./ProductDisplay.css";
 
+
 export interface ProductDisplayRef {
   addProduct: () => void;
-  refreshData: () => void; // Add this method
+  refreshData: () => void;
 }
 
 interface ProductDisplayProps {
@@ -15,6 +16,7 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Extract fetch function so it can be reused
   const fetchProducts = async () => {
@@ -26,7 +28,7 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
       const data = await response.json();
       setProducts(data);
       console.log(data);
-      setError(null); // Clear any previous errors
+      setError(null);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -112,10 +114,9 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
     );
   });
 
-  // Exponer las funciones al componente padre
   useImperativeHandle(ref, () => ({
     addProduct,
-    refreshData: fetchProducts // Expose the refresh function
+    refreshData: fetchProducts
   }));
 
   if (loading) {
@@ -140,69 +141,130 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
 
   return (
     <div className="product-container">
+      <div className="view-controls">
+        <span className="view-controls-label">Vista:</span>
+        <button
+          onClick={() => setViewMode('grid')}
+          className={`view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+        >
+          🔳 Cuadrícula
+        </button>
+        <button
+          onClick={() => setViewMode('list')}
+          className={`view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+        >
+          📋 Lista
+        </button>
+      </div>
+
       {searchTerm && (
-        <div className="search-info" style={{ 
-          padding: '10px', 
-          backgroundColor: '#f0f0f0', 
-          borderRadius: '5px', 
-          margin: '10px 0',
-          fontSize: '14px',
-          color: '#666'
-        }}>
+        <div className="search-info">
           Mostrando {filteredProducts.length} de {products.length} productos que coinciden con "{searchTerm}"
           {filteredProducts.length === 0 && (
-            <span style={{ color: '#e74c3c', fontStyle: 'italic' }}> - No se encontraron productos</span>
+            <span className="search-info-no-results"> - No se encontraron productos</span>
           )}
         </div>
       )}
 
-      <div className="product-grid2">
-        {filteredProducts.map((product) => (
-          <div key={product.id} className="product-card">
-            <button
-              onClick={() => deleteProduct(product.id)}
-              className="delete-button"
-              title="Eliminar producto"
-              aria-label="Eliminar producto"
-            >
-              ×
-            </button>
+      {viewMode === 'grid' && (
+        <div className="product-grid2">
+          {filteredProducts.map((product) => (
+            <div key={product.id} className="product-card">
+              <button
+                onClick={() => deleteProduct(product.id)}
+                className="delete-button"
+                title="Eliminar producto"
+                aria-label="Eliminar producto"
+              >
+                ×
+              </button>
 
-            <img 
-              src={product.image || "https://via.placeholder.com/200x200.png?text=Sin+Imagen"} 
-              alt={product.tipo_producto || 'Producto'} 
-              className="product-image" 
-            />
+              <img 
+                src={product.image || "https://via.placeholder.com/200x200.png?text=Sin+Imagen"} 
+                alt={product.tipo_producto || 'Producto'} 
+                className="product-image" 
+              />
 
-            <div className="product-title">
-              {product.tipo_producto || 'Sin nombre'}
-            </div>
+              <div className="product-title">
+                {product.tipo_producto || 'Sin nombre'}
+              </div>
 
-            <div className="typeTag">
-              <div className="tag">PRECIO</div>
-              <div className="product-price">
-                ${product.precio_venta_unitario || 0}
+              <div className="typeTag">
+                <div className="tag">PRECIO</div>
+                <div className="product-price">
+                  ${product.precio_venta_unitario || 0}
+                </div>
+              </div>
+
+              <div className="typeTag">
+                <div className="tag">CANTIDAD</div>
+                <div className="product-text">
+                  {product.cantidad || 0}
+                </div>
               </div>
             </div>
+          ))}
+        </div>
+      )}
 
-            <div className="typeTag">
-              <div className="tag">CANTIDAD</div>
-              <div className="product-text">
-                {product.cantidad || 0}
+      {viewMode === 'list' && (
+        <div className="product-list">
+          {filteredProducts.map((product) => (
+            <div key={product.id} className="product-list-item">
+              <button
+                onClick={() => deleteProduct(product.id)}
+                className="product-list-delete-btn"
+                title="Eliminar producto"
+                aria-label="Eliminar producto"
+              >
+                ×
+              </button>
+
+              <img 
+                src={product.image || "https://via.placeholder.com/80x80.png?text=Sin+Imagen"} 
+                alt={product.tipo_producto || 'Producto'} 
+                className="product-list-image"
+              />
+
+              <div className="product-list-content">
+                <h3 className="product-list-title">
+                  {product.tipo_producto || 'Sin nombre'}
+                </h3>
+                
+                {product.descripcion && (
+                  <p className="product-list-description">
+                    {product.descripcion}
+                  </p>
+                )}
+
+                <div className="product-list-details">
+                  <div className="product-list-detail-item">
+                    <span className="product-list-detail-label">ID:</span>
+                    <span className="product-list-detail-value">{product.id}</span>
+                  </div>
+                  <div className="product-list-detail-item">
+                    <span className="product-list-detail-label">Precio:</span>
+                    <span className="product-list-detail-value price">
+                      ${product.precio_venta_unitario || 0}
+                    </span>
+                  </div>
+                  <div className="product-list-detail-item">
+                    <span className="product-list-detail-label">Cantidad:</span>
+                    <span className={`product-list-detail-value ${
+                      (product.cantidad || 0) > 0 ? 'quantity-available' : 'quantity-unavailable'
+                    }`}>
+                      {product.cantidad || 0}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {filteredProducts.length === 0 && !searchTerm && (
-        <div style={{ 
-          padding: '40px', 
-          textAlign: 'center', 
-          color: '#666',
-          fontSize: '16px'
-        }}>
+        <div className="product-empty-state">
           No hay productos disponibles
         </div>
       )}
