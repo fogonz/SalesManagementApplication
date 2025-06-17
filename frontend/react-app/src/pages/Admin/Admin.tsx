@@ -22,7 +22,7 @@ const Admin = () => {
   const [productError, setProductError] = useState(null);
   
   const ingreso = 400000;
-  const egreso = 100000;
+  const egresoTotal = expensesData.reduce((sum, item) => sum + item.value, 0);
 
   const performanceData = [];
 
@@ -147,7 +147,7 @@ const Admin = () => {
 
           <div className="content-and-sidebar">
             <div className="dashboard-main-wrapper">
-              <Datachart ingreso={ingreso} egreso={egreso} />
+              <Datachart ingreso={ingreso} egreso={egresoTotal} />
               <PerformanceGrid performanceData={performanceData} />
             </div>
 
@@ -165,7 +165,7 @@ const Admin = () => {
                     noDataMessage={productLoading ? "Cargando productos..." : productError ? `Error: ${productError}` : "No hay productos disponibles"}
                   />
                 </div>
-                <ROIChart />
+                <ROIChart data={[]} />
                 <TotalSales />
               </div>
 
