@@ -1,3 +1,8 @@
+main {
+  display: flex;
+  flex-direction: column;
+}
+
 .admin-container {
   width: 100%;
   min-height: 100vh;
@@ -23,7 +28,6 @@
   background: #292929;
   color: white;
   padding: 1rem 2rem;
-  border-radius: 8px;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -31,7 +35,6 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  animation: slideInHeader 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .content-and-sidebar {
@@ -259,6 +262,7 @@ img, table, pre, code {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -270,6 +274,7 @@ img, table, pre, code {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -282,6 +287,7 @@ img, table, pre, code {
       opacity: 0;
       transform: translateY(10px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -316,6 +322,7 @@ img, table, pre, code {
 }
 
 @media (max-width: 480px) {
+
   .loading-state,
   .error-state {
     min-height: 80px;

@@ -26,7 +26,6 @@
     color: #d1d5db;
     background: #333333;
     border: none;
-    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -89,7 +88,6 @@
     width: 16px;
     height: 16px;
     margin-left: 8px;
-    border-radius: 2px;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -103,9 +101,19 @@
     font-family: monospace;
 }
 
-.topbar-button:hover .close { opacity: 0.6; }
-.topbar-button .close:hover { opacity: 1; background: #e53e3e; color: #ffffff; }
-.topbar-button.active .close { color: #d1d5db; }
+.topbar-button:hover .close {
+    opacity: 0.6;
+}
+
+.topbar-button .close:hover {
+    opacity: 1;
+    background: #e53e3e;
+    color: #ffffff;
+}
+
+.topbar-button.active .close {
+    color: #d1d5db;
+}
 
 .header-icons {
     display: flex;

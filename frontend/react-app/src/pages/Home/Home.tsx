@@ -9,9 +9,14 @@ import NewProduct from "../../layouts/menus/NewProduct/NewProduct";
 type Tabla = "movimientos" | "cuentas" | "productos";
 type Menu = 'transaction' | 'account' | 'product' | null;
 
-const Home = () => {
-  const [openMenu, setOpenMenu] = useState<Menu>(null);
-  const [activeView, setActiveView] = useState<Tabla>('movimientos');
+interface HomeProps {
+  activeView: Tabla;
+  setActiveView: (view: Tabla) => void;
+  openMenu: Menu;
+  setOpenMenu: (menu: Menu) => void;
+}
+
+const Home : React.FC<HomeProps> = ({activeView, setActiveView, openMenu, setOpenMenu}) => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const open = (menu: Exclude<Menu, null>) => setOpenMenu(menu);

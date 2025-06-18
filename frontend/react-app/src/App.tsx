@@ -3,43 +3,54 @@ import Home from "./pages/Home/Home";
 import HelpMenu from "./pages/Help/help";
 import TopBar from "./layouts/TopBar/TopBar";
 import Admin from "./pages/Admin/Admin";
+import { useState } from "react";
+import { DataProvider } from "./contexts/DataContext";
+
+type Tabla = "movimientos" | "cuentas" | "productos";
+type Menu = 'transaction' | 'account' | 'product' | null;
 
 function App() {
+  const [activeView, setActiveView] = useState<Tabla>('movimientos');
+  const [openMenu, setOpenMenu] = useState<Menu>(null);
+  
   return (
-    <Routes>
-      {/* MAIN PATH - HOME */}
-      {
+    <DataProvider>
+      <Routes>
+        {/* MAIN PATH - HOME */}
         <Route path="/" element={
-            <div>
-              <TopBar></TopBar>
-              <Home></Home>
-            </div>
-          }>
-        </Route>
-      }
+          <div>
+            <TopBar />
+            <Home
+              activeView={activeView}
+              setActiveView={setActiveView}
+              openMenu={openMenu}
+              setOpenMenu={setOpenMenu}
+            />
+          </div>
+        } />
 
-      {/* HELP PATH */}
-      {
+        {/* HELP PATH */}
         <Route path="/ayuda" element={
-            <div>
-              <TopBar></TopBar>
-              <HelpMenu></HelpMenu>
-            </div>
-          }>
-        </Route>
-      }
-            
-      {/* ADMIN PATH */}
-      {
+          <div>
+            <TopBar />
+            <HelpMenu />
+          </div>
+        } />
+              
+        {/* ADMIN PATH */}
         <Route path="/admin" element={
-            <div>
-              <TopBar></TopBar>
-              <Admin></Admin>
-            </div>
-          }>
-        </Route>
-      }
-    </Routes>
+          <div>
+            <TopBar />
+            <Admin
+              activeView={activeView}
+              setActiveView={setActiveView}
+              openMenu={openMenu}
+              setOpenMenu={setOpenMenu}
+            />
+          </div>
+        } />
+      </Routes>
+    </DataProvider>
   );
 }
 
