@@ -14,15 +14,16 @@ export interface MovimientoRow {
   id: number
   fecha: string
   tipo: string
-  cuenta_id: number
-  producto_id: number
+  cuenta: number // Changed from cuenta_id to cuenta
   total: string | number | null
+  descuento_total?: string | number | null
+  concepto?: string
+  cantidad_productos?: number
   name?: string
   producto?: string
-  cuenta?: string
   tipoMovimiento?: string
   abonado?: number | null
-  items?: { nombre_producto: string }[]
+  items?: { nombre_producto: string; precio_unitario: string; cantidad: string; descuento_item: string }[]
 }
 
 export interface CuentaRow {
@@ -48,6 +49,8 @@ type TableProps = {
   columns: ColumnDefinition[]
   rows: TableRow[]
   tableType: 'movimientos' | 'cuentas' | 'productos'
+  movimientosData?: MovimientoRow[]
+  movimientosColumns?: ColumnDefinition[] 
 }
 
 // Helper function to format tipo values
@@ -61,7 +64,7 @@ const formatTipoValue = (value: string): string => {
 }
 
 
-const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
+const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimientosData, movimientosColumns }) => {
   const tableRef = useRef<HTMLDivElement>(null)
   const [hoveredCell, setHoveredCell] = useState<any>(null)
   const [modalVisible, setModalVisible] = useState(false)
@@ -93,6 +96,12 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
         </div>
       </div>
     )
+  }
+
+  // Get movimientos for the selected cuenta
+  const getMovimientosForCuenta = (cuentaId: number): MovimientoRow[] => {
+    if (!movimientosData) return []
+    return movimientosData.filter(m => m.cuenta === cuentaId) // Changed from cuenta_id to cuenta
   }
 
   return (
@@ -188,15 +197,15 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType }) => {
         </div>
 
         {hoveredCell && <FloatingCell hoveredCell={hoveredCell} isGray={hoveredCell.currentCol === 'id'} />}
-        {modalVisible && (
+        {modalVisible && selectedCuentaId && (
           <>
             <div className="modal-overlay" onClick={closeModal} />
             <div className="modal">
               <button className="modal-close" onClick={closeModal}>×</button>
               <h2>Movimientos de la cuenta #{selectedCuentaId}</h2>
               <TableComponent
-                columns={columns!}
-                rows={(rows as MovimientoRow[]).filter(m => m.cuenta_id === selectedCuentaId!)}
+                columns={movimientosColumns || columns}
+                rows={getMovimientosForCuenta(selectedCuentaId)}
                 tableType="movimientos"
               />
             </div>
