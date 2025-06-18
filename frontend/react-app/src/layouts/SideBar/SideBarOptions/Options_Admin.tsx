@@ -8,7 +8,7 @@ interface OptionsAdminProps {
 	setActiveView: React.Dispatch<React.SetStateAction<Tabla>>;
 	toggleActive?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	currentAdminView?: string;
-	setCurrentAdminView: React.Dispatch<React.SetStateAction<AdminView>>; // Remove optional
+	setCurrentAdminView: React.Dispatch<React.SetStateAction<AdminView>>;
 }
 
 const Options_Admin: React.FC<OptionsAdminProps> = ({ 
@@ -54,7 +54,7 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 					}}
 				>
 					<i className="fas fa-home"></i> MOVIMIENTOS
-					<i className="fas fa-pen"></i>
+					<i className="fas fa-pen right"></i>
 				</button>
 
 				<button
@@ -67,7 +67,7 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 					}}
 				>
 					<i className="fas fa-circle-user"></i> CUENTAS
-					<i className="fas fa-pen"></i>
+					<i className="fas fa-pen right"></i>
 				</button>
 				
 				<button
@@ -80,20 +80,32 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 					}}
 				>
 					<i className="fas fa-boxes"></i> STOCK
-					<i className="fas fa-pen"></i>
+					<i className="fas fa-pen right"></i>
 				</button>
 			</div>
 
+			<line></line>
+
 			<div className="sidebar-options">
 				<button
-					className="menu-button"
+					className="menu-button-round green-border"
 					data-view="exportar"
-					onClick={(e) => {
-						toggleActive?.(e);
-						setCurrentAdminView("exportar");
+					onClick={(e) => {setCurrentAdminView("exportar");
 					}}
 				>
 					<i className="fas fa-file-excel"></i> EXPORTAR EXCEL
+				</button>
+
+				<button
+					className="menu-button-round blue-border"
+				>
+					<i className="fas fa-link"></i> VINCULAR DISPOSITIVO
+				</button>
+
+				<button
+					className="menu-button-round gray-border"
+				>
+					<i className="fas fa-comments"></i> CHAT
 				</button>
 			</div>
 		</div>

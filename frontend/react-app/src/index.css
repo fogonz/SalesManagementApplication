@@ -148,3 +148,12 @@ input[type=button]:focus {
   pointer-events: none;
   user-select: none;
 }
+
+line {
+  display: flex;
+  width: 95%;
+  margin-top: 10%;
+  justify-self: center;
+  height: 1px;
+  background-color: var(--toolbar-gradient);
+}
