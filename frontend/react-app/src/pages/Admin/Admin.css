@@ -1,28 +1,31 @@
-main {
-  display: flex;
-  flex-direction: column;
-}
-
 .admin-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   width: 100%;
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+main {
   display: flex;
-  position: relative;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .dashboard-container {
   background-color: #646464c9;
-  width: calc(100% - var(--sidebar-width));
+  flex: 1; 
   min-width: 0;
   min-height: 100vh;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  flex: 1;
   overflow-x: hidden;
   position: relative;
 }
+
 
 .dashboard-header {
   background: #292929;

@@ -6,8 +6,8 @@
   box-sizing: border-box;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   position: sticky;
-  top: var(--topbar-height, 0);
   z-index: 10;
+  height: var(--dashboard-header-height);
 }
 
 
@@ -73,14 +73,13 @@
   align-items: center;
   overflow-x: auto;
   overflow-y: hidden;
-  max-width: calc(100vw - 120px);
-  padding: 1.5rem 1rem;
+  max-width: calc(100vw - 150px);
   position: relative;
   scrollbar-width: none;
   -ms-overflow-style: none;
   cursor: grab;
   user-select: none;
-  min-height: 60px;
+  
 }
 
 .alert-badges::-webkit-scrollbar {
