@@ -1,46 +1,18 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import "./RoiChart.css"
+import { useEffect } from 'react';
 
-const data = [
-  {
-    date: 'May 1',
-    sales: 12500,
-    revenue: 25000,
-  },
-  {
-    date: 'May 5',
-    sales: 15800,
-    revenue: 31600,
-  },
-  {
-    date: 'May 10',
-    sales: 18200,
-    revenue: 36400,
-  },
-  {
-    date: 'May 15',
-    sales: 22100,
-    revenue: 44200,
-  },
-  {
-    date: 'May 20',
-    sales: 19800,
-    revenue: 39600,
-  },
-  {
-    date: 'May 25',
-    sales: 26300,
-    revenue: 52600,
-  },
-  {
-    date: 'May 31',
-    sales: 28900,
-    revenue: 57800,
-  },
-];
+const ROIChart = ({data = [], noDataMessage = "No hay datos disponibles" }) => {
+  if (data.length === 0) {
+    return <p>{noDataMessage}</p>;
+  }
 
-const ROIChart = () => {
+  useEffect(() => {
+    console.log("DATA RECEIVED",data ? data : "no data")
+    }
+  )
+
   return (
     <div className="roi-chart-container">
       <div className="roi-chart-title">Ventas</div>

@@ -19,17 +19,11 @@ const ProductChart = ({
   title = "Productos Más Vendidos",
   noDataMessage = "No hay datos disponibles" 
 }) => {
-  // Default data if none provided
-  const defaultData = [
-    { name: "Producto A", ventas: 4400 },
-    { name: "Producto B", ventas: 2210 },
-    { name: "Producto C", ventas: 1800 },
-    { name: "Producto D", ventas: 1450 },
-    { name: "Producto E", ventas: 1200 },
-    { name: "Producto F", ventas: 2200 },
-  ];
+  if (data.length === 0) {
+    return <p>{noDataMessage}</p>;
+  }
 
-  const chartData = data.length > 0 ? data : defaultData;
+  const chartData = data;
 
   return (
     <div className="product-chart-container">

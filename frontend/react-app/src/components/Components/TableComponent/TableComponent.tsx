@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react'
 import './TableComponent.css'
 import FloatingCell from '../FloatingCell/FloatingCell'
-import { getCellColorClass } from '../../config/rowColors'
+import { getCellColorClass } from '../../../config/rowColors'
 
 export interface ColumnDefinition {
   key: string
@@ -14,7 +14,7 @@ export interface MovimientoRow {
   id: number
   fecha: string
   tipo: string
-  cuenta: number // Changed from cuenta_id to cuenta
+  cuenta: number
   total: string | number | null
   descuento_total?: string | number | null
   concepto?: string
@@ -101,7 +101,7 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimi
   // Get movimientos for the selected cuenta
   const getMovimientosForCuenta = (cuentaId: number): MovimientoRow[] => {
     if (!movimientosData) return []
-    return movimientosData.filter(m => m.cuenta === cuentaId) // Changed from cuenta_id to cuenta
+    return movimientosData.filter(m => m.cuenta === cuentaId)
   }
 
   return (

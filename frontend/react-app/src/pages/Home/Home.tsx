@@ -1,7 +1,7 @@
 import { useState } from "react";
 import TopBar from "../../layouts/TopBar/TopBar";
 import SideBar from "../../layouts/SideBar/SideBar";
-import TableBox from "../../components/TableBox/TableBox";
+import TableBox from "../../layouts/TableBox/TableBox";
 import Transaction from "../../layouts/menus/NewTransaction/NewTransaction";
 import NewAccount from "../../layouts/menus/NewAccount/NewAccount";
 import NewProduct from "../../layouts/menus/NewProduct/NewProduct";

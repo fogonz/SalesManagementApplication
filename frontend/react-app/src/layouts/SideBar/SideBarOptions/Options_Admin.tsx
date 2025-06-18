@@ -93,7 +93,7 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 					onClick={(e) => {setCurrentAdminView("exportar");
 					}}
 				>
-					<i className="fas fa-file-excel"></i> EXPORTAR EXCEL
+					<i className="fas fa-file-excel"></i> EXPORTAR A EXCEL
 				</button>
 
 				<button

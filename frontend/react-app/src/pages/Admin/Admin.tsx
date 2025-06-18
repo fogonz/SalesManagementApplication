@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Admin.css';
 import SideBar from '../../layouts/SideBar/SideBar';
 import ROIChart from '../../components/Charts/ROIChart/ROIChart';
 import ProductChart from '../../components/Charts/ProductChart/ProductChart';
 import SalesChart from '../../components/Charts/SalesChart/SalesChart';
-import Datachart from '../../components/Datachart/Datachart';
-import PerformanceGrid from '../../components/PerformanceGrid/PerformanceGrid';
-import Alerts from '../../components/Alerts/Aletrs';
-import SidebarPanel from '../../components/SidebarPanel/SidebarPanel';
-import FilterButton from '../../components/FilterButton/FilterButton';
-import TotalSales from '../../components/TotalSales/TotalSales';
+import Datachart from '../../components/Charts/Datachart/Datachart';
+import PerformanceGrid from '../../components/Components/PerformanceGrid/PerformanceGrid';
+import Alerts from '../../components/Components/Alerts/Aletrs';
+import SidebarPanel from '../../components/Components/SidebarPanel/SidebarPanel';
+import FilterButton from '../../components/Components/FilterButton/FilterButton';
+import TotalSales from '../../components/Charts/TotalSales/TotalSales';
 import PieChartExpenses from '../../components/Charts/SalesChart/SalesChart';
 import { useData } from '../../contexts/DataContext';
-import TableBox from '../../components/TableBox/TableBox';
+import TableBox from '../../layouts/TableBox/TableBox';
 import Transaction from '../../layouts/menus/NewTransaction/NewTransaction';
 import NewAccount from '../../layouts/menus/NewAccount/NewAccount';
 import NewProduct from '../../layouts/menus/NewProduct/NewProduct';
+import { filterData } from '../../utils/filterUtils';
+import { fetchTableData } from '../../services/api';
 
 type Tabla = "movimientos" | "cuentas" | "productos";
 type Menu = 'transaction' | 'account' | 'product' | null;
@@ -28,12 +30,79 @@ interface AdminProps {
   setOpenMenu: (menu: Menu) => void;
 }
 
+interface GroupedData {
+  [key: string]: {
+    sales: number;
+    revenue: number;
+  };
+}
+
 const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setOpenMenu }) => {
   // Estado para controlar qué vista del admin está activa
   const [currentAdminView, setCurrentAdminView] = useState<AdminView>('estadisticas');
   // Refresh Trigger para cuando se acepta un movimiento
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [roiChartData, setRoiChartData] = useState<{ date: string; sales: number; revenue: number }[]>([]);
+  const [loadingRoiData, setLoadingRoiData] = useState(false);
+  const [roiError, setRoiError] = useState("");
   
+  // Estados para movimientos
+  const [movimientosData, setMovimientosData] = useState<any[]>([]);
+  const [loadingMovs, setLoadingMovs] = useState(true);
+  const [movsError, setMovsError] = useState("");
+
+  // Función para procesar datos de movimientos
+  const processMovimientosData = (movimientos: any[]): { date: string; sales: number; revenue: number }[] => {
+    // Filtrar solo movimientos de tipo factura_venta
+    const ventasMovimientos = movimientos.filter(mov => mov.tipo === 'factura_venta');
+    
+    // Agrupar por fecha y sumar los montos - now with proper typing
+    const groupedByDate: GroupedData = ventasMovimientos.reduce((acc: GroupedData, mov) => {
+      const fecha = mov.fecha ? new Date(mov.fecha).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+      const monto = parseFloat(mov.total) || 0;
+      
+      if (!acc[fecha]) {
+        acc[fecha] = { sales: 0, revenue: 0 };
+      }
+      
+      acc[fecha].sales += monto;
+      acc[fecha].revenue += monto; // Para ventas, sales y revenue son el mismo valor
+      
+      return acc;
+    }, {});
+    
+    // Convertir a array y ordenar por fecha
+    return Object.entries(groupedByDate)
+      .map(([date, values]) => ({
+        date,
+        sales: values.sales,
+        revenue: values.revenue
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  };
+
+  // Fetch de movimientos una vez montado
+  useEffect(() => {
+    const fetchMovs = async () => {
+      try {
+        setLoadingMovs(true);
+        const data = await fetchTableData("movimientos");
+        setMovimientosData(data);
+        
+        // Procesar datos para ROI Chart
+        const processedData = processMovimientosData(data);
+        setRoiChartData(processedData);
+      } catch (err) {
+        console.error("Error al obtener movimientos:", err);
+        setMovsError("Error al cargar movimientos");
+      } finally {
+        setLoadingMovs(false);
+      }
+    };
+
+    fetchMovs();
+  }, [refreshTrigger]);
+
   // Usar el contexto de datos
   const {
     expensesData,
@@ -119,8 +188,15 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
                       }
                     />
                   </div>
-                  {/*<ROIChart data={[]} />*/}
-                  <TotalSales amount={0} />
+                  <ROIChart 
+                    data={roiChartData}
+                    noDataMessage={
+                      loadingMovs ? "Cargando datos de ROI..." : 
+                      movsError ? `Error: ${movsError}` : 
+                      "No hay datos de ROI disponibles"
+                    }
+                  />
+                  <TotalSales amount={ingreso} />
                 </div>
 
                 <SidebarPanel title="Panel de Control" />
@@ -193,7 +269,6 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           <div>{renderContent()}</div>
         </main>
       </div>
-
 
       {/* Render modals based on openMenu - same as in Home component */}
       {openMenu === 'transaction' && (

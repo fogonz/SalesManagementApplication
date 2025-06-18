@@ -1,12 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './TableBox.css';
-import TableComponent from '../TableComponent/TableComponent';
-import Calendar from '../Calendar/Calendar';
-import ProductDisplay from '../ProductDisplay/ProductDisplay';
+import TableComponent from '../../components/Components/TableComponent/TableComponent';
+import Calendar from '../../components/Components/Calendar/Calendar';
+import ProductDisplay from '../../components/Components/ProductDisplay/ProductDisplay';
 import AddButton from '../../assets/icons/AddButton';
-
-// Types
-type Tabla = 'movimientos' | 'cuentas' | 'productos';
+import { fetchCuentas } from '../../services/api/cuentas';
+import { fetchTableData } from '../../services/api';
+import { getColumnsForActiveView } from '../../config/tableColumns';
+import {
+  filterData,
+  extractDatesFromSearchTerm,
+  getNonDateSearchTerm,
+  type MovimientoRow,
+  type CuentaRow,
+  type ProductoRow,
+  type Tabla
+} from '../../utils/filterUtils';
 
 interface TableBoxProps {
   onOpenMenu: () => void;
@@ -14,93 +23,6 @@ interface TableBoxProps {
   setActiveView: (view: 'movimientos' | 'cuentas' | 'productos') => void;
   refreshTrigger?: number;
 }
-
-interface MovimientoRow {
-  id: number;
-  fecha: string;
-  tipo: string;
-  cuenta: number; // Changed from cuenta_id to cuenta
-  total: string | number | null;
-  descuento_total?: string | number | null;
-  concepto?: string;
-  cantidad_productos?: number;
-  items?: { nombre_producto: string; precio_unitario: string; cantidad: string; descuento_item: string }[];
-}
-
-interface CuentaRow {
-  id: number;
-  nombre: string;
-  contacto_mail: string;
-  contacto_telefono: string;
-  tipo_cuenta: string;
-  monto?: number | null;
-}
-
-interface ProductoRow {
-  id: number;
-  descripcion: string;
-  stock: number | null;
-  precio: number | null;
-}
-
-// Utility functions
-const normalizeText = (text: any): string => {
-  if (text === null || text === undefined) return '';
-  const str = String(text);
-  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-};
-
-const extractDatesFromSearchTerm = (term: string): string[] => {
-  const datePattern = /\b\d{4}-\d{2}-\d{2}\b/g;
-  const matches = term.match(datePattern);
-  return matches || [];
-};
-
-const getNonDateSearchTerm = (term: string): string => {
-  return term.replace(/\b\d{4}-\d{2}-\d{2}\b/g, '').replace(/\s+/g, ' ').trim();
-};
-
-// Configuration functions
-const getColumnsForActiveView = (activeView: Tabla, cuentas: CuentaRow[]) => {
-  switch (activeView) {
-    case 'movimientos':
-      return [
-        { key: 'id', label: 'ID' },
-        { key: 'fecha', label: 'FECHA' },
-        { key: 'tipo', label: 'TIPO' },
-        { 
-          key: 'cuenta', 
-          label: 'CUENTA',
-          format: (cuenta_id: number) => {
-            if (!cuentas || cuentas.length === 0) {
-              return 'Cargando...';
-            }
-            
-            const cuenta = cuentas.find(c => c.id === cuenta_id);
-            console.log(`cuenta_id: ${cuenta_id}, cuenta encontrada:`, cuenta);
-            
-            return cuenta ? cuenta.nombre : `ID: ${cuenta_id} (no encontrada)`;
-          }
-        },
-        { key: 'concepto', label: 'CONCEPTO' },
-        { key: 'descuento_total', label: 'DESCUENTO', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')},
-        { key: 'total', label: 'TOTAL', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')}
-      ];
-    case 'cuentas':
-      return [
-        { key: 'id', label: 'ID' },
-        { key: 'nombre', label: 'NOMBRE' },
-        { key: 'contacto_mail', label: 'E-MAIL'},
-        { key: 'contacto_telefono', label: 'TELÉFONO' },
-        { key: 'tipo_cuenta', label: 'TIPO de CUENTA'},
-        { key: 'monto', label: 'MONTO', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')}
-      ];
-    case 'productos':
-      return [];
-    default:
-      return [];
-  }
-};
 
 // Get movimientos columns specifically
 const getMovimientosColumns = (cuentas: CuentaRow[]) => {
@@ -124,102 +46,6 @@ const getMovimientosColumns = (cuentas: CuentaRow[]) => {
     { key: 'descuento_total', label: 'DESCUENTO', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')},
     { key: 'total', label: 'TOTAL', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')}
   ];
-};
-
-// Filter functions
-const filterMovimientos = (item: MovimientoRow, normalizedSearchTerm: string, cuentas: CuentaRow[]): boolean => {
-  const cuenta = cuentas.find(c => c.id === item.cuenta); // Changed from cuenta_id to cuenta
-  const cuentaNombre = cuenta ? cuenta.nombre : '';
-  
-  return (
-    normalizeText(item.id).includes(normalizedSearchTerm) ||
-    normalizeText(item.fecha).includes(normalizedSearchTerm) ||
-    normalizeText(item.tipo).includes(normalizedSearchTerm) ||
-    normalizeText(item.cuenta).includes(normalizedSearchTerm) || // Changed from cuenta_id to cuenta
-    normalizeText(cuentaNombre).includes(normalizedSearchTerm) ||
-    normalizeText(item.concepto).includes(normalizedSearchTerm) ||
-    normalizeText(item.total).includes(normalizedSearchTerm) ||
-    normalizeText(item.descuento_total).includes(normalizedSearchTerm)
-  );
-};
-
-const filterCuentas = (item: CuentaRow, normalizedSearchTerm: string): boolean => {
-  return (
-    normalizeText(item.id).includes(normalizedSearchTerm) ||
-    normalizeText(item.nombre).includes(normalizedSearchTerm) ||
-    normalizeText(item.contacto_mail).includes(normalizedSearchTerm) ||
-    normalizeText(item.contacto_telefono).includes(normalizedSearchTerm) ||
-    normalizeText(item.tipo_cuenta).includes(normalizedSearchTerm) ||
-    normalizeText(item.monto).includes(normalizedSearchTerm)
-  );
-};
-
-const filterProductos = (item: ProductoRow, normalizedSearchTerm: string): boolean => {
-  return (
-    normalizeText(item.id).includes(normalizedSearchTerm) ||
-    normalizeText(item.descripcion).includes(normalizedSearchTerm) ||
-    normalizeText(item.stock).includes(normalizedSearchTerm) ||
-    normalizeText(item.precio).includes(normalizedSearchTerm)
-  );
-};
-
-const filterData = (
-  data: any[], 
-  activeView: Tabla, 
-  searchTerm: string, 
-  selectedDates: string[], 
-  cuentas: CuentaRow[]
-): any[] => {
-  return data.filter(item => {
-    const nonDateSearchTerm = getNonDateSearchTerm(searchTerm);
-    const datesInSearchTerm = extractDatesFromSearchTerm(searchTerm);
-    const normalizedSearchTerm = normalizeText(nonDateSearchTerm);
-    
-    // Date filter logic
-    const allDatesToFilter = [...selectedDates, ...datesInSearchTerm];
-    const dateMatch =
-      allDatesToFilter.length === 0 ||
-      (activeView === 'movimientos' && allDatesToFilter.includes(item.fecha));
-
-    if (!dateMatch) return false;
-    if (!nonDateSearchTerm) return true;
-
-    // Search logic based on active view
-    switch (activeView) {
-      case 'movimientos':
-        return filterMovimientos(item, normalizedSearchTerm, cuentas);
-      case 'cuentas':
-        return filterCuentas(item, normalizedSearchTerm);
-      case 'productos':
-        return filterProductos(item, normalizedSearchTerm);
-      default:
-        return false;
-    }
-  });
-};
-
-// API functions
-const fetchCuentas = async (): Promise<CuentaRow[]> => {
-  try {
-    const response = await fetch(`http://localhost:8000/api/cuentas`);
-    const data = await response.json();
-    console.log("CUENTAS:", data);
-    return data;
-  } catch (err) {
-    console.error(`Error al cargar cuentas:`, err);
-    throw new Error("Error al cargar cuentas");
-  }
-};
-
-const fetchTableData = async (activeView: Tabla): Promise<any[]> => {
-  try {
-    const response = await fetch(`http://localhost:8000/api/${activeView}`);
-    const data = await response.json();
-    return data;
-  } catch (err) {
-    console.error(`Error al cargar ${activeView}:`, err);
-    throw err;
-  }
 };
 
 // Custom hooks

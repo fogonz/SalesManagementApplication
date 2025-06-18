@@ -1,5 +1,5 @@
-// movimientosAPI.ts
-const API_BASE_URL = 'http://localhost:8000/api';
+import { API_BASE_URL } from ".";
+import { APIError } from "./apiTypes";
 
 export interface MovimientoPayload {
   tipo: 'factura_compra' | 'factura_venta' | 'pago' | 'cobranza' ;
@@ -39,12 +39,6 @@ export interface MovimientoFiltros {
   estado?: string;
   limit?: number;
   offset?: number;
-}
-
-export interface APIError {
-  message: string;
-  status?: number;
-  code?: string;
 }
 
 class MovimientosAPI {

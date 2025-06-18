@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { createHandleSubmit } from '../../../utils/validation/validate_insertTransaction';
-import ProductGrid from '../../../components/ShoppingCart/ShoppingCart'; 
+import ProductGrid from '../../../components/Components/ShoppingCart/ShoppingCart'; 
 import { AnimatePresence, motion } from "framer-motion";
-import ShoppingCartTotal from '../../../components/ShoppingCart/ShoppingCartTotal';
+import ShoppingCartTotal from '../../../components/Components/ShoppingCart/ShoppingCartTotal';
 
 const ProductItem = ({ index, style, data, onAddProduct, carrito }) => {
     // Check if the current product is in the cart

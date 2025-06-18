@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import movimientosAPI from '../services/movimientosAPI';
+import movimientosAPI from '../services/api/movimientos';
 
 export const useMovimientos = () => {
   const [loading, setLoading] = useState(false);
