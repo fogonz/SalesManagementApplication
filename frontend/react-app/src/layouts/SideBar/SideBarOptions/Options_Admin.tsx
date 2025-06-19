@@ -1,7 +1,7 @@
 import React from "react";
 
 type Tabla = "movimientos" | "cuentas" | "productos";
-type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar';
+type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat';
 
 interface OptionsAdminProps {
 	activeView: string;
@@ -11,11 +11,11 @@ interface OptionsAdminProps {
 	setCurrentAdminView: React.Dispatch<React.SetStateAction<AdminView>>;
 }
 
-const Options_Admin: React.FC<OptionsAdminProps> = ({ 
-	setActiveView, 
-	toggleActive, 
-	currentAdminView, 
-	setCurrentAdminView 
+const Options_Admin: React.FC<OptionsAdminProps> = ({
+	setActiveView,
+	toggleActive,
+	currentAdminView,
+	setCurrentAdminView
 }) => {
 	return (
 		<div>
@@ -30,7 +30,7 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 				>
 					<i className="fas fa-chart-simple"></i> ESTADÍSTICAS
 				</button>	
-
+				
 				<button
 					className="menu-button"
 					data-view="historial"
@@ -90,7 +90,8 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 				<button
 					className="menu-button-round green-border"
 					data-view="exportar"
-					onClick={(e) => {setCurrentAdminView("exportar");
+					onClick={(e) => {
+						setCurrentAdminView("exportar");
 					}}
 				>
 					<i className="fas fa-file-excel"></i> EXPORTAR A EXCEL
@@ -104,6 +105,10 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 
 				<button
 					className="menu-button-round gray-border"
+					data-view="chat"
+					onClick={(e) => {
+						setCurrentAdminView("chat");
+					}}
 				>
 					<i className="fas fa-comments"></i> CHAT
 				</button>

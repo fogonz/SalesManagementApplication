@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './Admin.css';
 import SideBar from '../../layouts/SideBar/SideBar';
 import ROIChart from '../../components/Charts/ROIChart/ROIChart';
@@ -16,12 +16,13 @@ import TableBox from '../../layouts/TableBox/TableBox';
 import Transaction from '../../layouts/menus/NewTransaction/NewTransaction';
 import NewAccount from '../../layouts/menus/NewAccount/NewAccount';
 import NewProduct from '../../layouts/menus/NewProduct/NewProduct';
+import ChatDisplay from '../../components/Components/Chat/Chat';
 import { filterData } from '../../utils/filterUtils';
 import { fetchTableData } from '../../services/api';
 
 type Tabla = "movimientos" | "cuentas" | "productos";
 type Menu = 'transaction' | 'account' | 'product' | null;
-type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar';
+type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat';
 
 interface AdminProps {
   activeView: Tabla;
@@ -50,6 +51,11 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
   const [movimientosData, setMovimientosData] = useState<any[]>([]);
   const [loadingMovs, setLoadingMovs] = useState(true);
   const [movsError, setMovsError] = useState("");
+
+  // Calculate ingreso from roiChartData
+  const calculatedIngreso = useMemo(() => {
+    return roiChartData.reduce((total, item) => total + item.sales, 0);
+  }, [roiChartData]);
 
   // Función para procesar datos de movimientos
   const processMovimientosData = (movimientos: any[]): { date: string; sales: number; revenue: number }[] => {
@@ -103,7 +109,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
     fetchMovs();
   }, [refreshTrigger]);
 
-  // Usar el contexto de datos
+  // Usar el contexto de datos (excluding ingreso since we calculate it from ROI data)
   const {
     expensesData,
     expensesLoading,
@@ -113,7 +119,6 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
     productError,
     selectedFilter,
     setSelectedFilter,
-    ingreso,
     egresoTotal,
     refreshData
   } = useData();
@@ -162,7 +167,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
 
             <div className="content-and-sidebar">
               <div className="dashboard-main-wrapper">
-                <Datachart ingreso={ingreso} egreso={egresoTotal} />
+                <Datachart ingreso={calculatedIngreso} egreso={egresoTotal} />
                 <PerformanceGrid performanceData={performanceData} />
               </div>
 
@@ -196,7 +201,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
                       "No hay datos de ROI disponibles"
                     }
                   />
-                  <TotalSales amount={ingreso} />
+                  <TotalSales amount={calculatedIngreso} />
                 </div>
               </div>
             </div>
@@ -244,6 +249,13 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
             <button onClick={refreshData}>
               Refrescar Datos
             </button>
+          </div>
+        );
+      
+      case 'chat':
+        return (
+          <div className="dashboard-container chat-container-wrapper">
+            <ChatDisplay />
           </div>
         );
       

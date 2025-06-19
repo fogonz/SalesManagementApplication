@@ -1,1 +1,1 @@
-export const editableCells = ["items", "total", "fecha"]
+export const editableCells = ["items", "total", "fecha", "nombre", "contacto_mail", "contacto_telefono"]

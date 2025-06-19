@@ -199,7 +199,6 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimi
                       {symbol}
                       {content}
                       {symbolAfter}
-                      {isAdmin && editable && (<i className='fas fa-pen right'></i>)}
                     </div>
                   )
                 })}

@@ -1,8 +1,9 @@
 .content-container {
+  width: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 2% 2%;
+  padding: 1.5% 2%;
 }
 
 .content-box {
@@ -135,6 +136,7 @@
   text-align: center;
   align-items: center;
   justify-content: center;
+  padding: none;
   background-color: var(--secondary-color);
   color: white;
   border: none;
