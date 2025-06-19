@@ -49,6 +49,7 @@ const Home : React.FC<HomeProps> = ({activeView, setActiveView, openMenu, setOpe
           currentSection="home"
         />
         <TableBox
+          isAdmin={false}
           activeView={activeView}
           setActiveView={setActiveView}
           refreshTrigger={refreshTrigger}

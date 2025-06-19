@@ -10,6 +10,9 @@ export type HoveredCell = {
   background: string;
   symbol?: string;
   content?: string;
+  symbolAfter,
+  isAdmin,
+  editable,
   currentCol?: string;
   items?: { nombre_producto: string, precio_unitario: number , cantidad: number}[]
 };
@@ -32,12 +35,14 @@ const FloatingCell: React.FC<FloatingCellProps> = ({
     background,
     symbol,
     content,
+    symbolAfter,
+    isAdmin,
+    editable,
     items,
   } = hoveredCell;
 
   const isVisible = opacity > 0;
 
-  // Si no hay contenido ni items, no renderizar
   if ((!content || content === "-") && (!items || items.length === 0)) {
     return null;
   }
@@ -78,6 +83,8 @@ const FloatingCell: React.FC<FloatingCellProps> = ({
           <div className="content">
             {symbol}
             {content}
+            {symbolAfter}
+            {isAdmin && editable && (<i className='fas fa-pen right'></i>)}
           </div>
         </>
       )}

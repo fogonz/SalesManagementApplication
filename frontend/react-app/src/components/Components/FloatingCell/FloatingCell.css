@@ -69,3 +69,16 @@
 .list-header span {
 	font-weight: bold;
 }
+
+.content {
+	display: flex;
+	justify-content: left;
+	align-items: center;
+	padding-left: 5%;
+	width: 100%;
+}
+
+.content i {
+	margin-left: auto;
+	padding-right: 5%;
+}

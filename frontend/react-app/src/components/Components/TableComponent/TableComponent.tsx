@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'
 import './TableComponent.css'
 import FloatingCell from '../FloatingCell/FloatingCell'
 import { getCellColorClass } from '../../../config/rowColors'
+import { editableCells } from '../../../config/editableCells'
 
 export interface ColumnDefinition {
   key: string
@@ -51,6 +52,7 @@ type TableProps = {
   tableType: 'movimientos' | 'cuentas' | 'productos'
   movimientosData?: MovimientoRow[]
   movimientosColumns?: ColumnDefinition[] 
+  isAdmin?: boolean
 }
 
 // Helper function to format tipo values
@@ -63,8 +65,7 @@ const formatTipoValue = (value: string): string => {
     .charAt(0).toUpperCase() + value.replace(/_/g, ' ').slice(1)
 }
 
-
-const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimientosData, movimientosColumns }) => {
+const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimientosData, movimientosColumns, isAdmin }) => {
   const tableRef = useRef<HTMLDivElement>(null)
   const [hoveredCell, setHoveredCell] = useState<any>(null)
   const [modalVisible, setModalVisible] = useState(false)
@@ -139,9 +140,14 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimi
                   if (col.key === 'tipo' || col.key === 'tipo_cuenta' || col.key === 'tipoMovimiento') {
                     content = content !== '-' ? formatTipoValue(content) : content
                   }
-                  
+
                   const symbol = ['total', 'monto', 'estado'].includes(col.key) ? '$' : ''
                   const symbolAfter = ['descuento', 'descuento_total'].includes(col.key) ? '%' : ''
+                  let editable = false
+
+                  if (editableCells.includes(col.key)){
+                    editable = true;
+                  }
 
                   return (
                     <div
@@ -171,6 +177,9 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimi
                           background: bgColor,
                           symbol,
                           content,
+                          symbolAfter,
+                          isAdmin,
+                          editable,
                           items,
                           currentCol: col.key
                         })
@@ -187,7 +196,10 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimi
                         }
                       }}
                     >
-                      {symbol}{content}{symbolAfter}
+                      {symbol}
+                      {content}
+                      {symbolAfter}
+                      {isAdmin && editable && (<i className='fas fa-pen right'></i>)}
                     </div>
                   )
                 })}

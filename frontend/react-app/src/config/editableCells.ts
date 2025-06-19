@@ -1,0 +1,1 @@
+export const editableCells = ["items", "total", "fecha"]

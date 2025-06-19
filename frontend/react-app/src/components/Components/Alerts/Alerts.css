@@ -3,12 +3,14 @@
   color: white;
   padding: 1rem 2rem;
   width: 100%;
+  height: var(--dashboard-header-height);
+  overflow: hidden;
   box-sizing: border-box;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   position: sticky;
-  z-index: 10;
+  display: flex;
+  align-items: center;
 }
-
 
 @keyframes slideInHeader {
   0% {

@@ -118,6 +118,10 @@
   text-wrap: nowrap;
 }
 
+.table_cell i {
+  margin-left: auto;
+}
+
 .table_cell:first-child,
 .table_header__cell:first-child {
   max-width: 2.5vw;

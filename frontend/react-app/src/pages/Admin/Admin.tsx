@@ -219,10 +219,11 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
         return (
           <div className={`dashboard-container ${openMenu ? "blurred" : ""}`}>
             <TableBox
+              isAdmin={true}
               activeView={tableActiveView}
               setActiveView={(view) => {
                 setActiveView(view);
-                setCurrentAdminView(view); // Keep both states in sync
+                setCurrentAdminView(view);
               }}
               refreshTrigger={refreshTrigger}
               onOpenMenu={() => open(

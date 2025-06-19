@@ -22,6 +22,7 @@ interface TableBoxProps {
   activeView: 'movimientos' | 'cuentas' | 'productos';
   setActiveView: (view: 'movimientos' | 'cuentas' | 'productos') => void;
   refreshTrigger?: number;
+  isAdmin?: boolean;
 }
 
 // Get movimientos columns specifically
@@ -177,7 +178,8 @@ const TableBox: React.FC<TableBoxProps> = ({
   onOpenMenu, 
   activeView, 
   setActiveView, 
-  refreshTrigger 
+  refreshTrigger,
+  isAdmin
 }) => {
   // Custom hooks
   const { cuentas, error } = useCuentas();
@@ -237,7 +239,7 @@ const TableBox: React.FC<TableBoxProps> = ({
             >
               <i className="fas fa-circle-user" title="Cuentas"></i>
             </button>
-            <button 
+            <button
               className={`toolbar-icon ${activeView === 'productos' ? 'active' : ''}`} 
               onClick={() => setActiveView("productos")}
             >
@@ -314,12 +316,13 @@ const TableBox: React.FC<TableBoxProps> = ({
               refreshTrigger={refreshTrigger}
             />
           ) : (
-            <TableComponent 
+            <TableComponent
               rows={filteredData} 
-              columns={columns} 
+              columns={columns}
               tableType={activeView}
               movimientosData={movimientosData}
               movimientosColumns={movimientosColumns}
+              isAdmin={isAdmin}
             />
           )}
         </div>
