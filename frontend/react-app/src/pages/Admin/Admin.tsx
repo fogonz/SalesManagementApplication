@@ -198,8 +198,6 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
                   />
                   <TotalSales amount={ingreso} />
                 </div>
-
-                <SidebarPanel title="Panel de Control" />
               </div>
             </div>
           </div>
@@ -216,8 +214,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
       case 'movimientos':
       case 'cuentas':
       case 'productos':
-        // Use the same TableBox component for all three views
-        // Convert currentAdminView to the appropriate activeView
+
         const tableActiveView: Tabla = currentAdminView as Tabla;
         return (
           <div className={`dashboard-container ${openMenu ? "blurred" : ""}`}>
@@ -265,8 +262,10 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           setCurrentAdminView={setCurrentAdminView}
         />
         <main>
-          <Alerts Alerts={Alerts} />
-          <div>{renderContent()}</div>
+          <>
+            <Alerts Alerts={Alerts} />
+            {renderContent()}
+          </>
         </main>
       </div>
 

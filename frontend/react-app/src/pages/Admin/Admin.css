@@ -16,7 +16,7 @@ main {
 
 .dashboard-container {
   background-color: #646464c9;
-  flex: 1; 
+  flex: 1;
   min-width: 0;
   min-height: 100vh;
   box-sizing: border-box;
