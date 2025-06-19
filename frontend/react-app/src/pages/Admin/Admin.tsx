@@ -16,12 +16,13 @@ import TableBox from '../../layouts/TableBox/TableBox';
 import Transaction from '../../layouts/menus/NewTransaction/NewTransaction';
 import NewAccount from '../../layouts/menus/NewAccount/NewAccount';
 import NewProduct from '../../layouts/menus/NewProduct/NewProduct';
+import ChatDisplay from '../../components/Components/Chat/Chat';
 import { filterData } from '../../utils/filterUtils';
 import { fetchTableData } from '../../services/api';
 
 type Tabla = "movimientos" | "cuentas" | "productos";
 type Menu = 'transaction' | 'account' | 'product' | null;
-type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar';
+type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat';
 
 interface AdminProps {
   activeView: Tabla;
@@ -247,6 +248,13 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
             <button onClick={refreshData}>
               Refrescar Datos
             </button>
+          </div>
+        );
+      
+      case 'chat':
+        return (
+          <div className="dashboard-container chat-container-wrapper">
+            <ChatDisplay />
           </div>
         );
       
