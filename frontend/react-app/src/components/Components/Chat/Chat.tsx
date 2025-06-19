@@ -12,7 +12,7 @@ const ChatDisplay: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "¡Hola! Soy el asistente del sistema. ¿En qué puedo ayudarte?",
+      text: "¡Hola! Soy el empleado del sistema. ¿En qué puedo ayudarte?",
       isUser: false,
       timestamp: new Date()
     }
@@ -20,9 +20,6 @@ const ChatDisplay: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
- 
-  
 
   const handleSendMessage = () => {
     if (inputText.trim() === '') return;
@@ -36,17 +33,17 @@ const ChatDisplay: React.FC = () => {
 
     setMessages(prev => [...prev, newMessage]);
     setInputText('');
-    
-    // Simular respuesta del bot
+
+    // Simular respuesta del empleado
     setIsTyping(true);
     setTimeout(() => {
-      const botResponse: Message = {
+      const employeeResponse: Message = {
         id: messages.length + 2,
         text: "Gracias por tu mensaje. He registrado tu consulta y te responderé pronto.",
         isUser: false,
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, botResponse]);
+      setMessages(prev => [...prev, employeeResponse]);
       setIsTyping(false);
     }, 1500);
   };
@@ -67,14 +64,13 @@ const ChatDisplay: React.FC = () => {
       <div className="chat-header">
         <div className="chat-header-info">
           <div className="chat-avatar">
-            <i className="fas fa-robot"></i>
+            <i className="fas fa-user-tie"></i>
           </div>
           <div className="chat-header-text">
-            <h3>Asistente del Sistema</h3>
+            <h3>Empleado</h3>
             <span className="status online">En línea</span>
           </div>
         </div>
-        
       </div>
 
       <div className="chat-messages">
@@ -85,7 +81,7 @@ const ChatDisplay: React.FC = () => {
           >
             {!message.isUser && (
               <div className="message-avatar">
-                <i className="fas fa-robot"></i>
+                <i className="fas fa-user-tie"></i>
               </div>
             )}
             <div className="message-content">
@@ -107,7 +103,7 @@ const ChatDisplay: React.FC = () => {
         {isTyping && (
           <div className="message message-bot">
             <div className="message-avatar">
-              <i className="fas fa-robot"></i>
+              <i className="fas fa-user-tie"></i>
             </div>
             <div className="message-content">
               <div className="message-bubble typing">
