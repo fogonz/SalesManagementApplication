@@ -135,7 +135,7 @@
   text-align: center;
   align-items: center;
   justify-content: center;
-  
+  padding: none;
   background-color: var(--secondary-color);
   color: white;
   border: none;
