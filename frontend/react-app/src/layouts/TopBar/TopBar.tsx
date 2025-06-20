@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import './TopBar.css';
 import './DarkMode.css';
 import { useState, useEffect } from 'react';
@@ -7,12 +7,26 @@ import { useState, useEffect } from 'react';
 const TopBar: React.FC = () => {
   const [state, setState] = useState<"1" | "2" | "0">("1");
   const [darkMode, setDarkMode] = useState(false);
+  
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const setActive = (value: "1" | "2") => {
     setState(value);
   };
 
-  const navigate = useNavigate()
+  // Determinar el estado activo basado en la ruta actual
+  useEffect(() => {
+    const currentPath = location.pathname;
+    
+    if (currentPath === '/admin') {
+      setState("2");
+    } else if (currentPath === '/ayuda') {
+      setState("0");
+    } else if (currentPath === '/') {
+      setState("1");
+    }
+  }, [location.pathname]);
 
   // Cargar preferencia de modo oscuro desde localStorage
   useEffect(() => {
@@ -51,18 +65,18 @@ const TopBar: React.FC = () => {
       <div className="header-icons">
         <div className='row'>
           <button onClick={() => {sectionHome(); setActive("1")}} className={`topbar-button ${state === "1" ? "active" : "inactive"}`}> 
-            <p>Operador</p> 
+            <p>Operador</p>
           </button>
-          <button onClick={() => {sectionAdmin(); setActive("2")}} className={`topbar-button ${state === "1" ? "inactive" : "active"}`}> 
-            <p>Admin</p> 
+          <button onClick={() => {sectionAdmin(); setActive("2")}} className={`topbar-button ${state === "2" ? "active" : "inactive"}`}>
+            <p>Admin</p>
           </button>
         </div>
       </div>
-      
+             
       <div className="header-right-controls">
         {/* Dark Mode Toggle */}
         <div className="dark-mode-container">
-          
+                     
           <label className="switch">
             <input
               type="checkbox"
@@ -72,7 +86,7 @@ const TopBar: React.FC = () => {
             <span className="slider"></span>
           </label>
         </div>
-        
+                 
         {/* Help Button */}
         <button onClick={() => {sectionHelp(); setState("0")}} className="header-icon">
           <i className="fas fa-question"></i>

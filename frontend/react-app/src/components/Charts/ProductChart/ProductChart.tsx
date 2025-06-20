@@ -48,6 +48,8 @@ const ProductChart = ({
               <Tooltip
                 formatter={(value) => [`${value.toLocaleString()} unidades`, 'Ventas']}
                 labelFormatter={(label) => `Producto: ${label}`}
+                contentStyle={{ color: '#000000' }}
+                labelStyle={{ color: '#000000' }}
               />
               <Bar dataKey="ventas" barSize={24}>
                 {chartData.map((entry, index) => (
