@@ -1,8 +1,7 @@
 .table_wrapper {
   width: 100%;
   height: 100%;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: hidden;
   padding: 1rem;
   box-sizing: border-box;
   background: white;
@@ -17,12 +16,13 @@
   font-family: 'Inter', 'Open Sans', sans-serif;
   font-size: 0.875rem;
   color: var(--font-color-general);
-  overflow-y: hidden;
   height: 100%;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-/* Encabezado de la tabla */
 .table_header {
   display: flex;
   background: linear-gradient(135deg, var(--header-color-1) 0%, var(--header-color-2) 100%);
@@ -31,9 +31,10 @@
   letter-spacing: 0.05em;
   align-items: center;
   height: 4.5vh;
+  min-height: 45px;
+  flex-shrink: 0;
 }
 
-/* Celdas del encabezado */
 .table_header__cell {
   padding: .5rem;
   border-right: 1px solid var(--header-border);
@@ -46,8 +47,7 @@
   box-sizing: border-box;
   flex: 1;
   width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: hidden;
   height: 100%;
 }
 
@@ -55,42 +55,47 @@
   border-right: none;
 }
 
-/* Cuerpo de la tabla */
 .table_body {
   display: flex;
   flex-direction: column;
   row-gap: .25rem;
   overflow-y: auto;
-  height: 100%;
-  max-height: 100%;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 0;
+  padding: 0.25rem 0;
 }
 
-/* Personalización del scrollbar */
 .table_body::-webkit-scrollbar {
-  width: 6px;
+  width: 0px;
+  background: transparent;
 }
 
 .table_body::-webkit-scrollbar-thumb {
-  background-color: rgba(80, 124, 163, 0.3);
-  border-radius: 3px;
+  background: transparent;
 }
 
 .table_body::-webkit-scrollbar-track {
-  background-color: #D7D7D9;
+  background: transparent;
 }
 
-/* Filas de la tabla */
+.table_body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 .table_row {
   display: flex;
   transition: all 0.2s ease;
   cursor: pointer;
+  min-height: 3vh;
+  flex-shrink: 0;
 }
 
 .table_row:last-child {
   border-bottom: none;
 }
 
-/* Filas alternadas */
 .table_row--even {
   background-color: var(--row-even);
 }
@@ -99,7 +104,6 @@
   background-color: var(--row-odd);
 }
 
-/* Celdas de la tabla */
 .table_cell {
   padding: 0.5rem 1rem;
   border-right: 2px solid #ffffff;
@@ -112,10 +116,15 @@
   width: 0;
   height: 3vh;
   max-height: 4vh;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: hidden;
   transition: opacity 0.3s ease-in-out;
   text-wrap: nowrap;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.table_cell:hover {
+  overflow-x: auto;
 }
 
 .table_cell i {
@@ -124,46 +133,57 @@
 
 .table_cell:first-child,
 .table_header__cell:first-child {
+  min-width: 2.5vw;
   max-width: 2.5vw;
+  width: 2.5vw;
+  flex: 0 0 2.5vw;
   justify-content: center;
-  padding: none;
+  padding: 0.5rem;
+  border-right: 2px solid white;
 }
 
 .table_header__cell:first-child {
   background-color: gray;
   border-bottom: 2px solid white;
-  border-right: 2px solid white;
 }
 
 .table_cell:first-child {
-  border-right: 2px solid white;
   background-color: var(--background-color);
   color: white;
 }
 
 .table_cell::-webkit-scrollbar {
-  height: 0;
+  height: 4px;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
 
 .table_cell:hover::-webkit-scrollbar {
-  height: 6px;
-  /* Restore height */
   opacity: 1;
 }
 
 .table_cell::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
 }
 
 .table_cell::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .table_cell::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.5);
+}
+
+.no-data-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #666;
+  font-style: italic;
+  font-size: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -184,14 +204,25 @@
     max-width: 150px;
   }
 
+  .table_cell:first-child,
+  .table_header__cell:first-child {
+    min-width: 60px;
+    max-width: 60px;
+    width: 60px;
+    flex: 0 0 60px;
+  }
+
   .table_header__cell--movement,
   .table_cell--movement,
   .table_header__cell--product,
   .table_cell--product {
     flex: 1 1 100px;
   }
-}
 
+  .table_body::-webkit-scrollbar {
+    width: 0px;
+  }
+}
 
 .modal-overlay {
   position: fixed;
@@ -216,6 +247,13 @@
   max-height: 85vh;
   overflow: auto;
   z-index: 1001;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal .table_wrapper {
+  flex: 1;
+  min-height: 0;
 }
 
 .modal-close {
@@ -227,6 +265,7 @@
   font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
+  z-index: 1002;
 }
 
 .modal, .modal-overlay {
@@ -237,7 +276,6 @@
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
