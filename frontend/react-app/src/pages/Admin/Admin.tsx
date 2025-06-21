@@ -1,29 +1,42 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import './Admin.css';
+
+// Importaciones de componentes de layout
 import SideBar from '../../layouts/SideBar/SideBar';
+import TableBox from '../../layouts/TableBox/TableBox';
+
+// Importaciones de componentes de gráficos
 import ROIChart from '../../components/Charts/ROIChart/ROIChart';
 import ProductChart from '../../components/Charts/ProductChart/ProductChart';
 import SalesChart from '../../components/Charts/SalesChart/SalesChart';
 import Datachart from '../../components/Charts/Datachart/Datachart';
+import TotalSales from '../../components/Charts/TotalSales/TotalSales';
+import PieChartExpenses from '../../components/Charts/SalesChart/SalesChart';
+
+// Importaciones de componentes de interfaz
 import PerformanceGrid from '../../components/Components/PerformanceGrid/PerformanceGrid';
 import Alerts from '../../components/Components/Alerts/Aletrs';
 import SidebarPanel from '../../components/Components/SidebarPanel/SidebarPanel';
 import FilterButton from '../../components/Components/FilterButton/FilterButton';
-import TotalSales from '../../components/Charts/TotalSales/TotalSales';
-import PieChartExpenses from '../../components/Charts/SalesChart/SalesChart';
-import { useData } from '../../contexts/DataContext';
-import TableBox from '../../layouts/TableBox/TableBox';
+import ChatDisplay from '../../components/Components/Chat/Chat';
+
+// Importaciones de menús modales
 import Transaction from '../../layouts/menus/NewTransaction/NewTransaction';
 import NewAccount from '../../layouts/menus/NewAccount/NewAccount';
 import NewProduct from '../../layouts/menus/NewProduct/NewProduct';
-import ChatDisplay from '../../components/Components/Chat/Chat';
+import { ConfirmChangesMenu } from '../../layouts/menus/ConfirmChanges/ConfirmChangesMenu';
+
+// Importaciones de contextos y servicios
+import { useData, DataProvider } from '../../contexts/DataContext';
 import { filterData } from '../../utils/filterUtils';
 import { fetchTableData } from '../../services/api';
 
+// ========== DEFINICIÓN DE TIPOS ==========
 type Tabla = "movimientos" | "cuentas" | "productos";
-type Menu = 'transaction' | 'account' | 'product' | null;
-type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat';
+type Menu = 'transaction' | 'account' | 'product' | 'confirmChanges' | null;
+type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat' | 'linkDevice';
 
+// Interfaz para props del componente
 interface AdminProps {
   activeView: Tabla;
   setActiveView: (view: Tabla) => void;
@@ -31,6 +44,7 @@ interface AdminProps {
   setOpenMenu: (menu: Menu) => void;
 }
 
+// Interfaz para datos agrupados
 interface GroupedData {
   [key: string]: {
     sales: number;
@@ -38,12 +52,25 @@ interface GroupedData {
   };
 }
 
+interface CellEditParams {
+  rowId: number;
+  field: any;
+  newValue: number | string;
+  prevValue?: number | string; // Add prevValue to store the original value
+}
+
+// ========== COMPONENTE PRINCIPAL ==========
 const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setOpenMenu }) => {
-  // Estado para controlar qué vista del admin está activa
+  
+  // ========== ESTADOS LOCALES ==========
+  // Control de vista activa del admin
   const [currentAdminView, setCurrentAdminView] = useState<AdminView>('estadisticas');
-  // Refresh Trigger para cuando se acepta un movimiento
+  
+  // Control de refrescar datos
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [roiChartData, setRoiChartData] = useState<{ date: string; sales: number; revenue: number }[]>([]);
+  
+  // Estados para datos de ROI
+  const [roiChartData, setRoiChartData] = useState<{  }[]>([]);
   const [loadingRoiData, setLoadingRoiData] = useState(false);
   const [roiError, setRoiError] = useState("");
   
@@ -52,64 +79,12 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
   const [loadingMovs, setLoadingMovs] = useState(true);
   const [movsError, setMovsError] = useState("");
 
-  // Calculate ingreso from roiChartData
-  const calculatedIngreso = useMemo(() => {
-    return roiChartData.reduce((total, item) => total + item.sales, 0);
-  }, [roiChartData]);
+  // Estado para almacenar los datos de la celda editada
+  const [cellEditData, setCellEditData] = useState<CellEditParams | null>(null);
 
-  // Función para procesar datos de movimientos
-  const processMovimientosData = (movimientos: any[]): { date: string; sales: number; revenue: number }[] => {
-    // Filtrar solo movimientos de tipo factura_venta
-    const ventasMovimientos = movimientos.filter(mov => mov.tipo === 'factura_venta');
-    
-    // Agrupar por fecha y sumar los montos - now with proper typing
-    const groupedByDate: GroupedData = ventasMovimientos.reduce((acc: GroupedData, mov) => {
-      const fecha = mov.fecha ? new Date(mov.fecha).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
-      const monto = parseFloat(mov.total) || 0;
-      
-      if (!acc[fecha]) {
-        acc[fecha] = { sales: 0, revenue: 0 };
-      }
-      
-      acc[fecha].sales += monto;
-      acc[fecha].revenue += monto; // Para ventas, sales y revenue son el mismo valor
-      
-      return acc;
-    }, {});
-    
-    // Convertir a array y ordenar por fecha
-    return Object.entries(groupedByDate)
-      .map(([date, values]) => ({
-        date,
-        sales: values.sales,
-        revenue: values.revenue
-      }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  };
+  const filterOptions = ['Esta Semana', 'Este Mes', 'Este Año'];
 
-  // Fetch de movimientos una vez montado
-  useEffect(() => {
-    const fetchMovs = async () => {
-      try {
-        setLoadingMovs(true);
-        const data = await fetchTableData("movimientos");
-        setMovimientosData(data);
-        
-        // Procesar datos para ROI Chart
-        const processedData = processMovimientosData(data);
-        setRoiChartData(processedData);
-      } catch (err) {
-        console.error("Error al obtener movimientos:", err);
-        setMovsError("Error al cargar movimientos");
-      } finally {
-        setLoadingMovs(false);
-      }
-    };
-
-    fetchMovs();
-  }, [refreshTrigger]);
-
-  // Usar el contexto de datos (excluding ingreso since we calculate it from ROI data)
+  // ========== CONTEXTO DE DATOS ==========
   const {
     expensesData,
     expensesLoading,
@@ -117,48 +92,97 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
     productData,
     productLoading,
     productError,
+    ventasData,
+    ventasLoading,
+    ventasError,
     selectedFilter,
     setSelectedFilter,
     egresoTotal,
     refreshData
   } = useData();
 
-  const performanceData: any[] = [];
-  const filterOptions = ['Esta Semana', 'Este Mes', 'Este Año'];
-
-  // Functions to handle menu actions
+  // ========== HANDLERS DE MENÚS ==========
+  // Abrir menú específico
   const open = (menu: Exclude<Menu, null>) => setOpenMenu(menu);
-  const close = () => setOpenMenu(null);
+  
+  // Cerrar menú actual
+  const close = () => {
+    setOpenMenu(null);
+    setCellEditData(null);
+  };
 
+  // Manejar edición de celda
+  const handleCellEdit = (params: CellEditParams) => {
+    console.log('Se editó una celda:', params);
+    // Make sure we have both prevValue and newValue
+    const editData: CellEditParams = {
+      rowId: params.rowId,
+      field: params.field,
+      prevValue: params.prevValue, // This should be the original value
+      newValue: params.newValue,   // This should be the new value
+    };
+    console.log('Edit data:', {
+      original: editData.prevValue,
+      new: editData.newValue
+    });
+  
+    setCellEditData(editData);
+    open('confirmChanges');
+  };
+
+  // Manejar aceptación de transacción
   const handleAcceptTransaction = () => {
     console.log("Transacción aceptada");
     close();
     setRefreshTrigger(prev => prev + 1);
   };
 
+  // Manejar aceptación de cuenta
   const handleAcceptAccount = () => {
     console.log("Cuenta guardada");
     close();
     setRefreshTrigger(prev => prev + 1);
   };
 
+  // Manejar aceptación de producto
   const handleAcceptProduct = () => {
     console.log("Producto guardado");
     close();
     setRefreshTrigger(prev => prev + 1);
   };
 
+  // Manejar confirmación de cambios en celda
+  const handleConfirmChanges = () => {
+    if (cellEditData) {
+      console.log("Cambios confirmados:", cellEditData);
+      // Aquí puedes agregar la lógica para guardar los cambios
+      // Por ejemplo, hacer una llamada a la API
+    }
+    close();
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  // Manejar cancelación de cambios
+  const handleCancelChanges = () => {
+    console.log("Cambios cancelados");
+    close();
+  };
+
+  // Manejar cambio de filtro
   const handleFilterChange = (filter: string) => {
     setSelectedFilter(filter);
     console.log('Filtro seleccionado:', filter);
   };
 
-  // Función para renderizar el contenido según la vista activa
+  // ========== RENDERIZADO CONDICIONAL ==========
+  // Función para renderizar contenido según vista activa
   const renderContent = () => {
     switch (currentAdminView) {
+      // Vista de estadísticas con dashboard completo
       case 'estadisticas':
         return (
           <div className="dashboard-container">
+            {/* Botón de filtros */}
             <FilterButton
               selectedFilter={selectedFilter}
               filterOptions={filterOptions}
@@ -166,14 +190,17 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
             />
 
             <div className="content-and-sidebar">
+              {/* Contenido principal del dashboard */}
               <div className="dashboard-main-wrapper">
-                <Datachart ingreso={calculatedIngreso} egreso={egresoTotal} />
-                <PerformanceGrid performanceData={performanceData} />
+                <Datachart ingreso={useData().ingreso} egreso={useData().egresoTotal} />
+                <PerformanceGrid performanceData={[]} />
               </div>
 
+              {/* Panel lateral con gráficos */}
               <div className="right-side-wrapper">
                 <div className='cards-container'>
                   <div className='cards-row'>
+                    {/* Gráfico de gastos */}
                     <PieChartExpenses 
                       data={expensesData}
                       title="Distribución de Gastos"
@@ -183,6 +210,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
                         "No hay gastos disponibles"
                       }
                     />
+                    {/* Gráfico de productos */}
                     <ProductChart 
                       data={productData}
                       title="Productos Más Vendidos"
@@ -193,6 +221,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
                       }
                     />
                   </div>
+                  {/* Gráfico de ROI */}
                   <ROIChart 
                     data={roiChartData}
                     noDataMessage={
@@ -201,13 +230,13 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
                       "No hay datos de ROI disponibles"
                     }
                   />
-                  <TotalSales amount={calculatedIngreso} />
                 </div>
               </div>
             </div>
           </div>
         );
       
+      // Vista de historial (placeholder)
       case 'historial':
         return (
           <div className="dashboard-container">
@@ -216,14 +245,15 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           </div>
         );
       
+      // Vistas de tablas (movimientos, cuentas, productos)
       case 'movimientos':
       case 'cuentas':
       case 'productos':
-
         const tableActiveView: Tabla = currentAdminView as Tabla;
         return (
           <div className={`dashboard-container ${openMenu ? "blurred" : ""}`}>
             <TableBox
+              onCellEdit={handleCellEdit}
               isAdmin={true}
               activeView={tableActiveView}
               setActiveView={(view) => {
@@ -241,6 +271,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           </div>
         );
       
+      // Vista de exportación
       case 'exportar':
         return (
           <div className="dashboard-container">
@@ -252,6 +283,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           </div>
         );
       
+      // Vista de chat
       case 'chat':
         return (
           <div className="dashboard-container chat-container-wrapper">
@@ -259,14 +291,17 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           </div>
         );
       
+      // Vista por defecto
       default:
         return null;
     }
   };
 
+  // ========== RENDERIZADO PRINCIPAL ==========
   return (
     <div className='app-wrapper'>
       <div className='admin-container'>
+        {/* Barra lateral de navegación */}
         <SideBar 
           currentSection='admin' 
           activeView={''} 
@@ -274,6 +309,8 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           currentAdminView={currentAdminView}
           setCurrentAdminView={setCurrentAdminView}
         />
+        
+        {/* Contenido principal */}
         <main>
           <>
             <Alerts Alerts={Alerts} />
@@ -282,15 +319,32 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
         </main>
       </div>
 
-      {/* Render modals based on openMenu - same as in Home component */}
+      {/* ========== MODALES ==========*/}
+      {/* Modal de nueva transacción */}
       {openMenu === 'transaction' && (
         <Transaction onClose={close} onAccept={handleAcceptTransaction} />
       )}
+      
+      {/* Modal de nueva cuenta */}
       {openMenu === 'account' && (
         <NewAccount onClose={close} onAccept={handleAcceptAccount} />
       )}
+      
+      {/* Modal de nuevo producto */}
       {openMenu === 'product' && (
         <NewProduct onClose={close} onAccept={handleAcceptProduct} />
+      )}
+
+      {/* Modal confirmar cambios en cell edit */}
+      {openMenu === 'confirmChanges' && cellEditData && (
+        <ConfirmChangesMenu
+          onClose={close}
+          onAccept={handleConfirmChanges}
+          prevValue={cellEditData.prevValue || ''}
+          newValue={cellEditData.newValue}
+          rowId={cellEditData.rowId}
+          field={cellEditData.field}
+        />
       )}
     </div>
   );

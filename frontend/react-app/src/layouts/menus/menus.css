@@ -89,7 +89,7 @@
   overflow: hidden;
 }
 
-.menu_newTransaction_topBar {
+.menu_topBar {
   display: flex;
   background: #202020;
   width: 100%;
@@ -262,7 +262,7 @@
   margin-top: auto;
 }
 
-.menu_newTransaction_bottomBar {
+.menu_bottomBar {
   display: flex;
   flex-direction: row;
   column-gap: 2%;
@@ -273,7 +273,7 @@
   padding: 5%;
 }
 
-.menu_newTransaction_bottomBar .open-sans {
+.menu_bottomBar .open-sans {
   font-size: large;
   font-weight: 400;
 }
@@ -635,4 +635,35 @@
 
 .searchButton {
   height: 100%;
+}
+
+.valuesContainer {
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  row-gap: .5rem;
+  color: black;
+  padding: 3%;
+}
+
+.valuesContainer i {
+  align-self: center;
+}
+
+.values {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  border: 1px solid black
+}
+
+.menu_confirmChanges {
+  background: #f4f5f8;
+  height: var(--confirmChangesMenu-height);
+  width: 20vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }

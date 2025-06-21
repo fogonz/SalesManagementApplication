@@ -311,7 +311,7 @@
   line-height: 1.4;
   overflow: hidden;
   display: -webkit-box;
-  
+
   -webkit-box-orient: vertical;
 }
 
@@ -382,24 +382,24 @@
     justify-content: center;
     flex-wrap: wrap;
   }
-  
+
   .product-list-item {
     flex-direction: column;
     align-items: flex-start;
     padding: 20px 15px;
   }
-  
+
   .product-list-image {
     margin-right: 0;
     margin-bottom: 15px;
     align-self: center;
   }
-  
+
   .product-list-details {
     justify-content: center;
     width: 100%;
   }
-  
+
   .product-list-delete-btn {
     top: 5px;
     right: 5px;
@@ -411,7 +411,7 @@
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .view-toggle-btn {
     padding: 6px 10px;
     font-size: 11px;

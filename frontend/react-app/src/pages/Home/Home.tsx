@@ -7,7 +7,7 @@ import NewAccount from "../../layouts/menus/NewAccount/NewAccount";
 import NewProduct from "../../layouts/menus/NewProduct/NewProduct";
 
 type Tabla = "movimientos" | "cuentas" | "productos";
-type Menu = 'transaction' | 'account' | 'product' | null;
+type Menu = 'transaction' | 'account' | 'product' | 'confirmChanges' | null;
 
 interface HomeProps {
   activeView: Tabla;

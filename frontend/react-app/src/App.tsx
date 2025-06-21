@@ -7,7 +7,7 @@ import { useState } from "react";
 import { DataProvider } from "./contexts/DataContext";
 
 type Tabla = "movimientos" | "cuentas" | "productos";
-type Menu = 'transaction' | 'account' | 'product' | null;
+type Menu = 'transaction' | 'account' | 'product' | 'confirmChanges' | null;
 
 function App() {
   const [activeView, setActiveView] = useState<Tabla>('movimientos');

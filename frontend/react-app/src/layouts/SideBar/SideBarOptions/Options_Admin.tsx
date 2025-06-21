@@ -1,7 +1,7 @@
 import React from "react";
 
 type Tabla = "movimientos" | "cuentas" | "productos";
-type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat';
+type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat'| 'linkDevice';
 
 interface OptionsAdminProps {
 	activeView: string;
@@ -39,7 +39,7 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 						setCurrentAdminView("historial");
 					}}
 				>
-					<i className="fas fa-clock-rotate-left"></i> HISTORIAL MOVIMIENTOS
+					<i className="fas fa-clock-rotate-left"></i> HISTORIAL DE ACCIONES
 				</button>	
 			</div>
 			
@@ -99,6 +99,9 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 
 				<button
 					className="menu-button-round blue-border"
+					onClick={(e) => {
+						setCurrentAdminView("linkDevice")
+					}}
 				>
 					<i className="fas fa-link"></i> VINCULAR DISPOSITIVO
 				</button>

@@ -239,7 +239,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                             ease: "easeInOut"
                         }}
                     >
-                        <div className="menu_newTransaction_topBar">
+                        <div className="menu_topBar">
                             <div className="text open-sans"> Agregando Movimiento </div>
                         </div>
     
@@ -363,7 +363,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                             </div>
                         </div>
                         
-                        <div className="menu_newTransaction_bottomBar">
+                        <div className="menu_bottomBar">
                             <button 
                                 className="bigButton button-shadow gray" 
                                 onClick={onClose}
@@ -406,7 +406,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                 className='motion'
                                 >
                                 <div className='productSection'>
-                                    <div className="menu_newTransaction_topBar">
+                                    <div className="menu_topBar">
                                         <div className="text open-sans"> Seleccionar Items </div>
                                     </div>
                                     <div className='row'>

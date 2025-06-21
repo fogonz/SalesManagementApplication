@@ -5,7 +5,6 @@ export const fetchCuentas = async (): Promise<CuentaRow[]> => {
   try {
     const response = await fetch(`${API_BASE_URL}/cuentas/`);
     const data = await response.json();
-    console.log("CUENTAS:", data);
     return data;
   } catch (err) {
     console.error(`Error al cargar cuentas:`, err);

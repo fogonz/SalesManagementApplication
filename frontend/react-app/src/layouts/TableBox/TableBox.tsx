@@ -23,6 +23,12 @@ interface TableBoxProps {
   setActiveView: (view: 'movimientos' | 'cuentas' | 'productos') => void;
   refreshTrigger?: number;
   isAdmin?: boolean;
+  onCellEdit?: (params: {
+    rowId: number;
+    field: any;
+    newValue: any;
+    prevValue: any;
+  }) => void;
 }
 
 // Get movimientos columns specifically
@@ -176,6 +182,7 @@ const useCalendar = () => {
 // Main component
 const TableBox: React.FC<TableBoxProps> = ({ 
   onOpenMenu, 
+  onCellEdit,
   activeView, 
   setActiveView, 
   refreshTrigger,
@@ -323,6 +330,7 @@ const TableBox: React.FC<TableBoxProps> = ({
               movimientosData={movimientosData}
               movimientosColumns={movimientosColumns}
               isAdmin={isAdmin}
+              onCellEdit={onCellEdit}
             />
           )}
         </div>

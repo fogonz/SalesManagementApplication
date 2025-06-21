@@ -179,11 +179,11 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
                 ×
               </button>
 
-              <img 
+              {/*<img 
                 src={product.image || "https://via.placeholder.com/200x200.png?text=Sin+Imagen"} 
                 alt={product.tipo_producto || 'Producto'} 
                 className="product-image" 
-              />
+              />*/}
 
               <div className="product-title">
                 {product.tipo_producto || 'Sin nombre'}

@@ -101,7 +101,7 @@ const NewProduct: React.FC<ProductProps> = ({ onClose, onAccept, editingProduct 
             <div className='popup'>
                 <div className='content'>
                     <div className="menu_newAccount">
-                        <div className="menu_newTransaction_topBar">
+                        <div className="menu_topBar">
                             <div className="text open-sans">
                                 {editingProduct ? 'Editando Producto' : 'Nuevo Producto'}
                             </div>
@@ -187,7 +187,7 @@ const NewProduct: React.FC<ProductProps> = ({ onClose, onAccept, editingProduct 
                             </div>
                         </div>
                         
-                        <div className="menu_newTransaction_bottomBar">
+                        <div className="menu_bottomBar">
                             <button 
                                 className="bigButton button-shadow gray" 
                                 onClick={onClose}

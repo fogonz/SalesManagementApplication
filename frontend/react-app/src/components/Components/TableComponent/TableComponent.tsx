@@ -53,6 +53,12 @@ type TableProps = {
   movimientosData?: MovimientoRow[]
   movimientosColumns?: ColumnDefinition[] 
   isAdmin?: boolean
+  onCellEdit?: (params: {
+    rowId: number;
+    field: any;
+    prevValue: any;
+    newValue: any;
+  }) => void;
 }
 
 // Helper function to format tipo values
@@ -65,19 +71,68 @@ const formatTipoValue = (value: string): string => {
     .charAt(0).toUpperCase() + value.replace(/_/g, ' ').slice(1)
 }
 
-const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimientosData, movimientosColumns, isAdmin }) => {
+const TableComponent: React.FC<TableProps> = ({ 
+  columns, 
+  rows, 
+  tableType, 
+  movimientosData, 
+  movimientosColumns, 
+  isAdmin,
+  onCellEdit 
+}) => {
   const tableRef = useRef<HTMLDivElement>(null)
   const [hoveredCell, setHoveredCell] = useState<any>(null)
   const [modalVisible, setModalVisible] = useState(false)
   const [selectedCuentaId, setSelectedCuentaId] = useState<number | null>(null)
+  const [editingCell, setEditingCell] = useState<{rowId: number, columnKey: string, prevValue: any} | null>(null)
+  const [editValue, setEditValue] = useState<string>('')
 
   const openModal = (cuentaId: number) => {
     setSelectedCuentaId(cuentaId)
     setModalVisible(true)
   }
+  
   const closeModal = () => {
     setSelectedCuentaId(null)
     setModalVisible(false)
+  }
+
+  const handleCellClick = (rowId: number, columnKey: string, currentValue: any, isEditable: boolean) => {
+    if (tableType === 'cuentas' && columnKey === 'nombre') {
+      openModal(rowId)
+      return
+    }
+    
+    if (isEditable && isAdmin) {
+      setEditingCell({ rowId, columnKey, prevValue: currentValue })
+      setEditValue(currentValue?.toString() || '')
+    }
+  }
+
+  const handleEditSubmit = (rowId: number, columnKey: any, prevValue: any) => {
+    if (onCellEdit) {
+      onCellEdit({
+        rowId: rowId,
+        field: columnKey,
+        prevValue: prevValue,
+        newValue: editValue
+      });
+    }
+    setEditingCell(null)
+    setEditValue('')
+  }
+
+  const handleEditCancel = () => {
+    setEditingCell(null)
+    setEditValue('')
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent, rowId: number, columnKey: string, prevValue: any) => {
+    if (e.key === 'Enter') {
+      handleEditSubmit(rowId, columnKey, prevValue)
+    } else if (e.key === 'Escape') {
+      handleEditCancel()
+    }
   }
 
   if (!rows.length) {
@@ -143,18 +198,23 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimi
 
                   const symbol = ['total', 'monto', 'estado'].includes(col.key) ? '$' : ''
                   const symbolAfter = ['descuento', 'descuento_total'].includes(col.key) ? '%' : ''
-                  let editable = false
+                  let isEditable = false
 
                   if (editableCells.includes(col.key)){
-                    editable = true;
+                    isEditable = true;
                   }
+
+                  const isCurrentlyEditing = editingCell?.rowId === (row as any).id && editingCell?.columnKey === col.key
 
                   return (
                     <div
                       key={col.key}
-                      className="table_cell"
+                      className={`table_cell ${isEditable && isAdmin ? 'editable-cell' : ''}`}
                       style={{ width: col.width }}
                       onMouseEnter={e => {
+                        if (isCurrentlyEditing) return
+                        
+                        console.log(col.key)
                         const rect = e.currentTarget.getBoundingClientRect()
                         const wrap = tableRef.current?.getBoundingClientRect()
 
@@ -179,26 +239,51 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimi
                           content,
                           symbolAfter,
                           isAdmin,
-                          editable,
+                          isEditable,
                           items,
                           currentCol: col.key
+
                         })
                       }}
                       onMouseLeave={e => {
+                        if (isCurrentlyEditing) return
+                        
                         const rect = e.currentTarget.getBoundingClientRect()
                         const wrap = tableRef.current?.getBoundingClientRect()
                         if (!wrap) return
                         setHoveredCell({ x: 0, y: 0, width: 0, height: 0, opacity: 0, background: '#fff' })
                       }}
                       onClick={e => {
-                        if (tableType === 'cuentas' && col.key === 'nombre') {
-                          openModal((row as CuentaRow).id)
-                        }
+                        handleCellClick((row as any).id, col.key, raw, isEditable)
                       }}
                     >
-                      {symbol}
-                      {content}
-                      {symbolAfter}
+                      {isCurrentlyEditing ? (
+                        <input
+                          type="text"
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          onBlur={() => handleEditSubmit((row as any).id, col.key, editingCell.prevValue)}
+                          onKeyDown={(e) => handleKeyDown(e, (row as any).id, col.key, editingCell.prevValue)}
+                          className="edit-input"
+                          autoFocus
+                          style={{
+                            width: '100%',
+                            border: 'none',
+                            outline: 'none',
+                            backgroundColor: 'transparent',
+                            fontSize: 'inherit',
+                            fontFamily: 'inherit',
+                            padding: '0',
+                            margin: '0'
+                          }}
+                        />
+                      ) : (
+                        <>
+                          {symbol}
+                          {content}
+                          {symbolAfter}
+                        </>
+                      )}
                     </div>
                   )
                 })}
@@ -207,7 +292,7 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimi
           })}
         </div>
 
-        {hoveredCell && <FloatingCell hoveredCell={hoveredCell} isGray={hoveredCell.currentCol === 'id'} />}
+        {hoveredCell && !editingCell && <FloatingCell hoveredCell={hoveredCell} isGray={hoveredCell.currentCol === 'id'} />}
         {modalVisible && selectedCuentaId && (
           <>
             <div className="modal-overlay" onClick={closeModal} />
@@ -218,6 +303,7 @@ const TableComponent: React.FC<TableProps> = ({ columns, rows, tableType, movimi
                 columns={movimientosColumns || columns}
                 rows={getMovimientosForCuenta(selectedCuentaId)}
                 tableType="movimientos"
+                onCellEdit={onCellEdit}
               />
             </div>
           </>

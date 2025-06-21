@@ -73,7 +73,7 @@ class MovimientosAPI {
 
   async obtener(id: number): Promise<MovimientoResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/movimientos/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/movimientos/${id}/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -134,14 +134,32 @@ class MovimientosAPI {
 
   async actualizar(id: number, payload: Partial<MovimientoPayload>): Promise<MovimientoResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/movimientos/${id}`, {
+      // First, get the existing record
+      const existingRecord = await this.obtener(id);
+      
+      // Create complete payload by merging existing record with new payload
+      const completePayload = {
+        ...existingRecord,
+        ...payload
+      };
+      
+      // Remove fields that don't belong in the payload or cause serializer issues
+      const { id: recordId, created_at, updated_at, ...payloadData } = completePayload;
+      
+      // If productos is not being explicitly updated, remove it to avoid nested field issues
+      if (!payload.hasOwnProperty('productos')) {
+        delete payloadData.productos;
+      }
+      
+      // Now send the complete object
+      const response = await fetch(`${API_BASE_URL}/movimientos/${id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payloadData)
       });
-
+      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         const error: APIError = {
@@ -150,17 +168,46 @@ class MovimientosAPI {
         };
         throw new Error(error.message);
       }
-
-      return await response.json() as MovimientoResponse;
+      
+      return await response.json();
+      
     } catch (error) {
       console.error('Error updating movement:', error);
       throw error;
     }
   }
 
+  // Alternative method for simple field updates (PATCH instead of PUT)
+  async actualizarCampos(id: number, payload: Partial<MovimientoPayload>): Promise<MovimientoResponse> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/movimientos/${id}/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const error: APIError = {
+          message: errorData.message || `Error ${response.status}: ${response.statusText}`,
+          status: response.status
+        };
+        throw new Error(error.message);
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error updating movement fields:', error);
+      throw error;
+    }
+  }
+
   async eliminar(id: number): Promise<{ success: boolean; message?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/movimientos/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/movimientos/${id}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

@@ -18,7 +18,6 @@ export const getColumnsForActiveView = (activeView: Tabla, cuentas: CuentaRow[])
 			}
 			
 			const cuenta = cuentas.find(c => c.id === cuenta_id);
-			console.log(`cuenta_id: ${cuenta_id}, cuenta encontrada:`, cuenta);
 			
 			return cuenta ? cuenta.nombre : `ID: ${cuenta_id} (no encontrada)`;
 		  }
