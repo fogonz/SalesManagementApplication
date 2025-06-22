@@ -323,7 +323,6 @@ const TableBox: React.FC<TableBoxProps> = ({
               refreshTrigger={refreshTrigger}
               isAdmin={isAdmin}
               onCellEdit={onCellEdit}
-              
             />
           ) : (
             <TableComponent

@@ -1,4 +1,3 @@
-
 .product-chart-container {
   display: block;
   background-color: white;
@@ -22,17 +21,21 @@
   padding: 0.5rem 0.5rem 0 0.5rem;
 }
 
+
 .chart-content {
-  height: calc(100% - 3rem); 
+  height: calc(100% - 3rem);
   width: 100%;
   padding: 0 0.5rem 0.5rem 0.5rem;
 }
+
+
 
 @keyframes cardAppear {
   from {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -45,13 +48,42 @@
   background-color: white;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  
   box-sizing: border-box;
   height: 21vh;
   min-height: 200px;
   width: 100%;
   max-width: 100%;
   animation: cardAppear 0.6s ease-out;
+}
+
+.expense-chart-content {
+  display: flex;
+  flex-direction: row;
+  height: calc(100% - 3rem);
+  width: 100%;
+  padding: 2%;
+}
+
+.chartdata {
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  padding: 1rem;
+  height: 100%;
+  width: 100%;
+  border: 1px solid gray;
+  border-radius: 12px;
+  background-color: white;
+  color: black;
+}
+
+.expense-chart-content ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  height: 100%;
+  width: fit-content;
 }
 
 .expense-chart-title {
@@ -68,8 +100,17 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.type {
+  color: gray;
+}
+
+.price {
+  color: black;
 }

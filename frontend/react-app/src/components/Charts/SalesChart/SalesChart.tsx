@@ -1,5 +1,5 @@
 import React from "react";
-import '../ProductChart/Chart.css';
+import '../Chart.css';
 
 import {
   PieChart,
@@ -102,7 +102,7 @@ const PieChartExpenses = ({
   return (
     <div className="expense-chart-container">
       <div className="expense-chart-title">{title}</div>
-      <div className="chart-content">
+      <div className="expense-chart-content">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -127,8 +127,19 @@ const PieChartExpenses = ({
               ))}
             </Pie>
             <Tooltip content={<CustomTooltip active={undefined} payload={undefined} />} />
+
           </PieChart>
         </ResponsiveContainer>
+        <div className="chartdata">
+          <ul>
+            {data.map((entry,index) => (
+              <li key={index}>
+                <span className="type"> {entry.name}: </span> 
+                <span className="price"> ${entry.value}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

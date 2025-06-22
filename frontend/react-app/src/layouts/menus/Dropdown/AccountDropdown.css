@@ -1,247 +1,300 @@
-/* Account Dropdown Container */
-.account-dropdown {
+/* Base dropdown component */
+.dropdown {
 	position: relative;
 	width: 100%;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
-/* Account Selector (Main Button) */
-.account-selector {
+/* Selector (main trigger button) */
+.selector {
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
+	justify-content: space-between;
 	padding: 12px 16px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	background-color: white;
+	border: 2px solid #e5e7eb;
+	border-radius: 8px;
+	background-color: #ffffff;
 	cursor: pointer;
 	transition: all 0.2s ease;
-	min-height: 20px;
+	min-height: 48px;
 }
 
-.account-selector:hover {
-	border-color: #999;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.selector:hover:not(.selector--disabled) {
+	border-color: #d1d5db;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.account-selector.disabled {
+.selector:focus-within:not(.selector--disabled) {
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.selector--disabled {
+	background-color: #f9fafb;
+	color: #9ca3af;
 	cursor: not-allowed;
-	opacity: 0.6;
-	background-color: #f5f5f5;
 }
 
-.account-selector-text {
+.selector__text {
 	flex: 1;
-	color: #333;
+	color: #374151;
 	font-size: 14px;
+	font-weight: 500;
 }
 
-.account-chevron {
-	color: #666;
+.selector--disabled .selector__text {
+	color: #9ca3af;
+}
+
+.selector__chevron {
+	color: #6b7280;
+	font-size: 12px;
 	transition: transform 0.2s ease;
-	margin-left: 8px;
 }
 
-/* Dropdown Menu */
-.account-dropdown-menu {
+/* Dropdown menu */
+.dropdown__menu {
 	position: absolute;
 	top: 100%;
 	left: 0;
 	right: 0;
-	background-color: white;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 	z-index: 1000;
-	max-height: 400px;
-	display: flex;
-	flex-direction: column;
+	background-color: #ffffff;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 	margin-top: 4px;
+	max-height: 400px;
+	overflow: hidden;
 }
 
-/* Search Section */
-.account-search {
-	padding: 12px;
-	border-bottom: 1px solid #eee;
+/* Search section */
+.search {
+	padding: 16px;
+	border-bottom: 1px solid #e5e7eb;
 }
 
-.account-search-input {
+.search__input {
 	width: 100%;
 	padding: 8px 12px;
-	border: 1px solid #ddd;
-	border-radius: 4px;
+	border: 1px solid #d1d5db;
+	border-radius: 6px;
 	font-size: 14px;
 	outline: none;
 	transition: border-color 0.2s ease;
 }
 
-.account-search-input:focus {
-	border-color: #007bff;
-	box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+.search__input:focus {
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.account-search-input::placeholder {
-	color: #999;
+.search__input::placeholder {
+	color: #9ca3af;
 }
 
-.account-search-results {
+.search__results {
 	margin-top: 8px;
 	font-size: 12px;
-	color: #666;
-	font-style: italic;
+	color: #6b7280;
+	font-weight: 500;
 }
 
-/* Account List Container */
-.account-list-container {
-	flex: 1;
+/* List container */
+.list-container {
+	max-height: 300px;
+	overflow: hidden;
+}
+
+.list-header {
 	display: flex;
-	flex-direction: column;
-}
-
-.account-list-header {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	gap: 8px;
-	padding: 8px 12px;
-	border-bottom: 1px solid #eee;
-	background-color: #f8f9fa;
-	font-weight: 600;
+	align-items: center;
+	padding: 12px 16px;
+	background-color: #f9fafb;
+	border-bottom: 1px solid #e5e7eb;
 	font-size: 12px;
-	color: #666;
+	font-weight: 600;
+	color: #374151;
 	text-transform: uppercase;
+	letter-spacing: 0.5px;
 }
 
-.account-list-header div {
-	text-align: left;
-}
-
-.account-list-wrapper {
-	height: 250px;
+.list-header>div {
 	flex: 1;
 }
 
-.account-scroll-content {
-	outline: none;
+.list-header>div:first-child {
+	flex: 2;
 }
 
-/* Account Item */
-.account-item {
+.list-wrapper {
+	max-height: 250px;
+	overflow-y: auto;
+}
+
+.list-wrapper::-webkit-scrollbar {
+	width: 6px;
+}
+
+.list-wrapper::-webkit-scrollbar-track {
+	background: #f1f5f9;
+}
+
+.list-wrapper::-webkit-scrollbar-thumb {
+	background: #cbd5e1;
+	border-radius: 3px;
+}
+
+.list-wrapper::-webkit-scrollbar-thumb:hover {
+	background: #94a3b8;
+}
+
+/* Dropdown items */
+.dropdown-item {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 8px 12px;
-	border-bottom: 1px solid #f0f0f0;
+	padding: 12px 16px;
+	border-bottom: 1px solid #f3f4f6;
 	cursor: pointer;
 	transition: all 0.2s ease;
-	background-color: white;
+	min-height: 60px;
 }
 
-.account-item.hoverable:hover {
-	background-color: #f8f9fa;
-	transform: translateX(2px);
+.dropdown-item--hoverable:hover {
+	background-color: #f9fafb;
 }
 
-.account-item.selected {
-	background-color: #e3f2fd;
-	border-left: 4px solid #2196f3;
-	cursor: default;
+.dropdown-item--selected {
+	background-color: #eff6ff;
+	border-bottom-color: #dbeafe;
 }
 
-.account-wrapper {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	gap: 8px;
-	flex: 1;
+.item-content {
+	display: flex;
 	align-items: center;
+	flex: 1;
+	gap: 16px;
 }
 
-.account-name {
+.item-name {
+	flex: 2;
 	font-weight: 500;
-	color: #333;
-}
-
-.account-name span {
+	color: #111827;
 	font-size: 14px;
 }
 
-.account-type {
-	color: #666;
-	font-size: 12px;
+.item-type {
+	flex: 1;
+	font-size: 13px;
+	color: #6b7280;
 }
 
-.account-amount {
-	color: #333;
+.item-amount {
+	flex: 1;
 	font-weight: 600;
+	color: #059669;
+	font-size: 14px;
 	text-align: right;
 }
 
-.account-amount span {
-	font-size: 13px;
-}
-
-/* Account Button */
-.account-button {
+.item-action {
 	width: 32px;
 	height: 32px;
-	border: none;
 	border-radius: 50%;
-	background-color: #007bff;
-	color: white;
-	cursor: pointer;
+	border: none;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	cursor: pointer;
 	transition: all 0.2s ease;
-	margin-left: 8px;
-	flex-shrink: 0;
+	margin-left: 12px;
+	background-color: #e5e7eb;
+	color: #6b7280;
 }
 
-.account-button:hover {
-	background-color: #0056b3;
-	transform: scale(1.1);
+.item-action:hover:not(:disabled) {
+	background-color: #d1d5db;
+	transform: scale(1.05);
 }
 
-.account-button.selected-button {
-	background-color: #28a745;
-	cursor: default;
+.item-action--selected {
+	background-color: #3b82f6;
+	color: #ffffff;
 }
 
-.account-button.selected-button:hover {
-	background-color: #28a745;
-	transform: none;
-}
-
-.account-button:disabled {
-	opacity: 0.6;
+.item-action:disabled {
 	cursor: not-allowed;
+	opacity: 0.6;
 }
 
-.account-button i {
+.item-action i {
 	font-size: 12px;
 }
 
-/* Responsive adjustments */
+/* Empty state */
+.empty-state {
+	padding: 32px 16px;
+	text-align: center;
+	color: #6b7280;
+	font-size: 14px;
+}
+
+.empty-state i {
+	font-size: 24px;
+	margin-bottom: 8px;
+	display: block;
+	color: #d1d5db;
+}
+
+/* Loading state */
+.loading {
+	padding: 24px 16px;
+	text-align: center;
+	color: #6b7280;
+	font-size: 14px;
+}
+
+.loading i {
+	animation: spin 1s linear infinite;
+	margin-right: 8px;
+}
+
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-	.account-dropdown-menu {
-		max-height: 300px;
+	.item-content {
+		gap: 8px;
 	}
 
-	.account-list-wrapper {
-		height: 200px;
+	.item-name {
+		font-size: 13px;
 	}
 
-	.account-wrapper {
-		gap: 4px;
-	}
-
-	.account-name span {
+	.item-type {
 		font-size: 12px;
 	}
 
-	.account-type {
-		font-size: 11px;
+	.item-amount {
+		font-size: 13px;
 	}
 
-	.account-amount span {
-		font-size: 12px;
+	.item-action {
+		width: 28px;
+		height: 28px;
+		margin-left: 8px;
+	}
+
+	.item-action i {
+		font-size: 10px;
 	}
 }

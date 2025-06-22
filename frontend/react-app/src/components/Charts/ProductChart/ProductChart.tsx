@@ -1,5 +1,5 @@
 import React from "react";
-import "./Chart.css";
+import "../Chart.css";
 
 import {
   BarChart,

@@ -203,7 +203,7 @@ const TableComponent: React.FC<TableProps> = ({
                   const symbolAfter = ['descuento', 'descuento_total'].includes(col.key) ? '%' : ''
                   let isEditable = false
 
-                  if (editableCells.includes(col.key)){
+                  if (editableCells.includes(col.key) && isAdmin){
                     isEditable = true;
                   }
 
