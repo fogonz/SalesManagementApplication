@@ -34,13 +34,15 @@ const Options_Home: React.FC<OptionsHomeProps> = ({ activeView, setActiveView })
 				</button>
 			</div>
 
-			<line></line>
-
+			{/**
+			<div classname="line"></div>
+			
 			<div className="sidebar-options">
 				<button className="menu-button-round gray-border">
 					<i className="fas fa-comments"></i> CHAT
 				</button>
 			</div>
+			 */}
 		</>
 	);
 };

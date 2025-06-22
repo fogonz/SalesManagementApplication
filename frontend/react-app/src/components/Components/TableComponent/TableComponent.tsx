@@ -110,7 +110,10 @@ const TableComponent: React.FC<TableProps> = ({
   }
 
   const handleEditSubmit = (rowId: number, columnKey: any, prevValue: any) => {
-    if (onCellEdit) {
+    // Check if there are actual changes
+    const hasChanges = editValue !== (prevValue?.toString() || '')
+    
+    if (hasChanges && onCellEdit) {
       onCellEdit({
         rowId: rowId,
         field: columnKey,
@@ -118,6 +121,7 @@ const TableComponent: React.FC<TableProps> = ({
         newValue: editValue
       });
     }
+    
     setEditingCell(null)
     setEditValue('')
   }
@@ -162,15 +166,14 @@ const TableComponent: React.FC<TableProps> = ({
 
   return (
     <div className="table_wrapper" ref={tableRef}>
+      <div className="table_header">
+        {columns.map(col => (
+          <div key={col.key} className="table_header__cell" style={{ width: col.width }}>
+            {col.label}
+          </div>
+        ))}
+      </div>
       <div className="table_container">
-        <div className="table_header">
-          {columns.map(col => (
-            <div key={col.key} className="table_header__cell" style={{ width: col.width }}>
-              {col.label}
-            </div>
-          ))}
-        </div>
-
         <div className="table_body">
           {rows.map(row => {
             const tipoKey = tableType === 'movimientos' ? 'tipo' : 'tipo_cuenta'
@@ -295,16 +298,17 @@ const TableComponent: React.FC<TableProps> = ({
         {hoveredCell && !editingCell && <FloatingCell hoveredCell={hoveredCell} isGray={hoveredCell.currentCol === 'id'} />}
         {modalVisible && selectedCuentaId && (
           <>
-            <div className="modal-overlay" onClick={closeModal} />
-            <div className="modal">
-              <button className="modal-close" onClick={closeModal}>×</button>
-              <h2>Movimientos de la cuenta #{selectedCuentaId}</h2>
-              <TableComponent
-                columns={movimientosColumns || columns}
-                rows={getMovimientosForCuenta(selectedCuentaId)}
-                tableType="movimientos"
-                onCellEdit={onCellEdit}
-              />
+            <div className="modal-overlay" onClick={closeModal}>
+              <div className="modal">
+                <button className="modal-close" onClick={closeModal}>×</button>
+                <h2>Movimientos de la cuenta #{selectedCuentaId}</h2>
+                <TableComponent
+                  columns={movimientosColumns || columns}
+                  rows={getMovimientosForCuenta(selectedCuentaId)}
+                  tableType="movimientos"
+                  onCellEdit={onCellEdit}
+                />
+              </div>
             </div>
           </>
         )}

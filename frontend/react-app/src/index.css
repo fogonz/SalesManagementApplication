@@ -154,7 +154,7 @@ input[type=button]:focus {
   user-select: none;
 }
 
-line {
+.line {
   display: flex;
   width: 95%;
   margin-top: 10%;

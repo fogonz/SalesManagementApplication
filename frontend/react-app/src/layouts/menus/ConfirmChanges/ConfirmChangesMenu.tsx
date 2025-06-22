@@ -1,15 +1,15 @@
 import React from "react";
 import { useState } from "react";
-import movimientosAPI from "../../../services/api/movimientos";
+import { movimientosAPI, cuentasAPI, productosAPI, movimientoItemsAPI } from "../../../services/api";
 
 interface ConfirmProps {
 	onClose: () => void;
     onAccept: () => void;
 	prevValue: number | string;
 	newValue: number | string;
-	// Added new props for the update operation
 	rowId: number;
-	field: string; // The field being updated (e.g., 'abonado', 'descuento', 'concepto', etc.)
+	field: string;
+	currentTable: string;
 }
 
 export const ConfirmChangesMenu: React.FC<ConfirmProps> = ({ 
@@ -18,7 +18,8 @@ export const ConfirmChangesMenu: React.FC<ConfirmProps> = ({
 	onClose, 
 	onAccept,
 	rowId,
-	field 
+	field,
+	currentTable
 }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -33,8 +34,22 @@ export const ConfirmChangesMenu: React.FC<ConfirmProps> = ({
 				[field]: newValue
 			};
 
-			// Call the actualizar method from movimientosAPI
-			await movimientosAPI.actualizarCampos(rowId, updatePayload);
+			// Map of table names to their corresponding API objects
+			const apiMap: { [key: string]: any } = {
+				movimientos: movimientosAPI,
+				cuentas: cuentasAPI,
+				productos: productosAPI,
+				movimientoItems: movimientoItemsAPI,
+				movimiento_items: movimientoItemsAPI
+			};
+
+			// Get the appropriate API and call actualizarCampos
+			const api = apiMap[currentTable];
+			if (!api) {
+				throw new Error(`Tabla no soportada: ${currentTable}`);
+			}
+
+			await api.actualizarCampos(rowId, updatePayload);
 			
 			// Call the onAccept callback to notify parent component of success
 			onAccept();
@@ -43,9 +58,9 @@ export const ConfirmChangesMenu: React.FC<ConfirmProps> = ({
 			onClose();
 		} catch (err) {
 			// Handle any errors that occur during the update
-			const errorMessage = err instanceof Error ? err.message : 'Error al actualizar el movimiento';
+			const errorMessage = err instanceof Error ? err.message : `Error al actualizar ${currentTable}`;
 			setError(errorMessage);
-			console.error('Error updating movement:', err);
+			console.error(`Error updating ${currentTable}:`, err);
 		} finally {
 			setIsLoading(false);
 		}

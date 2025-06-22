@@ -70,15 +70,15 @@
 	font-weight: bold;
 }
 
-.content {
+.cellContent {
 	display: flex;
-	justify-content: left;
+	justify-content: center;
 	align-items: center;
 	padding-left: 5%;
 	width: 100%;
 }
 
-.content i {
+.cellContent i {
 	margin-left: auto;
 	padding-right: 5%;
 }

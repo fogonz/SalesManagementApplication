@@ -6,6 +6,8 @@
   box-sizing: border-box;
   background: white;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .table_container {
@@ -20,7 +22,18 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.table_body {
+  display: flex;
+  flex-direction: column;
+  row-gap: .25rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 0;
+  padding: 0.25rem 0;
 }
 
 .table_header {
@@ -53,17 +66,6 @@
 
 .table_header__cell:last-child {
   border-right: none;
-}
-
-.table_body {
-  display: flex;
-  flex-direction: column;
-  row-gap: .25rem;
-  overflow-y: auto;
-  overflow-x: hidden;
-  flex: 1;
-  min-height: 0;
-  padding: 0.25rem 0;
 }
 
 .table_body::-webkit-scrollbar {
@@ -158,6 +160,10 @@
   transition: opacity 0.3s ease-in-out;
 }
 
+.table_container::-webkit-scrollbar {
+  width: 4px;
+}
+
 .table_cell:hover::-webkit-scrollbar {
   opacity: 1;
 }
@@ -167,7 +173,7 @@
   border-radius: 2px;
 }
 
-.table_cell::-webkit-scrollbar-thumb {
+.table_cell::-webkit-scrollbar-thumb, .table_container::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 2px;
 }
@@ -226,7 +232,7 @@
 
 .modal-overlay {
   position: fixed;
-  top: 0;
+  top: 25px;
   left: 0;
   width: 100vw;
   height: 100vh;
@@ -244,8 +250,9 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   padding: 1.5rem;
   max-width: 90vw;
-  max-height: 85vh;
-  overflow: auto;
+  max-height: 40vh;
+  overflow-x: hidden;
+  overflow-y: auto;
   z-index: 1001;
   display: flex;
   flex-direction: column;
@@ -276,6 +283,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }

@@ -344,6 +344,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           newValue={cellEditData.newValue}
           rowId={cellEditData.rowId}
           field={cellEditData.field}
+          currentTable={activeView}
         />
       )}
     </div>

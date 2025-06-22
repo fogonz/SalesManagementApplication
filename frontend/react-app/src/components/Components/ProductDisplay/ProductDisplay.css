@@ -150,6 +150,8 @@
   padding-bottom: 0.25rem;
   margin-left: auto;
   padding-right: 3%;
+  display: flex;
+  flex-direction: row;
 }
 
 .product-text {
@@ -160,6 +162,8 @@
   padding-bottom: 0.25rem;
   margin-left: auto;
   padding-right: 3%;
+  display: flex;
+  flex-direction: row;
 }
 
 .product-stock {
@@ -341,6 +345,15 @@
 .product-list-detail-value.price {
   color: #2ecc71;
   font-weight: bold;
+  display: flex;
+  flex-direction: row;
+}
+
+.product-list-detail-value.cost {
+  color: #666;
+  font-weight: bold;
+  display: flex;
+  flex-direction: row;
 }
 
 .product-list-detail-value.quantity-available {
@@ -416,4 +429,34 @@
     padding: 6px 10px;
     font-size: 11px;
   }
+}
+
+.product-editable-field {
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 2px;
+  transition: background-color 0.2s;
+}
+
+.product-editable-field:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Input field styling for editing */
+.product-edit-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  font-size: inherit;
+  font-family: inherit;
+  padding: 2px;
+  margin: 0;
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.product-edit-input:focus {
+  background-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.8);
 }

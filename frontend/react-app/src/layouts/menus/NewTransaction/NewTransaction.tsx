@@ -7,6 +7,7 @@ import { createHandleSubmit } from '../../../utils/validation/validate_insertTra
 import ProductGrid from '../../../components/Components/ShoppingCart/ShoppingCart'; 
 import { AnimatePresence, motion } from "framer-motion";
 import ShoppingCartTotal from '../../../components/Components/ShoppingCart/ShoppingCartTotal';
+import AccountDropdown from '../Dropdown/AccountDropdown';
 
 const ProductItem = ({ index, style, data, onAddProduct, carrito }) => {
     // Check if the current product is in the cart
@@ -67,6 +68,41 @@ interface CuentaOption {
     monto: number;
     tipo_cuenta: string;
 }
+
+const AccountItem = ({ index, style, data, onSelectAccount, selectedAccount }) => {
+    const account = data[index];
+    const isSelected = selectedAccount?.id === account?.id;
+    
+    return (
+        <div 
+            style={style} 
+            className={`productDB ${isSelected ? 'selected' : 'hoverable'}`}
+            onClick={() => onSelectAccount(account)}
+        >
+            <div className='wrapper'>
+                <div className='scroll_content'>
+                    <span className='show'>{account?.nombre}</span>
+                </div>
+                <div className='hide'>
+                    <span>({account?.tipo_cuenta})</span>
+                </div>
+                <div className='hide'>
+                    <span>${account?.monto}</span>
+                </div>
+            </div>
+            <button 
+                className={`add_button ${isSelected ? 'selected-button' : ''}`}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectAccount(account);
+                }}
+                disabled={!account || isSelected}
+            > 
+                <i className={`fas ${isSelected ? 'fa-check' : 'fa-plus'}`}></i> 
+            </button>
+        </div>
+    );
+};
 
 const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
@@ -276,19 +312,13 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                     <div className="entry_label">                                    
                                         <div className="text open-sans">Cuenta</div>    
                                     </div>
-                                    <select 
-                                        className="custom_input" 
-                                        value={cuenta} 
-                                        onChange={(e) => setCuenta(e.target.value)}
-                                        disabled={isSubmitting}
-                                    >
-                                        <option value="">-- Selecciona una cuenta --</option>
-                                        {options.map((item) => (
-                                            <option key={item.id} value={item.id}>
-                                                {item.nombre} ({item.tipo_cuenta})
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <AccountDropdown 
+                                        options={options}
+                                        selectedAccount={cuenta}
+                                        onSelectAccount={setCuenta}
+                                        isSubmitting={isSubmitting}
+                                        placeholder="-- Selecciona una cuenta --"
+                                    />
                                 </div>
     
                                 <div className="entry">

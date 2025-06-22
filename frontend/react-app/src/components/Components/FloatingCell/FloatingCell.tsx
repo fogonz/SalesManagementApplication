@@ -60,7 +60,7 @@ const FloatingCell: React.FC<FloatingCellProps> = ({
     >
       {items && items.length ? (
         <>
-          <div className="content">
+          <div className="cellContent">
             {symbol}
             {content}
           </div>
@@ -79,7 +79,7 @@ const FloatingCell: React.FC<FloatingCellProps> = ({
         </>
       ) : (
         <>
-          <div className="content">
+          <div className="cellContent">
             {symbol}
             {content}
             {symbolAfter}

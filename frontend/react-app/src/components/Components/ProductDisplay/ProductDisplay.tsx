@@ -1,7 +1,6 @@
 import React, { useState, forwardRef, useImperativeHandle, useEffect } from "react";
 import "./ProductDisplay.css";
 
-
 export interface ProductDisplayRef {
   addProduct: () => void;
   refreshData: () => void;
@@ -10,13 +9,27 @@ export interface ProductDisplayRef {
 interface ProductDisplayProps {
   searchTerm?: string;
   refreshTrigger?: number;
+  isAdmin?: boolean;
+  onCellEdit?: (params: {
+    rowId: number;
+    field: string;
+    prevValue: any;
+    newValue: any;
+  }) => void;
 }
 
-const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ searchTerm = '', refreshTrigger }, ref) => {
+const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ 
+  searchTerm = '', 
+  refreshTrigger, 
+  isAdmin,
+  onCellEdit 
+}, ref) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [editingCell, setEditingCell] = useState<{productId: number, field: string, prevValue: any} | null>(null);
+  const [editValue, setEditValue] = useState<string>('');
 
   // Extract fetch function so it can be reused
   const fetchProducts = async () => {
@@ -73,6 +86,7 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
         tipo_producto: "Nuevo Producto",
         descripcion: "Descripción aquí",
         precio_venta_unitario: 0,
+        costo_unitario: 0,
         image: "https://via.placeholder.com/200x200.png?text=Nuevo+Producto",
         cantidad: 0,
       },
@@ -81,6 +95,93 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
 
   const deleteProduct = (id) => {
     setProducts(products.filter(product => product.id !== id));
+  };
+
+  // Editing functions
+  const handleCellClick = (productId: number, field: string, currentValue: any) => {
+    if (isAdmin) {
+      setEditingCell({ productId, field, prevValue: currentValue });
+      setEditValue(currentValue?.toString() || '');
+    }
+  };
+
+  const handleEditSubmit = (productId: number, field: string, prevValue: any) => {
+    // Check if there are actual changes
+    const hasChanges = editValue !== (prevValue?.toString() || '');
+    
+    if (hasChanges && onCellEdit) {
+      onCellEdit({
+        rowId: productId,
+        field: field,
+        prevValue: prevValue,
+        newValue: editValue
+      });
+    }
+    
+    // Update local state for immediate UI feedback
+    if (hasChanges) {
+      handleChange(productId, field, editValue);
+    }
+    
+    setEditingCell(null);
+    setEditValue('');
+  };
+
+  const handleEditCancel = () => {
+    setEditingCell(null);
+    setEditValue('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent, productId: number, field: string, prevValue: any) => {
+    if (e.key === 'Enter') {
+      handleEditSubmit(productId, field, prevValue);
+    } else if (e.key === 'Escape') {
+      handleEditCancel();
+    }
+  };
+
+  // Check if a field is currently being edited
+  const isCurrentlyEditing = (productId: number, field: string) => {
+    return editingCell?.productId === productId && editingCell?.field === field;
+  };
+
+  // Render editable field component
+  const renderEditableField = (product: any, field: string, displayValue: any, className: string = '') => {
+    const isEditing = isCurrentlyEditing(product.id, field);
+    const isEditable = isAdmin;
+
+    if (isEditing) {
+      return (
+        <input
+          type="text"
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={() => handleEditSubmit(product.id, field, editingCell?.prevValue)}
+          onKeyDown={(e) => handleKeyDown(e, product.id, field, editingCell?.prevValue)}
+          className="product-edit-input"
+          autoFocus
+        />
+      );
+    }
+
+    return (
+      <div
+        className={`${className} ${isEditable ? 'product-editable-field' : ''}`}
+        onClick={() => handleCellClick(product.id, field, product[field])}
+        onMouseEnter={(e) => {
+          if (isEditable) {
+            e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (isEditable) {
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }
+        }}
+      >
+        {displayValue}
+      </div>
+    );
   };
 
   // Función para normalizar texto
@@ -179,27 +280,52 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
                 ×
               </button>
 
-              {/*<img 
-                src={product.image || "https://via.placeholder.com/200x200.png?text=Sin+Imagen"} 
-                alt={product.tipo_producto || 'Producto'} 
-                className="product-image" 
-              />*/}
-
               <div className="product-title">
-                {product.tipo_producto || 'Sin nombre'}
+                {renderEditableField(
+                  product, 
+                  'tipo_producto', 
+                  product.tipo_producto || 'Sin nombre',
+                  'product-title-content'
+                )}
               </div>
 
               <div className="typeTag">
                 <div className="tag">PRECIO</div>
                 <div className="product-price">
-                  ${product.precio_venta_unitario || 0}
+                  $
+                  {renderEditableField(
+                    product,
+                    'precio_venta_unitario',
+                    product.precio_venta_unitario || 0,
+                    'product-price-content'
+                  )}
                 </div>
               </div>
+              
+              {isAdmin && (
+                <div className="typeTag">
+                  <div className="tag">COSTO UNITARIO</div>
+                  <div className="product-text">
+                    $
+                    {renderEditableField(
+                      product,
+                      'costo_unitario',
+                      product.costo_unitario || 0,
+                      'product-cost-content'
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="typeTag">
                 <div className="tag">CANTIDAD</div>
                 <div className="product-text">
-                  {product.cantidad || 0}
+                  {renderEditableField(
+                    product,
+                    'cantidad',
+                    product.cantidad || 0,
+                    'product-quantity-content'
+                  )}
                 </div>
               </div>
             </div>
@@ -220,10 +346,14 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
                 ×
               </button>
 
-             
               <div className="product-list-content">
                 <h3 className="product-list-title">
-                  {product.tipo_producto || 'Sin nombre'}
+                  {renderEditableField(
+                    product,
+                    'tipo_producto',
+                    product.tipo_producto || 'Sin nombre',
+                    'product-list-title-content'
+                  )}
                 </h3>
                 
                 {product.descripcion && (
@@ -234,21 +364,40 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({ sea
 
                 <div className="product-list-details">
                   <div className="product-list-detail-item">
-                    <span className="product-list-detail-label">ID:</span>
-                    <span className="product-list-detail-value">{product.id}</span>
-                  </div>
-                  <div className="product-list-detail-item">
-                    <span className="product-list-detail-label">Precio:</span>
+                    <span className="product-list-detail-label">PRECIO:</span>
                     <span className="product-list-detail-value price">
-                      ${product.precio_venta_unitario || 0}
+                      $
+                      {renderEditableField(
+                        product,
+                        'precio_venta_unitario',
+                        product.precio_venta_unitario || 0,
+                        'product-list-price-content'
+                      )}
                     </span>
                   </div>
                   <div className="product-list-detail-item">
-                    <span className="product-list-detail-label">Cantidad:</span>
+                    <span className="product-list-detail-label">COSTO UNITARIO:</span>
+                    <span className="product-list-detail-value cost">
+                      $
+                      {renderEditableField(
+                        product,
+                        'costo_unitario',
+                        product.costo_unitario || 0,
+                        'product-list-cost-content'
+                      )}
+                    </span>
+                  </div>
+                  <div className="product-list-detail-item">
+                    <span className="product-list-detail-label">CANTIDAD:</span>
                     <span className={`product-list-detail-value ${
                       (product.cantidad || 0) > 0 ? 'quantity-available' : 'quantity-unavailable'
                     }`}>
-                      {product.cantidad || 0}
+                      {renderEditableField(
+                        product,
+                        'cantidad',
+                        product.cantidad || 0,
+                        'product-list-quantity-content'
+                      )}
                     </span>
                   </div>
                 </div>

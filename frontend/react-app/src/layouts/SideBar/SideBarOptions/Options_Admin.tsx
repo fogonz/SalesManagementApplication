@@ -84,7 +84,7 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 				</button>
 			</div>
 
-			<line></line>
+			<div className="line"></div>
 
 			<div className="sidebar-options">
 				<button
@@ -106,6 +106,7 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 					<i className="fas fa-link"></i> VINCULAR DISPOSITIVO
 				</button>
 
+				{/* CHAT BUTTON 
 				<button
 					className="menu-button-round gray-border"
 					data-view="chat"
@@ -115,6 +116,7 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 				>
 					<i className="fas fa-comments"></i> CHAT
 				</button>
+				*/}
 			</div>
 		</div>
 	);
