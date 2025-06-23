@@ -58,10 +58,6 @@ class SaldoSerializer(serializers.ModelSerializer):
         fields = ['id', 'saldo_actual']
 
 
-# ─────────────────────────────────────────────────────────────────────
-# Serializers para las nuevas tablas “transacciones” y “transaccion_items”
-# ─────────────────────────────────────────────────────────────────────
-
 class TransaccionItemsSerializer(serializers.ModelSerializer):
     producto = serializers.PrimaryKeyRelatedField(
         queryset=Productos.objects.all(),
@@ -116,3 +112,48 @@ class TransaccionesSerializer(serializers.ModelSerializer):
                 descuento_item=item_data.get('descuento_item', 0)
             )
         return transaccion
+    
+
+class TransaccionesWriteSerializer(serializers.ModelSerializer):
+    items = TransaccionItemsSerializer(many=True, required=False)
+    
+    class Meta:
+        model = Transacciones
+        fields = [
+            'id', 'tipo', 'fecha', 'cuenta', 'total', 
+            'descuento_total', 'concepto', 'items'
+        ]
+    
+    def create(self, validated_data):
+        items_data = validated_data.pop('items', [])
+        transaccion = Transacciones.objects.create(**validated_data)
+        
+        for item_data in items_data:
+            TransaccionItems.objects.create(
+                transaccion=transaccion, 
+                **item_data
+            )
+        
+        return transaccion
+    
+    def update(self, instance, validated_data):
+        items_data = validated_data.pop('items', None)
+        
+        # Update transaction fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        
+        # Update items if provided
+        if items_data is not None:
+            # Delete existing items
+            instance.transaccionitems_set.all().delete()
+            
+            # Create new items
+            for item_data in items_data:
+                TransaccionItems.objects.create(
+                    transaccion=instance, 
+                    **item_data
+                )
+        
+        return instance

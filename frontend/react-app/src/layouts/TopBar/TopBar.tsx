@@ -3,8 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import './TopBar.css';
 import './DarkMode.css';
 import { useState, useEffect } from 'react';
+import { TopBarProps } from '../../types';
 
-const TopBar: React.FC = () => {
+const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, setOpenMenu }) => {
   const [state, setState] = useState<"1" | "2" | "0">("1");
   const [darkMode, setDarkMode] = useState(false);
   

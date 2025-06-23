@@ -5,12 +5,10 @@ import TopBar from "./layouts/TopBar/TopBar";
 import Admin from "./pages/Admin/Admin";
 import { useState } from "react";
 import { DataProvider } from "./contexts/DataContext";
+import { Tabla, Menu, ValidTabla } from "./types";
 
-type Tabla = "movimientos" | "cuentas" | "productos";
-type Menu = 'transaction' | 'account' | 'product' | null;
-
-const isValidTabla = (value: string): value is Tabla => {
-  return ['movimientos', 'cuentas', 'productos'].includes(value);
+const isValidTabla = (value: string | null): value is ValidTabla => {
+  return ['movimientos', 'cuentas', 'productos'].includes(value as string);
 };
 
 function App() {
@@ -38,7 +36,14 @@ function App() {
           />
         } />
         <Route path="/ayuda" element={<HelpMenu />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin" element={
+          <Admin 
+            activeView={activeView}
+            setActiveView={setActiveView} 
+            openMenu={openMenu}
+            setOpenMenu={setOpenMenu}
+          />
+        } />
       </Routes>
     </DataProvider>
   );

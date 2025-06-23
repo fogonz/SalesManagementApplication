@@ -31,18 +31,9 @@ import { useData, DataProvider } from '../../contexts/DataContext';
 import { filterData } from '../../utils/filterUtils';
 import { fetchTableData } from '../../services/api';
 
-// ========== DEFINICIÓN DE TIPOS ==========
-type Tabla = "movimientos" | "cuentas" | "productos";
-type Menu = 'transaction' | 'account' | 'product' | 'confirmChanges' | null;
-type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat' | 'linkDevice';
+import { ValidTabla, Tabla, Menu, AdminProps } from '../../types';
 
-// Interfaz para props del componente
-interface AdminProps {
-  activeView: Tabla;
-  setActiveView: (view: Tabla) => void;
-  openMenu: Menu;
-  setOpenMenu: (menu: Menu) => void;
-}
+type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat' | 'linkDevice';
 
 // Interfaz para datos agrupados
 interface GroupedData {
@@ -221,7 +212,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
                       }
                     />
                   </div>
-                  {/* Gráfico de ROI */}
+                  {/* Gráfico de ROI 
                   <ROIChart 
                     data={roiChartData}
                     noDataMessage={
@@ -229,7 +220,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
                       movsError ? `Error: ${movsError}` : 
                       "No hay datos de ROI disponibles"
                     }
-                  />
+                  />*/}
                 </div>
               </div>
             </div>
@@ -255,7 +246,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
             <TableBox
               onCellEdit={handleCellEdit}
               isAdmin={true}
-              activeView={tableActiveView}
+              activeView={tableActiveView as ValidTabla}
               setActiveView={(view) => {
                 setActiveView(view);
                 setCurrentAdminView(view);
@@ -304,7 +295,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
         {/* Barra lateral de navegación */}
         <SideBar 
           currentSection='admin' 
-          activeView={''} 
+          activeView={''}
           setActiveView={setActiveView}
           currentAdminView={currentAdminView}
           setCurrentAdminView={setCurrentAdminView}
@@ -313,7 +304,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
         {/* Contenido principal */}
         <main>
           <>
-            <Alerts Alerts={Alerts} />
+            {/*<Alerts Alerts={Alerts} />*/}
             {renderContent()}
           </>
         </main>

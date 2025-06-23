@@ -2,9 +2,9 @@ import React from 'react';
 import './SideBar.css';
 import Options_Home from './SideBarOptions/Options_Home';
 import Options_Admin from './SideBarOptions/Options_Admin';
+import { Tabla } from '../../types';
 
-type Tabla = 'movimientos' | 'cuentas' | 'productos';
-type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar';
+type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat' | 'linkDevice';
 
 interface SideBarProps {
   currentSection: string;

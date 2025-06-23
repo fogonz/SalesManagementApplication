@@ -1,5 +1,8 @@
 from django.db import models
-
+from decimal import Decimal
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.db import transaction
 
 class ApiNote(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -92,6 +95,70 @@ class Cuentas(models.Model):
     class Meta:
         managed = False
         db_table = 'cuentas'
+    
+    def recalcular_monto(self):
+        """
+        Recalculate the account balance based on all related transactions
+        Business Logic:
+        - factura_venta: +total, -items_value
+        - factura_compra: -total, +items_value  
+        - cobranza: +total
+        - pago: -total
+        - Other types don't affect balance
+        """
+        total_balance = Decimal('0.00')
+        
+        # Get all transactions for this account
+        transacciones = self.transacciones_set.all()
+        
+        for transaccion in transacciones:
+            transaction_total = transaccion.total or Decimal('0.00')
+            
+            if transaccion.tipo == 'factura_venta':
+                # Add total (money client owes)
+                total_balance += transaction_total
+                # Subtract items value (products delivered)
+                items_value = self._calculate_items_value(transaccion)
+                total_balance -= items_value
+                
+            elif transaccion.tipo == 'factura_compra':
+                # Subtract total (money you paid)
+                total_balance -= transaction_total
+                # Add items value (products received)
+                items_value = self._calculate_items_value(transaccion)
+                total_balance += items_value
+                
+            elif transaccion.tipo == 'cobranza':
+                # Add total (money received)
+                total_balance += transaction_total
+                
+            elif transaccion.tipo == 'pago':
+                # Subtract total (money paid)
+                total_balance -= transaction_total
+                
+            # jornal, aguinaldo, alquiler, impuestos, sueldo don't affect balance
+        
+        # Update the monto field
+        self.monto = float(total_balance)
+        self.save(update_fields=['monto'])
+        
+        return self.monto
+    
+    def _calculate_items_value(self, transaccion):
+        """Calculate total value of items in a transaction"""
+        items_value = Decimal('0.00')
+        
+        for item in transaccion.transaccionitems_set.all():
+            precio = item.precio_unitario or Decimal('0.00')
+            cantidad = item.cantidad or Decimal('0.00')
+            descuento = item.descuento_item or Decimal('0.00')
+            
+            item_total = (precio * cantidad) - descuento
+            items_value += item_total
+            
+        return items_value
+
+
 
 
 class DjangoAdminLog(models.Model):
@@ -159,10 +226,6 @@ class Saldo(models.Model):
         db_table = 'saldo'
 
 
-# ─────────────────────────────────────────────────────────────────────
-#  MODELOS RENOMBRADOS: Transacciones y TransaccionItems
-# ─────────────────────────────────────────────────────────────────────
-
 class Transacciones(models.Model):
     TIPO_CHOICES = [
         ('factura_compra', 'Factura Compra'),
@@ -210,3 +273,43 @@ class TransaccionItems(models.Model):
     class Meta:
         managed = False
         db_table = 'transaccion_items'
+
+
+@receiver(post_save, sender=Transacciones)
+def actualizar_balance_transaccion_save(sender, instance, created, **kwargs):
+    """Update account balance when a transaction is created or updated"""
+    if instance.cuenta_id:
+        with transaction.atomic():
+            instance.cuenta.recalcular_monto()
+
+
+@receiver(post_delete, sender=Transacciones)
+def actualizar_balance_transaccion_delete(sender, instance, **kwargs):
+    """Update account balance when a transaction is deleted"""
+    if instance.cuenta_id:
+        try:
+            with transaction.atomic():
+                instance.cuenta.recalcular_monto()
+        except Cuentas.DoesNotExist:
+            # Account was also deleted, nothing to update
+            pass
+
+
+@receiver(post_save, sender=TransaccionItems)
+def actualizar_balance_item_save(sender, instance, created, **kwargs):
+    """Update account balance when transaction items are created or updated"""
+    if instance.transaccion and instance.transaccion.cuenta_id:
+        with transaction.atomic():
+            instance.transaccion.cuenta.recalcular_monto()
+
+
+@receiver(post_delete, sender=TransaccionItems)
+def actualizar_balance_item_delete(sender, instance, **kwargs):
+    """Update account balance when transaction items are deleted"""
+    if instance.transaccion and instance.transaccion.cuenta_id:
+        try:
+            with transaction.atomic():
+                instance.transaccion.cuenta.recalcular_monto()
+        except (Cuentas.DoesNotExist, Transacciones.DoesNotExist):
+            # Parent objects were deleted, nothing to update
+            pass

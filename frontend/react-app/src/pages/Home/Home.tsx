@@ -5,16 +5,7 @@ import TableBox from "../../layouts/TableBox/TableBox";
 import Transaction from "../../layouts/menus/NewTransaction/NewTransaction";
 import NewAccount from "../../layouts/menus/NewAccount/NewAccount";
 import NewProduct from "../../layouts/menus/NewProduct/NewProduct";
-
-type Tabla = "movimientos" | "cuentas" | "productos";
-type Menu = 'transaction' | 'account' | 'product' | 'confirmChanges' | null;
-
-interface HomeProps {
-  activeView: Tabla;
-  setActiveView: (view: Tabla) => void;
-  openMenu: Menu;
-  setOpenMenu: (menu: Menu) => void;
-}
+import { ValidTabla, Tabla, Menu, HomeProps } from "../../types";
 
 const Home: React.FC<HomeProps> = ({ activeView, setActiveView, openMenu, setOpenMenu }) => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -61,7 +52,7 @@ const Home: React.FC<HomeProps> = ({ activeView, setActiveView, openMenu, setOpe
         />
         <TableBox
           isAdmin={false}
-          activeView={activeView}
+          activeView={activeView as ValidTabla}
           setActiveView={setActiveView}
           refreshTrigger={refreshTrigger}
           onOpenMenu={() => open(

@@ -7,6 +7,7 @@ import AddButton from '../../assets/icons/AddButton';
 import { fetchCuentas } from '../../services/api/cuentas';
 import { fetchTableData } from '../../services/api';
 import { getColumnsForActiveView } from '../../config/tableColumns';
+import { TableBoxProps } from '../../types';
 import {
   filterData,
   extractDatesFromSearchTerm,
@@ -17,19 +18,6 @@ import {
   type Tabla
 } from '../../utils/filterUtils';
 
-interface TableBoxProps {
-  onOpenMenu: () => void;
-  activeView: 'movimientos' | 'cuentas' | 'productos';
-  setActiveView: (view: 'movimientos' | 'cuentas' | 'productos') => void;
-  refreshTrigger?: number;
-  isAdmin?: boolean;
-  onCellEdit?: (params: {
-    rowId: number;
-    field: any;
-    newValue: any;
-    prevValue: any;
-  }) => void;
-}
 
 // Get movimientos columns specifically
 const getMovimientosColumns = (cuentas: CuentaRow[]) => {

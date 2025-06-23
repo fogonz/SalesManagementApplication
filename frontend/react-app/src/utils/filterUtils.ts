@@ -27,7 +27,7 @@ export interface MovimientoRow {
 	precio: number | null;
   }
   
-  export type Tabla = 'movimientos' | 'cuentas' | 'productos';
+  export type Tabla = 'movimientos' | 'cuentas' | 'productos' | "" | null;
   
   // Utility functions
   export const normalizeText = (text: any): string => {
