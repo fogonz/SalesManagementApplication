@@ -51,7 +51,7 @@
   box-sizing: border-box;
   height: 21vh;
   min-height: 200px;
-  width: 100%;
+  width: 50%;
   max-width: 100%;
   animation: cardAppear 0.6s ease-out;
 }

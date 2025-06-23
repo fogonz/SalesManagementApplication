@@ -130,16 +130,7 @@ const PieChartExpenses = ({
 
           </PieChart>
         </ResponsiveContainer>
-        <div className="chartdata">
-          <ul>
-            {data.map((entry,index) => (
-              <li key={index}>
-                <span className="type"> {entry.name}: </span> 
-                <span className="price"> ${entry.value}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        
       </div>
     </div>
   );

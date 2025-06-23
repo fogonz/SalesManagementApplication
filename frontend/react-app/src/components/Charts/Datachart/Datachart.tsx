@@ -16,13 +16,15 @@ const Datachart: React.FC<DatachartProps> = ({ ingreso, egreso }) => {
     if (gridRef.current) {
       const grid = GridStack.init(
         {
-          float: true,
+          float: false, 
           margin: '-20px 10px 0px 0px',
           cellHeight: 160,
           resizable: { handles: '' },
           draggable: {
             handle: '.card',
           },
+           
+          column: 12, 
         },
         gridRef.current
       );

@@ -223,8 +223,25 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({
   if (loading) {
     return (
       <div className="product-container">
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-          Cargando productos...
+        <div className="view-controls">
+          <span className="view-controls-label">Vista:</span>
+          <button
+            onClick={() => setViewMode('grid')}
+            className={`view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+          >
+            🔳 Cuadrícula
+          </button>
+          <button
+            onClick={() => setViewMode('list')}
+            className={`view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+          >
+            📋 Lista
+          </button>
+        </div>
+        <div className="product-content">
+          <div style={{ padding: '20px', textAlign: 'center' }}>
+            Cargando productos...
+          </div>
         </div>
       </div>
     );
@@ -233,8 +250,25 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({
   if (error) {
     return (
       <div className="product-container">
-        <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
-          Error: {error}
+        <div className="view-controls">
+          <span className="view-controls-label">Vista:</span>
+          <button
+            onClick={() => setViewMode('grid')}
+            className={`view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+          >
+            🔳 Cuadrícula
+          </button>
+          <button
+            onClick={() => setViewMode('list')}
+            className={`view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+          >
+            📋 Lista
+          </button>
+        </div>
+        <div className="product-content">
+          <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
+            Error: {error}
+          </div>
         </div>
       </div>
     );
@@ -258,160 +292,162 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({
         </button>
       </div>
 
-      {searchTerm && (
-        <div className="search-info">
-          Mostrando {filteredProducts.length} de {products.length} productos que coinciden con "{searchTerm}"
-          {filteredProducts.length === 0 && (
-            <span className="search-info-no-results"> - No se encontraron productos</span>
-          )}
-        </div>
-      )}
+      <div className="product-content">
+        {searchTerm && (
+          <div className="search-info">
+            Mostrando {filteredProducts.length} de {products.length} productos que coinciden con "{searchTerm}"
+            {filteredProducts.length === 0 && (
+              <span className="search-info-no-results"> - No se encontraron productos</span>
+            )}
+          </div>
+        )}
 
-      {viewMode === 'grid' && (
-        <div className="product-grid2">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="product-card">
-              <button
-                onClick={() => deleteProduct(product.id)}
-                className="delete-button"
-                title="Eliminar producto"
-                aria-label="Eliminar producto"
-              >
-                ×
-              </button>
+        {viewMode === 'grid' && (
+          <div className="product-grid2">
+            {filteredProducts.map((product) => (
+              <div key={product.id} className="product-card">
+                <button
+                  onClick={() => deleteProduct(product.id)}
+                  className="delete-button"
+                  title="Eliminar producto"
+                  aria-label="Eliminar producto"
+                >
+                  ×
+                </button>
 
-              <div className="product-title">
-                {renderEditableField(
-                  product, 
-                  'tipo_producto', 
-                  product.tipo_producto || 'Sin nombre',
-                  'product-title-content'
-                )}
-              </div>
-
-              <div className="typeTag">
-                <div className="tag">PRECIO</div>
-                <div className="product-price">
-                  $
+                <div className="product-title">
                   {renderEditableField(
-                    product,
-                    'precio_venta_unitario',
-                    product.precio_venta_unitario || 0,
-                    'product-price-content'
+                    product, 
+                    'tipo_producto', 
+                    product.tipo_producto || 'Sin nombre',
+                    'product-title-content'
                   )}
                 </div>
-              </div>
-              
-              {isAdmin && (
+
                 <div className="typeTag">
-                  <div className="tag">COSTO UNITARIO</div>
-                  <div className="product-text">
+                  <div className="tag">PRECIO</div>
+                  <div className="product-price">
                     $
                     {renderEditableField(
                       product,
-                      'costo_unitario',
-                      product.costo_unitario || 0,
-                      'product-cost-content'
+                      'precio_venta_unitario',
+                      product.precio_venta_unitario || 0,
+                      'product-price-content'
                     )}
                   </div>
                 </div>
-              )}
-
-              <div className="typeTag">
-                <div className="tag">CANTIDAD</div>
-                <div className="product-text">
-                  {renderEditableField(
-                    product,
-                    'cantidad',
-                    product.cantidad || 0,
-                    'product-quantity-content'
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {viewMode === 'list' && (
-        <div className="product-list">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="product-list-item">
-              <button
-                onClick={() => deleteProduct(product.id)}
-                className="product-list-delete-btn"
-                title="Eliminar producto"
-                aria-label="Eliminar producto"
-              >
-                ×
-              </button>
-
-              <div className="product-list-content">
-                <h3 className="product-list-title">
-                  {renderEditableField(
-                    product,
-                    'tipo_producto',
-                    product.tipo_producto || 'Sin nombre',
-                    'product-list-title-content'
-                  )}
-                </h3>
                 
-                {product.descripcion && (
-                  <p className="product-list-description">
-                    {product.descripcion}
-                  </p>
-                )}
-
-                <div className="product-list-details">
-                  <div className="product-list-detail-item">
-                    <span className="product-list-detail-label">PRECIO:</span>
-                    <span className="product-list-detail-value price">
-                      $
-                      {renderEditableField(
-                        product,
-                        'precio_venta_unitario',
-                        product.precio_venta_unitario || 0,
-                        'product-list-price-content'
-                      )}
-                    </span>
-                  </div>
-                  <div className="product-list-detail-item">
-                    <span className="product-list-detail-label">COSTO UNITARIO:</span>
-                    <span className="product-list-detail-value cost">
+                {isAdmin && (
+                  <div className="typeTag">
+                    <div className="tag">COSTO UNITARIO</div>
+                    <div className="product-text">
                       $
                       {renderEditableField(
                         product,
                         'costo_unitario',
                         product.costo_unitario || 0,
-                        'product-list-cost-content'
+                        'product-cost-content'
                       )}
-                    </span>
+                    </div>
                   </div>
-                  <div className="product-list-detail-item">
-                    <span className="product-list-detail-label">CANTIDAD:</span>
-                    <span className={`product-list-detail-value ${
-                      (product.cantidad || 0) > 0 ? 'quantity-available' : 'quantity-unavailable'
-                    }`}>
-                      {renderEditableField(
-                        product,
-                        'cantidad',
-                        product.cantidad || 0,
-                        'product-list-quantity-content'
-                      )}
-                    </span>
+                )}
+
+                <div className="typeTag">
+                  <div className="tag">CANTIDAD</div>
+                  <div className="product-text">
+                    {renderEditableField(
+                      product,
+                      'cantidad',
+                      product.cantidad || 0,
+                      'product-quantity-content'
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
 
-      {filteredProducts.length === 0 && !searchTerm && (
-        <div className="product-empty-state">
-          No hay productos disponibles
-        </div>
-      )}
+        {viewMode === 'list' && (
+          <div className="product-list">
+            {filteredProducts.map((product) => (
+              <div key={product.id} className="product-list-item">
+                <button
+                  onClick={() => deleteProduct(product.id)}
+                  className="product-list-delete-btn"
+                  title="Eliminar producto"
+                  aria-label="Eliminar producto"
+                >
+                  ×
+                </button>
+
+                <div className="product-list-content">
+                  <h3 className="product-list-title">
+                    {renderEditableField(
+                      product,
+                      'tipo_producto',
+                      product.tipo_producto || 'Sin nombre',
+                      'product-list-title-content'
+                    )}
+                  </h3>
+                  
+                  {product.descripcion && (
+                    <p className="product-list-description">
+                      {product.descripcion}
+                    </p>
+                  )}
+
+                  <div className="product-list-details">
+                    <div className="product-list-detail-item">
+                      <span className="product-list-detail-label">PRECIO:</span>
+                      <span className="product-list-detail-value price">
+                        $
+                        {renderEditableField(
+                          product,
+                          'precio_venta_unitario',
+                          product.precio_venta_unitario || 0,
+                          'product-list-price-content'
+                        )}
+                      </span>
+                    </div>
+                    <div className="product-list-detail-item">
+                      <span className="product-list-detail-label">COSTO UNITARIO:</span>
+                      <span className="product-list-detail-value cost">
+                        $
+                        {renderEditableField(
+                          product,
+                          'costo_unitario',
+                          product.costo_unitario || 0,
+                          'product-list-cost-content'
+                        )}
+                      </span>
+                    </div>
+                    <div className="product-list-detail-item">
+                      <span className="product-list-detail-label">CANTIDAD:</span>
+                      <span className={`product-list-detail-value ${
+                        (product.cantidad || 0) > 0 ? 'quantity-available' : 'quantity-unavailable'
+                      }`}>
+                        {renderEditableField(
+                          product,
+                          'cantidad',
+                          product.cantidad || 0,
+                          'product-list-quantity-content'
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {filteredProducts.length === 0 && !searchTerm && (
+          <div className="product-empty-state">
+            No hay productos disponibles
+          </div>
+        )}
+      </div>
     </div>
   );
 });

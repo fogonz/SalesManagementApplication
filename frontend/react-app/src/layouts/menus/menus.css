@@ -314,11 +314,19 @@
 
 .entry_label {
   width: 30%;
-  height: 70%;
-  align-content: center;
+  height: 48px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   background-color: #bcc4c4;
+  border-radius: 8px;
+  
+  font-family: "Open Sans", sans-serif;
+  font-size: medium;
+  box-sizing: border-box;
 }
+
 
 .entry_label .text {
   font-size: 1rem;

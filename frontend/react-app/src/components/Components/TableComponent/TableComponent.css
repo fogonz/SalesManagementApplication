@@ -11,7 +11,6 @@
 }
 
 .table_container {
-  background-color: #ffffff;
   border-radius: 0.2rem;
   box-shadow: 0 4px 6px rgba(2, 48, 89, 0.1), 0 1px 3px rgba(75, 123, 166, 0.15);
   min-width: 900px;

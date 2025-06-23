@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TopBar from "../../layouts/TopBar/TopBar";
 import SideBar from "../../layouts/SideBar/SideBar";
 import TableBox from "../../layouts/TableBox/TableBox";
@@ -16,8 +16,19 @@ interface HomeProps {
   setOpenMenu: (menu: Menu) => void;
 }
 
-const Home : React.FC<HomeProps> = ({activeView, setActiveView, openMenu, setOpenMenu}) => {
+const Home: React.FC<HomeProps> = ({ activeView, setActiveView, openMenu, setOpenMenu }) => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  useEffect(() => {
+    const savedView = localStorage.getItem('activeView') as Tabla;
+    if (savedView) {
+      setActiveView(savedView);
+    }
+  }, [setActiveView]);
+
+  useEffect(() => {
+    localStorage.setItem('activeView', activeView);
+  }, [activeView]);
 
   const open = (menu: Exclude<Menu, null>) => setOpenMenu(menu);
   const close = () => setOpenMenu(null);
@@ -62,7 +73,6 @@ const Home : React.FC<HomeProps> = ({activeView, setActiveView, openMenu, setOpe
         />
       </div>
 
-      {/* Renderizas cada modal según openMenu */}
       {openMenu === 'transaction' && (
         <Transaction onClose={close} onAccept={handleAcceptTransaction} />
       )}

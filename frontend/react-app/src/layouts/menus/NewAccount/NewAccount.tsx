@@ -130,7 +130,7 @@ const NewAccount: React.FC<AccountProps> = ({ onClose, onAccept, editingAccount 
 
                                 <div className="entry">
                                     <div className="entry_label">
-                                        <div className="text open-sans">Nombre *</div>
+                                        <div className="text open-sans">Nombre</div>
                                     </div>
                                     <input 
                                         type="text" 
@@ -144,7 +144,7 @@ const NewAccount: React.FC<AccountProps> = ({ onClose, onAccept, editingAccount 
 
                                 <div className="entry">
                                     <div className="entry_label">
-                                        <div className="text open-sans">Tipo de Cuenta *</div>
+                                        <div className="text open-sans">Tipo de Cuenta</div>
                                     </div>
                                     <select 
                                         className="custom_input" 
@@ -161,7 +161,7 @@ const NewAccount: React.FC<AccountProps> = ({ onClose, onAccept, editingAccount 
 
                                 <div className="entry">
                                     <div className="entry_label">
-                                        <div className="text open-sans">Monto *</div>
+                                        <div className="text open-sans">Monto</div>
                                     </div>
                                     <input 
                                         type="number" 

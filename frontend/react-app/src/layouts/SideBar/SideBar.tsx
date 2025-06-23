@@ -1,6 +1,5 @@
 import React from 'react';
 import './SideBar.css';
-import { useEffect } from 'react';
 import Options_Home from './SideBarOptions/Options_Home';
 import Options_Admin from './SideBarOptions/Options_Admin';
 
@@ -9,30 +8,19 @@ type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'pro
 
 interface SideBarProps {
   currentSection: string;
-  activeView: string;
+  activeView: Tabla;
   setActiveView?: React.Dispatch<React.SetStateAction<Tabla>>;
-  currentAdminView?: string;
+  currentAdminView?: AdminView;
   setCurrentAdminView?: React.Dispatch<React.SetStateAction<AdminView>>;
 }
 
-const SideBar: React.FC<SideBarProps> = ({activeView, setActiveView, currentAdminView, setCurrentAdminView, currentSection="home", }) => {
-  const toggleActive = (event) => {
-    const buttons = document.querySelectorAll('.menu-button');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-  };
-
-  useEffect(() => {
-    if (setActiveView) {
-      setActiveView("movimientos");
-    }
-
-    const firstBtn = document.querySelector<HTMLButtonElement>(".menu-button");
-    if (firstBtn) {
-      firstBtn.classList.add("active");
-    }
-  }, [setActiveView])
-
+const SideBar: React.FC<SideBarProps> = ({
+  activeView, 
+  setActiveView, 
+  currentAdminView, 
+  setCurrentAdminView, 
+  currentSection = "home"
+}) => {
   return (
     <div className="sidebar">
       <div className="logo-section">
@@ -49,10 +37,19 @@ const SideBar: React.FC<SideBarProps> = ({activeView, setActiveView, currentAdmi
       </div>
 
       {currentSection === "home" && (
-          <Options_Home activeView={activeView} setActiveView={setActiveView} toggleActive={toggleActive} />
+        <Options_Home 
+          activeView={activeView}
+          setActiveView={setActiveView} toggleActive={function (e: React.MouseEvent<HTMLButtonElement>): void {
+            throw new Error('Function not implemented.');
+          } }        />
       )}
       {currentSection === "admin" && (
-          <Options_Admin activeView={activeView} setActiveView={setActiveView} toggleActive={toggleActive} currentAdminView={currentAdminView} setCurrentAdminView={setCurrentAdminView}  />
+        <Options_Admin 
+          activeView={activeView}
+          currentAdminView={currentAdminView}
+          setCurrentAdminView={setCurrentAdminView} setActiveView={function (value: React.SetStateAction<'movimientos' | 'cuentas' | 'productos'>): void {
+            throw new Error('Function not implemented.');
+          } }        />
       )}
     </div>
   );

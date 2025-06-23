@@ -1,22 +1,26 @@
 /* Base dropdown component */
 .dropdown {
 	position: relative;
-	width: 100%;
+	width: 80%;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
-/* Selector (main trigger button) */
 .selector {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 12px 16px;
-	border: 2px solid #e5e7eb;
-	border-radius: 8px;
-	background-color: #ffffff;
-	cursor: pointer;
-	transition: all 0.2s ease;
-	min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border: 1px solid #bcc4c4;
+  border-radius: 8px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 48px;
+  font-size: medium;
+  text-align: right;
+  padding-right: 3.5%;
+  direction: ltr;
+  box-sizing: border-box;
 }
 
 .selector:hover:not(.selector--disabled) {

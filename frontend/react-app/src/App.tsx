@@ -7,48 +7,38 @@ import { useState } from "react";
 import { DataProvider } from "./contexts/DataContext";
 
 type Tabla = "movimientos" | "cuentas" | "productos";
-type Menu = 'transaction' | 'account' | 'product' | 'confirmChanges' | null;
+type Menu = 'transaction' | 'account' | 'product' | null;
+
+const isValidTabla = (value: string): value is Tabla => {
+  return ['movimientos', 'cuentas', 'productos'].includes(value);
+};
 
 function App() {
-  const [activeView, setActiveView] = useState<Tabla>('movimientos');
-  const [openMenu, setOpenMenu] = useState<Menu>(null);
+  const savedView = localStorage.getItem('activeView');
+  const initialView = savedView && isValidTabla(savedView) ? savedView : 'movimientos';
   
+  const [activeView, setActiveView] = useState<Tabla>(initialView);
+  const [openMenu, setOpenMenu] = useState<Menu>(null);
+
   return (
     <DataProvider>
+      <TopBar
+        activeView={activeView}
+        setActiveView={setActiveView}
+        openMenu={openMenu}
+        setOpenMenu={setOpenMenu}
+      />
       <Routes>
-        {/* MAIN PATH - HOME */}
         <Route path="/" element={
-          <div>
-            <TopBar />
-            <Home
-              activeView={activeView}
-              setActiveView={setActiveView}
-              openMenu={openMenu}
-              setOpenMenu={setOpenMenu}
-            />
-          </div>
+          <Home 
+            activeView={activeView}
+            setActiveView={setActiveView}
+            openMenu={openMenu}
+            setOpenMenu={setOpenMenu}
+          />
         } />
-
-        {/* HELP PATH */}
-        <Route path="/ayuda" element={
-          <div>
-            <TopBar />
-            <HelpMenu />
-          </div>
-        } />
-              
-        {/* ADMIN PATH */}
-        <Route path="/admin" element={
-          <div>
-            <TopBar />
-            <Admin
-              activeView={activeView}
-              setActiveView={setActiveView}
-              openMenu={openMenu}
-              setOpenMenu={setOpenMenu}
-            />
-          </div>
-        } />
+        <Route path="/ayuda" element={<HelpMenu />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </DataProvider>
   );
