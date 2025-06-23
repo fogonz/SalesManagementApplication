@@ -32,11 +32,11 @@ const ProductChart = ({
         {chartData.length === 0 ? (
           <div className="no-data-message">{noDataMessage}</div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="110%">
             <BarChart
               layout="vertical"
               data={chartData}
-              margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+              margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis type="number" />
