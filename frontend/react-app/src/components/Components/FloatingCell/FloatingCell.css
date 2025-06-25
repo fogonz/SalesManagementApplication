@@ -5,7 +5,7 @@
 	transform-origin: center;
 	transition: transform 0.3s ease, opacity 0.3s ease;
 	box-shadow: rgba(0, 0, 0, 0.20) 0px 14px 28px, rgba(0, 0, 0, 0.18) 0px 10px 10px;
-	z-index: 9999;
+	z-index: 500;
 	pointer-events: none;
 	display: flex;
 	flex-direction: column;

@@ -1,0 +1,131 @@
+/* Contenedor principal */
+.ssh-tunnel-menu {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.05);
+	z-index: 1000;
+	/* Allow pointer events to pass through except for the modal box */
+	pointer-events: none;
+}
+
+/* Caja del formulario centrada */
+.ssh-tunnel-menu__form {
+	background-color: #ffffff;
+	border-radius: 0.5rem;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	width: 100%;
+	max-width: 28rem;
+	margin: 0 auto;
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+/* Título */
+.ssh-tunnel-menu__title {
+	font-size: 1.25rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+}
+
+/* Formulario y espaciado entre campos */
+.ssh-tunnel-menu__form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+/* Grupo de campo */
+.ssh-tunnel-menu__field {
+	display: flex;
+	flex-direction: column;
+}
+
+.ssh-tunnel-menu__label {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: black;
+}
+
+.ssh-tunnel-menu__input,
+.ssh-tunnel-menu__select,
+.ssh-tunnel-menu__textarea {
+	margin-top: 0.25rem;
+	padding: 0.5rem;
+	border: 1px solid #d1d5db;
+	border-radius: 0.375rem;
+	font-size: 1rem;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.ssh-tunnel-menu__textarea {
+	font-family: monospace;
+	font-size: 0.875rem;
+	resize: vertical;
+}
+
+/* Grid para dos columnas */
+.ssh-tunnel-menu__grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 0.5rem;
+}
+
+/* Mensaje de error */
+.ssh-tunnel-menu__error {
+	color: #dc2626;
+	font-size: 0.875rem;
+}
+
+/* Contenedor de botones */
+.ssh-tunnel-menu__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.5rem;
+	margin-top: 1rem;
+}
+
+/* Botones */
+.ssh-tunnel-menu__button {
+	padding: 0.5rem 1rem;
+	font-size: 1rem;
+	font-weight: 500;
+	border-radius: 0.375rem;
+	color: #ffffff;
+	border: none;
+	cursor: pointer;
+}
+
+.ssh-tunnel-menu__button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.ssh-tunnel-menu__button--connect {
+	background-color: #10b981;
+}
+
+.ssh-tunnel-menu__button--connect:hover:not(:disabled) {
+	background-color: #059669;
+}
+
+.ssh-tunnel-menu__button--disconnect {
+	background-color: #ef4444;
+}
+
+.ssh-tunnel-menu__button--disconnect:hover:not(:disabled) {
+	background-color: #dc2626;
+}
+
+/* Modal box */
+.ssh-tunnel-menu__modal {
+	pointer-events: auto;
+}

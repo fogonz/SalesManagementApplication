@@ -63,7 +63,7 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
 
   return (
     <div className="header-top">
-      <div className="header-icons">
+      {/* <div className="header-icons">
         <div className='row'>
           <button onClick={() => {sectionHome(); setActive("1")}} className={`topbar-button ${state === "1" ? "active" : "inactive"}`}> 
             <p>Operador</p>
@@ -72,7 +72,7 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
             <p>Admin</p>
           </button>
         </div>
-      </div>
+      </div> */}
              
       <div className="header-right-controls">
         {/* Dark Mode Toggle */}
@@ -88,10 +88,11 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
           </label>
         </div>
                  
-        {/* Help Button */}
+        {/* Help Button 
         <button onClick={() => {sectionHelp(); setState("0")}} className="header-icon">
           <i className="fas fa-question"></i>
         </button>
+        */}
       </div>
     </div>
   );

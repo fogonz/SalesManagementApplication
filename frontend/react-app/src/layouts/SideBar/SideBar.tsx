@@ -2,9 +2,7 @@ import React from 'react';
 import './SideBar.css';
 import Options_Home from './SideBarOptions/Options_Home';
 import Options_Admin from './SideBarOptions/Options_Admin';
-import { Tabla } from '../../types';
-
-type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat' | 'linkDevice';
+import { Tabla, AdminView } from '../../types';
 
 interface SideBarProps {
   currentSection: string;
@@ -25,31 +23,33 @@ const SideBar: React.FC<SideBarProps> = ({
     <div className="sidebar">
       <div className="logo-section">
         <img
-          src="https://www.chile.ferreteriascercademi.com/wp-content/uploads/2023/01/AF1QipP47hhyrLPk3aRQDARC3EjtbgWFBXdNh3zfowBnw408-h306-k-no.jpeg"
+          src="https://static.tingelmar.com/app/uy/negocios/g/30/81030/g81030-sm-0-0-1-12411261855.jpg"
           alt="Logo"
+          className="logo-img"
         />
         <div className="logo-text">
-          <div className="logo-title">Ferretería Lo de Pablo</div>
+          <div className="logo-title">Maderas del Mar</div>
           <div className="logo-subtitle">
-            Aplicación de Registro y<br />Administración de Ventas
+            Aplicación de Registro y<br />Administración de Inventario y Finanzas
           </div>
         </div>
       </div>
 
-      {currentSection === "home" && (
-        <Options_Home 
-          activeView={activeView}
-          setActiveView={setActiveView} toggleActive={function (e: React.MouseEvent<HTMLButtonElement>): void {
-            throw new Error('Function not implemented.');
-          } }        />
-      )}
-      {currentSection === "admin" && (
+      {currentSection === "home" && setActiveView && (
         <Options_Admin 
-          activeView={activeView}
+          activeView={activeView as "movimientos" | "cuentas" | "productos" | "cajachica"}
+          setActiveView={setActiveView as React.Dispatch<React.SetStateAction<"movimientos" | "cuentas" | "productos" | "cajachica">>}
           currentAdminView={currentAdminView}
-          setCurrentAdminView={setCurrentAdminView} setActiveView={function (value: React.SetStateAction<'movimientos' | 'cuentas' | 'productos'>): void {
-            throw new Error('Function not implemented.');
-          } }        />
+          setCurrentAdminView={setCurrentAdminView}
+        />
+      )}
+      {currentSection === "admin" && setActiveView && setCurrentAdminView && (
+        <Options_Admin 
+          activeView={activeView as "movimientos" | "cuentas" | "productos" | "cajachica"}
+          setActiveView={setActiveView as React.Dispatch<React.SetStateAction<"movimientos" | "cuentas" | "productos" | "cajachica">>}
+          currentAdminView={currentAdminView}
+          setCurrentAdminView={setCurrentAdminView}
+        />
       )}
     </div>
   );

@@ -27,6 +27,10 @@
   background-color: #898989;
 }
 
+.red {
+  background-color: #dc3545;
+}
+
 .motion {
   display: flex;
   height: 100%;
@@ -314,14 +318,14 @@
 
 .entry_label {
   width: 30%;
-  height: 48px; 
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   background-color: #bcc4c4;
   border-radius: 8px;
-  
+
   font-family: "Open Sans", sans-serif;
   font-size: medium;
   box-sizing: border-box;

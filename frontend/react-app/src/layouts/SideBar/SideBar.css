@@ -26,9 +26,16 @@
 
 .logo-img {
   width: 60px;
-  height: 60px;
-  border-radius: 10%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border-radius: 0;
   object-fit: cover;
+  /* Ensure square shape */
+  min-width: 60px;
+  min-height: 60px;
+  max-width: 60px;
+  max-height: 60px;
+  display: block;
 }
 
 
@@ -119,8 +126,8 @@
   transition: all 0.2s ease;
   width: 90%;
   border: 1px solid var(--toolbar-gradient);
-  background-color: none
-    /*var(--tabs-background);*/
+  background-color: #1a1a1a;
+  /*var(--tabs-background);*/
 }
 
 .menu-button-round:hover {
@@ -141,4 +148,11 @@
 
 .gray-border:hover, .gray-border:focus {
   border: 1px solid lightgray;
+}
+
+.logo-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
 }

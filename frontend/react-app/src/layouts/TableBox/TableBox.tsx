@@ -3,11 +3,12 @@ import './TableBox.css';
 import TableComponent from '../../components/Components/TableComponent/TableComponent';
 import Calendar from '../../components/Components/Calendar/Calendar';
 import ProductDisplay from '../../components/Components/ProductDisplay/ProductDisplay';
-import AddButton from '../../assets/icons/AddButton';
+import AddButton from '../../assets/AddButton';
+import DeleteButton from '../../assets/DeleteButton';
 import { fetchCuentas } from '../../services/api/cuentas';
 import { fetchTableData } from '../../services/api';
 import { getColumnsForActiveView } from '../../config/tableColumns';
-import { TableBoxProps } from '../../types';
+import { TableBoxProps, Tabla } from '../../types';
 import {
   filterData,
   extractDatesFromSearchTerm,
@@ -15,7 +16,6 @@ import {
   type MovimientoRow,
   type CuentaRow,
   type ProductoRow,
-  type Tabla
 } from '../../utils/filterUtils';
 
 
@@ -81,13 +81,7 @@ const useTableData = (activeView: Tabla, cuentas: CuentaRow[], refreshTrigger?: 
       return;
     }
     loadData();
-  }, [activeView, cuentas]);
-
-  useEffect(() => {
-    if (refreshTrigger && refreshTrigger > 0 && activeView !== 'productos') {
-      loadData();
-    }
-  }, [refreshTrigger, activeView]);
+  }, [activeView, cuentas, refreshTrigger]); // <-- Add refreshTrigger here
 
   return { data, loadData };
 };
@@ -174,11 +168,12 @@ const TableBox: React.FC<TableBoxProps> = ({
   activeView, 
   setActiveView, 
   refreshTrigger,
-  isAdmin
+  isAdmin,
+  onRefresh
 }) => {
   // Custom hooks
   const { cuentas, error } = useCuentas();
-  const { data } = useTableData(activeView, cuentas, refreshTrigger);
+  const { data, loadData } = useTableData(activeView, cuentas, refreshTrigger);
   const { movimientosData } = useMovimientosData();
   const { 
     searchTerm, 
@@ -191,6 +186,9 @@ const TableBox: React.FC<TableBoxProps> = ({
   
   // Refs
   const productDisplayRef = useRef<any>(null);
+
+  // Selected Row - JUST ADDED THIS
+  const [rowSelected, setRowSelected] = useState<number | null>(null);
 
   // Event handlers
   const handleAdd = () => {
@@ -210,8 +208,30 @@ const TableBox: React.FC<TableBoxProps> = ({
     }
   }, [refreshTrigger, activeView]);
 
+  // Add this effect to force re-fetch on refreshTrigger
+  useEffect(() => {
+    loadData();
+  }, [refreshTrigger]); // <-- This ensures data is always re-fetched
+
   // Computed values
-  const filteredData = filterData(data, activeView, searchTerm, selectedDates, cuentas);
+  const filteredData = (() => {
+    if (activeView === 'cajachica') {
+      // Show only movimientos with tipo = "cobranza" or "pago" or any tipo except "factura_venta" and "factura_compra"
+      return filterData(
+        data.filter(
+          (row: any) =>
+            row.tipo === 'cobranza' ||
+            row.tipo === 'pago' ||
+            (row.tipo !== 'factura_venta' && row.tipo !== 'factura_compra')
+        ),
+        'movimientos',
+        searchTerm,
+        selectedDates,
+        cuentas
+      );
+    }
+    return filterData(data, activeView, searchTerm, selectedDates, cuentas);
+  })();
   const columns = getColumnsForActiveView(activeView, cuentas);
   const movimientosColumns = getMovimientosColumns(cuentas);
 
@@ -229,8 +249,18 @@ const TableBox: React.FC<TableBoxProps> = ({
               <i className="fas fa-home" title="Movimientos"></i>
             </button>
             <button 
+              className={`toolbar-icon ${activeView === 'cajachica' ? 'active' : ''}`} 
+              onClick={() => setActiveView("cajachica")}
+            >
+              <i className="fas fa-cash-register" title="Caja Chica"></i>
+            </button>
+            <button 
               className={`toolbar-icon ${activeView === 'cuentas' ? 'active' : ''}`} 
-              onClick={() => setActiveView("cuentas")}
+              onClick={() => {
+                setActiveView("cuentas");
+                // Debug: log the value to verify
+                console.log("Set activeView to:", "cuentas");
+              }}
             >
               <i className="fas fa-circle-user" title="Cuentas"></i>
             </button>
@@ -284,8 +314,23 @@ const TableBox: React.FC<TableBoxProps> = ({
             )}
           </div>
 
-          {/* Add button */}
+          {/* Add & Delete buttons */}
           <div className="toolbar-actions">
+            {/*}
+            <button
+              title={
+                activeView === 'movimientos' 
+                  ? 'Eliminar Movimiento' 
+                  : activeView === 'cuentas' 
+                    ? 'Eliminar Cuenta' 
+                    : 'Eliminar Producto'
+              }
+              className="add-button"
+              onClick={handleAdd}
+            >
+              <DeleteButton />
+            </button>
+            */}
             <button
               title={
                 activeView === 'movimientos' 
@@ -320,7 +365,10 @@ const TableBox: React.FC<TableBoxProps> = ({
               movimientosData={movimientosData}
               movimientosColumns={movimientosColumns}
               isAdmin={isAdmin}
+              rowSelected={rowSelected}
               onCellEdit={onCellEdit}
+              onRowSelect={setRowSelected}
+              onRefresh={onRefresh}
             />
           )}
         </div>

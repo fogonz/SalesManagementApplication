@@ -8,6 +8,18 @@ export const movimientosColorMap: Record<string, string> = {
 	impuestos:      '#98da3b',
 	sueldo:         '#b4e89c',
 	aguinaldo:      '#6fc15d',
+	// Cajachica-specific: fallback for other tipos
+	cajachica:      '#f7e6b7'
+};
+
+export const cajachicaColorMap: Record<string, string> = {
+	pago:      '#ed9797',
+	cobranza:  '#7be05d',
+	jornal:    '#ed9797',
+	alquiler:  '#ed9797',
+	impuestos: '#ed9797',
+	sueldo:    '#ed9797',
+	aguinaldo: '#ed9797',
 };
   
 export const cuentasColorMap: Record<string, string> = {
@@ -21,12 +33,15 @@ export const productosColorMap: Record<string, string> = {
 	destacado: '#fcf3cf',
 };
   
-export function getCellColorClass(content: string, tableType: 'movimientos' | 'cuentas' | 'productos'): string {
+export function getCellColorClass(content: string, tableType: 'movimientos' | 'cuentas' | 'productos' | 'cajachica'): string {
 	let colorMap: Record<string, string> = {};
-  
+
 	switch (tableType) {
 	  case 'movimientos':
 		colorMap = movimientosColorMap;
+		break;
+	  case 'cajachica':
+		colorMap = cajachicaColorMap;
 		break;
 	  case 'cuentas':
 		colorMap = cuentasColorMap;
@@ -37,7 +52,10 @@ export function getCellColorClass(content: string, tableType: 'movimientos' | 'c
 	  default:
 		break;
 	}
-  
+
+	// For cajachica, fallback to 'otro' if not found
+	if (tableType === 'cajachica') {
+		return colorMap[content] ?? colorMap['otro'] ?? '';
+	}
 	return colorMap[content] ?? '';
 }
-  

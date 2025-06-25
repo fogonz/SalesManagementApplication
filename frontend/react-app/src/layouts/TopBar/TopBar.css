@@ -157,4 +157,6 @@
     align-items: center;
     gap: 8px;
     height: 100%;
+    margin-left: auto;
+    /* Ensure right alignment */
 }

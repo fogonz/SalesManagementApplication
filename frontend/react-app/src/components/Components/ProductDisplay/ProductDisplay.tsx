@@ -306,15 +306,6 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({
           <div className="product-grid2">
             {filteredProducts.map((product) => (
               <div key={product.id} className="product-card">
-                <button
-                  onClick={() => deleteProduct(product.id)}
-                  className="delete-button"
-                  title="Eliminar producto"
-                  aria-label="Eliminar producto"
-                >
-                  ×
-                </button>
-
                 <div className="product-title">
                   {renderEditableField(
                     product, 
@@ -372,15 +363,6 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({
           <div className="product-list">
             {filteredProducts.map((product) => (
               <div key={product.id} className="product-list-item">
-                <button
-                  onClick={() => deleteProduct(product.id)}
-                  className="product-list-delete-btn"
-                  title="Eliminar producto"
-                  aria-label="Eliminar producto"
-                >
-                  ×
-                </button>
-
                 <div className="product-list-content">
                   <h3 className="product-list-title">
                     {renderEditableField(

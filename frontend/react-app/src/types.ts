@@ -1,7 +1,19 @@
 // types.ts - Updated type definitions
-export type ValidTabla = "movimientos" | "cuentas" | "productos";
+export type ValidTabla = "movimientos" | "cuentas" | "productos" | "cajachica";
 export type Tabla = ValidTabla | "" | null;
-export type Menu = "transaction" | "account" | "product" | "confirmChanges" | null;
+export type Menu = "transaction" | "account" | "product" | "confirmChanges" | "confirmDelete" | null;
+
+// Add AdminView type for admin section navigation/views
+export type AdminView =
+  | "estadisticas"
+  | "historial"
+  | "movimientos"
+  | "cuentas"
+  | "productos"
+  | "exportar"
+  | "chat"
+  | "linkDevice"
+  | "cajachica";
 
 // Component interface definitions
 export interface TableBoxProps {
@@ -11,6 +23,8 @@ export interface TableBoxProps {
   refreshTrigger: number;
   onOpenMenu: () => void;
   onCellEdit?: (params: any) => void;
+  onRowDelete?: (params: any) => void;
+  onRefresh?: () => void;
 }
 
 export interface SideBarProps {

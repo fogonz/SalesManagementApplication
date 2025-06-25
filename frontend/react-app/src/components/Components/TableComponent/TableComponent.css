@@ -32,7 +32,7 @@
   overflow-x: hidden;
   flex: 1;
   min-height: 0;
-  padding: 0.25rem 0;
+  padding: 0.25rem 0 10vh;
 }
 
 .table_header {
@@ -88,7 +88,8 @@
 .table_row {
   display: flex;
   transition: all 0.2s ease;
-  cursor: pointer;
+  cursor: none;
+  user-select: none;
   min-height: 3vh;
   flex-shrink: 0;
 }
@@ -122,6 +123,7 @@
   text-wrap: nowrap;
   white-space: nowrap;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 
 .table_cell:hover {
@@ -286,4 +288,20 @@
   to {
     opacity: 1;
   }
+}
+
+.selected-row,
+.selected-row .table_cell {
+  background-color: rgb(18, 81, 217) !important;
+  color: white !important;
+}
+
+.selected-row .selected-cell {
+  background-color: rgb(51, 192, 247) !important;
+  color: white !important;
+}
+
+.selected-cell {
+  background-color: rgb(51, 192, 247) !important;
+  color: white !important;
 }

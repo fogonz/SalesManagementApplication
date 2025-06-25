@@ -25,15 +25,15 @@ import Transaction from '../../layouts/menus/NewTransaction/NewTransaction';
 import NewAccount from '../../layouts/menus/NewAccount/NewAccount';
 import NewProduct from '../../layouts/menus/NewProduct/NewProduct';
 import { ConfirmChangesMenu } from '../../layouts/menus/ConfirmChanges/ConfirmChangesMenu';
+import { ConfirmDeleteMenu } from '../../layouts/menus/ConfitmDelete/ConfirmDelete';
 
 // Importaciones de contextos y servicios
 import { useData, DataProvider } from '../../contexts/DataContext';
 import { filterData } from '../../utils/filterUtils';
 import { fetchTableData } from '../../services/api';
 
-import { ValidTabla, Tabla, Menu, AdminProps } from '../../types';
-
-type AdminView = 'estadisticas' | 'historial' | 'movimientos' | 'cuentas' | 'productos' | 'exportar' | 'chat' | 'linkDevice';
+import { ValidTabla, Tabla, Menu, AdminProps, AdminView } from '../../types';
+import SshTunnelMenu from '../../layouts/menus/ConnectionMenu/SshTunnelMenu';
 
 // Interfaz para datos agrupados
 interface GroupedData {
@@ -50,12 +50,18 @@ interface CellEditParams {
   prevValue?: number | string; // Add prevValue to store the original value
 }
 
+interface RowDeleteParams {
+  rowId: number;
+  rowValues: any; // The entire row object
+  tableType: string; // 'movimientos', 'cuentas', 'productos'
+}
+
 // ========== COMPONENTE PRINCIPAL ==========
 const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setOpenMenu }) => {
   
   // ========== ESTADOS LOCALES ==========
   // Control de vista activa del admin
-  const [currentAdminView, setCurrentAdminView] = useState<AdminView>('estadisticas');
+  const [currentAdminView, setCurrentAdminView] = useState<AdminView>('movimientos');
   
   // Control de refrescar datos
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -72,6 +78,11 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
 
   // Estado para almacenar los datos de la celda editada
   const [cellEditData, setCellEditData] = useState<CellEditParams | null>(null);
+  // Fila a eliminar
+  const [rowDeleteData, setRowDeleteData] = useState<RowDeleteParams | null>(null);
+
+  // Estado para saber si el túnel SSH está conectado
+  const [sshConnected, setSshConnected] = useState(false);
 
   const filterOptions = ['Esta Semana', 'Este Mes', 'Este Año'];
 
@@ -100,6 +111,31 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
   const close = () => {
     setOpenMenu(null);
     setCellEditData(null);
+  };
+
+  const handleRowDelete = (params: RowDeleteParams) => {
+  console.log('Se solicitó eliminar una fila:', params);
+  
+  // Store the delete data
+  setRowDeleteData(params);
+  
+  // Open the delete confirmation menu
+  open('confirmDelete');
+  };
+
+  const handleConfirmDelete = () => {
+    if (rowDeleteData) {
+      console.log("Eliminación confirmada:", rowDeleteData);
+    }
+    setRowDeleteData(null); // <-- Clear first
+    close();
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  const handleCancelDelete = () => {
+  console.log("Eliminación cancelada");
+  setRowDeleteData(null); // <-- Clear first
+  close();
   };
 
   // Manejar edición de celda
@@ -165,67 +201,75 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
     console.log('Filtro seleccionado:', filter);
   };
 
+  const handleSshConnect = async (config: any) => {
+    setSshConnected(true);
+    console.log('Conectando SSH Tunnel con config:', config);
+  };
+
+  const handleSshDisconnect = async () => {
+    setSshConnected(false);
+    console.log('Desconectando SSH Tunnel');
+  };
+
   // ========== RENDERIZADO CONDICIONAL ==========
   // Función para renderizar contenido según vista activa
   const renderContent = () => {
     switch (currentAdminView) {
       // Vista de estadísticas con dashboard completo
-      case 'estadisticas':
-        return (
-          <div className="dashboard-container">
-            {/* Botón de filtros */}
-            <FilterButton
-              selectedFilter={selectedFilter}
-              filterOptions={filterOptions}
-              onFilterChange={handleFilterChange}
-            />
-
-            <div className="content-and-sidebar">
-              {/* Contenido principal del dashboard */}
-              <div className="dashboard-main-wrapper">
-                <Datachart ingreso={useData().ingreso} egreso={useData().egresoTotal} />
-                <PerformanceGrid performanceData={[]} />
-              </div>
-
-              {/* Panel lateral con gráficos */}
-              <div className="right-side-wrapper">
-                <div className='cards-container'>
-                  <div className='cards-row'>
-                    {/* Gráfico de gastos */}
-                    <PieChartExpenses 
-                      data={expensesData}
-                      title="Distribución de Gastos"
-                      noDataMessage={
-                        expensesLoading ? "Cargando datos..." : 
-                        expensesError ? `Error: ${expensesError}` : 
-                        "No hay gastos disponibles"
-                      }
-                    />
-                    {/* Gráfico de productos */}
-                    <ProductChart 
-                      data={productData}
-                      title="Productos Más Vendidos"
-                      noDataMessage={
-                        productLoading ? "Cargando productos..." : 
-                        productError ? `Error: ${productError}` : 
-                        "No hay productos disponibles"
-                      }
-                    />
-                  </div>
-                  {/* Gráfico de ROI 
-                  <ROIChart 
-                    data={roiChartData}
-                    noDataMessage={
-                      loadingMovs ? "Cargando datos de ROI..." : 
-                      movsError ? `Error: ${movsError}` : 
-                      "No hay datos de ROI disponibles"
-                    }
-                  />*/}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+      // case 'estadisticas':
+      //   return (
+      //     <div className="dashboard-container">
+      //       {/* Botón de filtros */}
+      //       <FilterButton
+      //         selectedFilter={selectedFilter}
+      //         filterOptions={filterOptions}
+      //         onFilterChange={handleFilterChange}
+      //       />
+      //       <div className="content-and-sidebar">
+      //         {/* Contenido principal del dashboard */}
+      //         <div className="dashboard-main-wrapper">
+      //           <Datachart ingreso={useData().ingreso} egreso={useData().egresoTotal} />
+      //           <PerformanceGrid performanceData={[]} />
+      //         </div>
+      //         {/* Panel lateral con gráficos */}
+      //         <div className="right-side-wrapper">
+      //           <div className='cards-container'>
+      //             <div className='cards-row'>
+      //               {/* Gráfico de gastos */}
+      //               <PieChartExpenses 
+      //                 data={expensesData}
+      //                 title="Distribución de Gastos"
+      //                 noDataMessage={
+      //                   expensesLoading ? "Cargando datos..." : 
+      //                   expensesError ? `Error: ${expensesError}` : 
+      //                   "No hay gastos disponibles"
+      //                 }
+      //               />
+      //               {/* Gráfico de productos */}
+      //               <ProductChart 
+      //                 data={productData}
+      //                 title="Productos Más Vendidos"
+      //                 noDataMessage={
+      //                   productLoading ? "Cargando productos..." : 
+      //                   productError ? `Error: ${productError}` : 
+      //                   "No hay productos disponibles"
+      //                 }
+      //               />
+      //             </div>
+      //             {/* Gráfico de ROI 
+      //             <ROIChart 
+      //               data={roiChartData}
+      //               noDataMessage={
+      //                 loadingMovs ? "Cargando datos de ROI..." : 
+      //                 movsError ? `Error: ${movsError}` : 
+      //                 "No hay datos de ROI disponibles"
+      //               }
+      //             />*/}
+      //           </div>
+      //         </div>
+      //       </div>
+      //     </div>
+      //   );
       
       // Vista de historial (placeholder)
       case 'historial':
@@ -242,9 +286,10 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
       case 'productos':
         const tableActiveView: Tabla = currentAdminView as Tabla;
         return (
-          <div className={`dashboard-container ${openMenu ? "blurred" : ""}`}>
+            <div className={`dashboard-container ${openMenu ? "blurred" : ""}`}>
             <TableBox
               onCellEdit={handleCellEdit}
+              onRowDelete={handleRowDelete}
               isAdmin={true}
               activeView={tableActiveView as ValidTabla}
               setActiveView={(view) => {
@@ -258,8 +303,9 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
                 tableActiveView === 'productos' ? 'product' :
                 'transaction'
               )}
+              onRefresh={() => setRefreshTrigger(prev => prev + 1)} // <-- Ensure this is present
             />
-          </div>
+            </div>
         );
       
       // Vista de exportación
@@ -281,7 +327,34 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
             <ChatDisplay />
           </div>
         );
-      
+      case 'linkDevice':
+        return (
+          <div className="dashboard-container">
+            <SshTunnelMenu
+              onConnect={handleSshConnect}
+              onDisconnect={handleSshDisconnect}
+              isConnected={sshConnected}
+            />
+          </div>
+        );
+      case 'cajachica':
+        return (
+          <div className={`dashboard-container ${openMenu ? "blurred" : ""}`}>
+            <TableBox
+              onCellEdit={handleCellEdit}
+              onRowDelete={handleRowDelete}
+              isAdmin={true}
+              activeView={'cajachica'}
+              setActiveView={(view) => {
+                setActiveView(view);
+                setCurrentAdminView(view);
+              }}
+              refreshTrigger={refreshTrigger}
+              onOpenMenu={() => open('transaction')}
+              onRefresh={() => setRefreshTrigger(prev => prev + 1)}
+            />
+          </div>
+        );
       // Vista por defecto
       default:
         return null;
@@ -295,8 +368,14 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
         {/* Barra lateral de navegación */}
         <SideBar 
           currentSection='admin' 
-          activeView={''}
-          setActiveView={setActiveView}
+          activeView={
+            // Highlight only if currentAdminView is a valid Tabla
+            (['movimientos', 'cuentas', 'productos', 'cajachica'].includes(currentAdminView)
+              ? (currentAdminView as Tabla)
+              : ''
+            )
+          }
+          setActiveView={setCurrentAdminView as React.Dispatch<React.SetStateAction<Tabla>>}
           currentAdminView={currentAdminView}
           setCurrentAdminView={setCurrentAdminView}
         />
@@ -336,6 +415,17 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           rowId={cellEditData.rowId}
           field={cellEditData.field}
           currentTable={activeView}
+        />
+      )}
+
+      {/* Modal confirmar eliminación de fila */}
+      {openMenu === 'confirmDelete' && rowDeleteData && (
+        <ConfirmDeleteMenu
+          onClose={handleCancelDelete}
+          onAccept={handleConfirmDelete}
+          rowId={rowDeleteData.rowId}
+          rowValues={rowDeleteData.rowValues}
+          currentTable={rowDeleteData.tableType}
         />
       )}
     </div>

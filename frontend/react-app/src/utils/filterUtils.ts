@@ -1,3 +1,5 @@
+import { Tabla } from "../types"; // <-- Import Tabla from types.ts
+
 // Types
 export interface MovimientoRow {
 	id: number;
@@ -26,8 +28,6 @@ export interface MovimientoRow {
 	stock: number | null;
 	precio: number | null;
   }
-  
-  export type Tabla = 'movimientos' | 'cuentas' | 'productos' | "" | null;
   
   // Utility functions
   export const normalizeText = (text: any): string => {
@@ -89,33 +89,32 @@ export interface MovimientoRow {
 	searchTerm: string, 
 	selectedDates: string[], 
 	cuentas: CuentaRow[]
-  ): any[] => {
+): any[] => {
 	return data.filter(item => {
-	  const nonDateSearchTerm = getNonDateSearchTerm(searchTerm);
-	  const datesInSearchTerm = extractDatesFromSearchTerm(searchTerm);
-	  const normalizedSearchTerm = normalizeText(nonDateSearchTerm);
-	  
-	  // Date filter logic
-	  const allDatesToFilter = [...selectedDates, ...datesInSearchTerm];
-	  const dateMatch =
-		allDatesToFilter.length === 0 ||
-		(activeView === 'movimientos' && allDatesToFilter.includes(item.fecha));
-  
-	  if (!dateMatch) return false;
-	  if (!nonDateSearchTerm) return true;
-  
-	  // Search logic based on active view
-	  switch (activeView) {
-		case 'movimientos':
-		  return filterMovimientos(item, normalizedSearchTerm, cuentas);
-		case 'cuentas':
-		  return filterCuentas(item, normalizedSearchTerm);
-		case 'productos':
-		  return filterProductos(item, normalizedSearchTerm);
-		default:
-		  return false;
-	  }
-	});
-  };
+		const nonDateSearchTerm = getNonDateSearchTerm(searchTerm);
+		const datesInSearchTerm = extractDatesFromSearchTerm(searchTerm);
+		const normalizedSearchTerm = normalizeText(nonDateSearchTerm);
 
-  
+		// Date filter logic
+		const allDatesToFilter = [...selectedDates, ...datesInSearchTerm];
+		const dateMatch =
+			allDatesToFilter.length === 0 ||
+			(activeView === 'movimientos' && allDatesToFilter.includes(item.fecha));
+
+		if (!dateMatch) return false;
+		if (!nonDateSearchTerm) return true;
+
+		// Search logic based on active view
+		switch (activeView) {
+			case 'movimientos':
+				return filterMovimientos(item, normalizedSearchTerm, cuentas);
+			case 'cuentas':
+				return filterCuentas(item, normalizedSearchTerm);
+			case 'productos':
+				return filterProductos(item, normalizedSearchTerm);
+			default:
+				return false;
+		}
+	});
+};
+

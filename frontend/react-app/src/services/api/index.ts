@@ -1,4 +1,4 @@
-import { Tabla } from '../../utils/filterUtils';
+import { Tabla } from "../../types";
 
 export const API_BASE_URL = 'http://localhost:8000/api';
 
@@ -277,7 +277,12 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
         throw new Error(error.message);
       }
 
-      return await response.json() as { success: boolean; message?: string };
+      // Only parse JSON if there is content
+      const text = await response.text();
+      if (text) {
+        return JSON.parse(text);
+      }
+      return null;
     } catch (error) {
       console.error(`Error deleting ${this.endpoint}:`, error);
       throw error;

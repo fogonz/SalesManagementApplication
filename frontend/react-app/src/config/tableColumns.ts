@@ -1,6 +1,7 @@
 // Configuration functions
-import { Tabla } from "../utils/filterUtils";
+import { Tabla } from "../types";
 import { CuentaRow } from "../utils/filterUtils";
+import { cajachicaColumns } from "./tableColumns.cajachica";
 
 export const getColumnsForActiveView = (activeView: Tabla, cuentas: CuentaRow[]) => {
   switch (activeView) {
@@ -26,6 +27,8 @@ export const getColumnsForActiveView = (activeView: Tabla, cuentas: CuentaRow[])
 		{ key: 'descuento_total', label: 'DESCUENTO', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')},
 		{ key: 'total', label: 'TOTAL', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')}
 	  ];
+	case 'cajachica':
+	  return cajachicaColumns(cuentas);
 	case 'cuentas':
 	  return [
 		{ key: 'id', label: 'ID' },

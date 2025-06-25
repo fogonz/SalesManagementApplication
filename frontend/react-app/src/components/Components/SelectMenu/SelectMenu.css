@@ -1,0 +1,114 @@
+/* SelectMenu.css */
+
+/* --- Overlay --- */
+.select-menu-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.2);
+	z-index: 1003;
+	cursor: default;
+	opacity: 0;
+	animation: fade-in-overlay 0.1s ease forwards;
+}
+
+/* --- Contenedor --- */
+.select-menu {
+	position: fixed;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+	padding: 6px 0;
+	min-width: 180px;
+	max-width: 240px;
+	font-family: sans-serif;
+	z-index: 1004;
+
+	/* Remove initial opacity: 0 - this was causing the issue */
+	opacity: 1;
+	/* Always visible */
+	transform: translateY(-8px);
+	transition: transform 0.2s ease;
+}
+
+/* When mounted, only animate transform */
+.select-menu.mounted {
+	transform: translateY(0);
+}
+
+/* Lista y items */
+.select-menu-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.select-menu-item {
+	margin: 0;
+	padding: 0;
+}
+
+/* Botones */
+.select-menu-button {
+	width: 100%;
+	padding: 10px 16px;
+	background: transparent;
+	border: none;
+	text-align: left;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 15px;
+	color: #333;
+	/* Ensure dark text color */
+	transition: background-color 0.2s ease, color 0.2s ease;
+	cursor: pointer;
+}
+
+.select-menu-button:hover:not(:disabled),
+.select-menu-button:focus-visible:not(:disabled) {
+	background-color: #f0f0f0;
+	cursor: pointer;
+}
+
+.select-menu-button:disabled {
+	color: #999;
+	/* Lighter but still visible for disabled state */
+	background-color: #f9f9f9;
+	cursor: not-allowed;
+	opacity: 0.6;
+	/* Only disabled items get reduced opacity */
+}
+
+/* Icono y etiqueta */
+.select-menu-icon {
+	width: 18px;
+	height: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #666;
+	font-size: 14px;
+}
+
+.select-menu-button:disabled .select-menu-icon {
+	color: #999;
+}
+
+.select-menu-label {
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-weight: 500;
+}
+
+/* Animación del overlay */
+@keyframes fade-in-overlay {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
