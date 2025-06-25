@@ -1,32 +1,46 @@
-# Node modules
+# node modules and package managers
 node_modules/
 **/node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+**/package-lock.json
+**/yarn.lock
+**/pnpm-lock.yaml
 
-# Build output
+# build output
 dist/
 build/
 out/
-*.log
-
-# Vite cache
 .vite/
+*.log
 
 # Electron
 *.asar
 
-# OS files
+# OS & IDE files
 .DS_Store
 Thumbs.db
-
-# Environment files
-.env
-.env.*
-
-# IDEs
 .vscode/
 .idea/
 *.sublime-workspace
 *.sublime-project
+
+# env files
+.env
+.env.*
+
+# npm/yarn/pnpm logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+**/yarn.lock
+**/pnpm-lock.yaml
+
+# Ignore all package.json files if desired (uncommon, but add if you want to ignore them)
+# package.json
+# **/package.json
 
 # Misc
 npm-debug.log*
