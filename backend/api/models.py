@@ -237,6 +237,8 @@ class Transacciones(models.Model):
         ('impuestos',      'Impuestos'),
         ('sueldo',         'Sueldo'),
         ('aguinaldo',      'Aguinaldo'),
+        ('factura_c_varios', 'Factura C. Varios'),
+        ('servicio_cepillado', 'Servicio Cepillado'),
     ]
 
     id = models.AutoField(primary_key=True)
@@ -244,6 +246,8 @@ class Transacciones(models.Model):
     fecha = models.DateField()
     cuenta = models.ForeignKey(Cuentas, models.DO_NOTHING)
     total = models.DecimalField(max_digits=12, decimal_places=2)
+    numero_comprobante = models.IntegerField(null=True, blank=True)
+    saldo_diferencia = models.FloatField(null=True, blank=True)
     descuento_total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     concepto = models.CharField(max_length=255, blank=True, null=True)
 
