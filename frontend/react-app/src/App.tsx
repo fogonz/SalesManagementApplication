@@ -5,10 +5,11 @@ import Admin from "./pages/Admin/Admin";
 import { useState } from "react";
 import { DataProvider } from "./contexts/DataContext";
 import { Tabla, Menu, ValidTabla } from "./types";
+import React from "react";
 
 
 const isValidTabla = (value: string | null): value is ValidTabla => {
-  return ['movimientos', 'cuentas', 'productos'].includes(value as string);
+  return ['movimientos', 'cuentas', 'productos', 'cajachica'].includes(value as string);
 };
 
 function App() {
@@ -17,6 +18,11 @@ function App() {
   
   const [activeView, setActiveView] = useState<Tabla>(initialView);
   const [openMenu, setOpenMenu] = useState<Menu>(null);
+
+  // Persist activeView on every change
+  React.useEffect(() => {
+    localStorage.setItem('activeView', activeView);
+  }, [activeView]);
 
   return (
     <DataProvider>

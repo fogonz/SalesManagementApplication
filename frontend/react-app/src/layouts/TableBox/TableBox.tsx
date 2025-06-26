@@ -17,7 +17,7 @@ import {
   type CuentaRow,
   type ProductoRow,
 } from '../../utils/filterUtils';
-
+import { ConfirmChangesMenu } from '../menus/ConfirmChanges/ConfirmChangesMenu';
 
 // Get movimientos columns specifically
 const getMovimientosColumns = (cuentas: CuentaRow[]) => {
@@ -76,8 +76,8 @@ const useTableData = (activeView: Tabla, cuentas: CuentaRow[], refreshTrigger?: 
   };
 
   useEffect(() => {
-    // Solo cargar movimientos si las cuentas ya están cargadas
-    if (activeView === 'movimientos' && cuentas.length === 0) {
+    // Solo cargar movimientos o cajachica si las cuentas ya están cargadas
+    if ((activeView === 'movimientos' || activeView === 'cajachica') && cuentas.length === 0) {
       return;
     }
     loadData();
@@ -190,6 +190,15 @@ const TableBox: React.FC<TableBoxProps> = ({
   // Selected Row - JUST ADDED THIS
   const [rowSelected, setRowSelected] = useState<number | null>(null);
 
+  // Estado para el menú de confirmación de cambios
+  const [confirmMenu, setConfirmMenu] = useState<{
+    prevValue: any;
+    newValue: any;
+    rowId: number;
+    field: string;
+    currentTable: string;
+  } | null>(null);
+
   // Event handlers
   const handleAdd = () => {
     onOpenMenu();
@@ -234,6 +243,29 @@ const TableBox: React.FC<TableBoxProps> = ({
   })();
   const columns = getColumnsForActiveView(activeView, cuentas);
   const movimientosColumns = getMovimientosColumns(cuentas);
+
+  // Handler para edición de celdas
+  const handleCellEdit = ({
+    rowId,
+    field,
+    prevValue,
+    newValue,
+    currentTable
+  }: {
+    rowId: number;
+    field: string;
+    prevValue: any;
+    newValue: any;
+    currentTable: string;
+  }) => {
+    setConfirmMenu({
+      prevValue,
+      newValue,
+      rowId,
+      field,
+      currentTable
+    });
+  };
 
   return (
     <div className="content-container">
@@ -355,7 +387,7 @@ const TableBox: React.FC<TableBoxProps> = ({
               searchTerm={searchTerm} 
               refreshTrigger={refreshTrigger}
               isAdmin={isAdmin}
-              onCellEdit={onCellEdit}
+              onCellEdit={handleCellEdit}
             />
           ) : (
             <TableComponent
@@ -366,9 +398,24 @@ const TableBox: React.FC<TableBoxProps> = ({
               movimientosColumns={movimientosColumns}
               isAdmin={isAdmin}
               rowSelected={rowSelected}
-              onCellEdit={onCellEdit}
+              onCellEdit={handleCellEdit}
               onRowSelect={setRowSelected}
               onRefresh={onRefresh}
+            />
+          )}
+          {/* Renderiza el menú de confirmación si es necesario */}
+          {confirmMenu && (
+            <ConfirmChangesMenu
+              prevValue={confirmMenu.prevValue}
+              newValue={confirmMenu.newValue}
+              rowId={confirmMenu.rowId}
+              field={confirmMenu.field}
+              currentTable={confirmMenu.currentTable}
+              onClose={() => setConfirmMenu(null)}
+              onAccept={() => {
+                setConfirmMenu(null);
+                if (onRefresh) onRefresh();
+              }}
             />
           )}
         </div>

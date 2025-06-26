@@ -182,6 +182,27 @@ class ProductosAPI {
     }
   }
 
+  async actualizarCampos(id: number, payload: Partial<ProductoPayload>): Promise<ProductoResponse> {
+    const response = await fetch(`${API_BASE_URL}/productos/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const error: APIError = {
+        message: errorData.message || `Error ${response.status}: ${response.statusText}`,
+        status: response.status
+      };
+      throw new Error(error.message);
+    }
+
+    return await response.json() as ProductoResponse;
+  }
+
   // Specific methods for product operations
   async activar(id: number): Promise<ProductoResponse> {
     return this.actualizar(id, { activo: true });

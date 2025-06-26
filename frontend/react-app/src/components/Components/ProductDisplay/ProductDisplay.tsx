@@ -15,6 +15,7 @@ interface ProductDisplayProps {
     field: string;
     prevValue: any;
     newValue: any;
+    currentTable?: string; // <-- Agrega esta línea
   }) => void;
 }
 
@@ -114,7 +115,8 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({
         rowId: productId,
         field: field,
         prevValue: prevValue,
-        newValue: editValue
+        newValue: editValue,
+        currentTable: 'productos' // <-- Asegúrate de pasar esto
       });
     }
     

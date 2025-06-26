@@ -62,6 +62,7 @@ type TableProps = {
     field: any;
     prevValue: any;
     newValue: any;
+    currentTable?: string; 
   }) => void;
   onRowDelete?: (rowId: number) => void;
   onRefresh?: () => void;
@@ -276,7 +277,8 @@ const TableComponent: React.FC<TableProps> = ({
         rowId: rowId,
         field: columnKey,
         prevValue: prevValue,
-        newValue: editValue
+        newValue: editValue,
+        currentTable: tableType // <-- Pasa el nombre de la tabla
       });
     }
     setEditingCell(null)

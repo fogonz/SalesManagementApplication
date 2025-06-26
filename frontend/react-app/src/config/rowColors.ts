@@ -25,6 +25,7 @@ export const cajachicaColorMap: Record<string, string> = {
 export const cuentasColorMap: Record<string, string> = {
 	proveedor: '#afe4ee',
 	cliente: '#9eaff5',
+	empleado: '#f5c6d7',
 };
   
 export const productosColorMap: Record<string, string> = {

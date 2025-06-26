@@ -36,11 +36,10 @@ const SideBar: React.FC<SideBarProps> = ({
       </div>
 
       {currentSection === "home" && setActiveView && (
-        <Options_Admin 
-          activeView={activeView as "movimientos" | "cuentas" | "productos" | "cajachica"}
-          setActiveView={setActiveView as React.Dispatch<React.SetStateAction<"movimientos" | "cuentas" | "productos" | "cajachica">>}
-          currentAdminView={currentAdminView}
-          setCurrentAdminView={setCurrentAdminView}
+        <Options_Home
+          activeView={activeView as "movimientos" | "cuentas" | "productos"}
+          setActiveView={setActiveView as React.Dispatch<React.SetStateAction<"movimientos" | "cuentas" | "productos">>}
+          toggleActive={() => {}}
         />
       )}
       {currentSection === "admin" && setActiveView && setCurrentAdminView && (

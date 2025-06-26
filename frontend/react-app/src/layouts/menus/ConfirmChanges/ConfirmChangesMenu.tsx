@@ -39,12 +39,22 @@ export const ConfirmChangesMenu: React.FC<ConfirmProps> = ({
 				movimientos: movimientosAPI,
 				cuentas: cuentasAPI,
 				productos: productosAPI,
-				movimientoItems: movimientoItemsAPI,
-				movimiento_items: movimientoItemsAPI
+				'movimiento-items': movimientoItemsAPI
 			};
 
-			// Get the appropriate API and call actualizarCampos
-			const api = apiMap[currentTable];
+			// Normalize currentTable to match API keys (lowercase, plural)
+			let normalizedTable = currentTable.toLowerCase();
+			if (normalizedTable === 'cajachica') {
+				normalizedTable = 'movimientos';
+			} else if (normalizedTable.endsWith('a')) {
+				// e.g. 'cuenta' -> 'cuentas', 'movimiento' -> 'movimientos', 'producto' -> 'productos'
+				normalizedTable += 's';
+			}
+			if (normalizedTable === 'movimientoitems' || normalizedTable === 'movimiento_items') {
+				normalizedTable = 'movimiento-items';
+			}
+
+			const api = apiMap[normalizedTable];
 			if (!api) {
 				throw new Error(`Tabla no soportada: ${currentTable}`);
 			}

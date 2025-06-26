@@ -299,7 +299,9 @@ export const movimientoItemsAPI = new GenericAPI<MovimientoItemPayload, Movimien
 // Keep your existing fetchTableData function
 export const fetchTableData = async (activeView: Tabla): Promise<any[]> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/${activeView}`);
+    // Si es cajachica, usa el endpoint de movimientos
+    const endpoint = activeView === "cajachica" ? "movimientos" : activeView;
+    const response = await fetch(`${API_BASE_URL}/${endpoint}`);
     const data = await response.json();
     console.log("DATANEW", data);
     return data;

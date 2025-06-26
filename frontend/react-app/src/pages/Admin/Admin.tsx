@@ -58,10 +58,16 @@ interface RowDeleteParams {
 
 // ========== COMPONENTE PRINCIPAL ==========
 const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setOpenMenu }) => {
-  
   // ========== ESTADOS LOCALES ==========
   // Control de vista activa del admin
-  const [currentAdminView, setCurrentAdminView] = useState<AdminView>('movimientos');
+  const [currentAdminView, setCurrentAdminView] = useState<AdminView>(activeView as AdminView);
+
+  // Sincronizar currentAdminView con activeView (prop) cuando cambia
+  React.useEffect(() => {
+    if (activeView !== currentAdminView) {
+      setCurrentAdminView(activeView as AdminView);
+    }
+  }, [activeView]);
   
   // Control de refrescar datos
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -369,13 +375,16 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
         <SideBar 
           currentSection='admin' 
           activeView={
-            // Highlight only if currentAdminView is a valid Tabla
+            // Solo pasar un valor válido de Tabla, nunca ""
             (['movimientos', 'cuentas', 'productos', 'cajachica'].includes(currentAdminView)
               ? (currentAdminView as Tabla)
-              : ''
+              : 'movimientos'
             )
           }
-          setActiveView={setCurrentAdminView as React.Dispatch<React.SetStateAction<Tabla>>}
+          setActiveView={(view) => {
+            setActiveView(view);
+            setCurrentAdminView(view as AdminView);
+          }}
           currentAdminView={currentAdminView}
           setCurrentAdminView={setCurrentAdminView}
         />
