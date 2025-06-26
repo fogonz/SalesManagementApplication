@@ -109,9 +109,8 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     const [cuenta, setCuenta] = useState<string>("");
     const [tipo, setTipo] = useState<string>("");
     const [descuento, setDescuento] = useState<string>("");
-    const [concepto, setConcepto] = useState<string>("");
     const [total, setTotal] = useState<string>("");
-    const [abonado, setAbonado] = useState<string>("");
+    const [concepto, setConcepto] = useState<string>("");
     const [searchTerm, setSearchTerm] = useState("");
     const [error, setError] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -119,7 +118,10 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     const [data, setData] = useState<ProductoRow[] | null>(null);
     const [options, setOptions] = useState<CuentaOption[]>([]);
     const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
-    const totalCarrito = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+    const [estadoPago, setEstadoPago] = useState<string>("no"); // "no" | "si"
+
+    // Calcula el precio total de los productos en el carrito
+    const precioBrutoProductos = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
     const handleCarritoUpdate = (nuevoCarrito: ItemCarrito[]) => {
         setCarrito(nuevoCarrito);
@@ -172,7 +174,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
 
     // Function to check if current type requires cart
     const shouldShowCart = () => {
-        return tipo === "factura venta" || tipo === "factura compra";
+        return tipo === "factura_venta" || tipo === "factura_compra";
     };
 
     // Fetch: Table Cuentas
@@ -233,35 +235,67 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
         setIsSubmitting(true);
 
         try {
-            // Create the enhanced submit handler
-            const dataSubmitted = createHandleSubmit(
-                {
-                    fecha,
-                    cuenta,
-                    tipo,
-                    descuento,
-                    abonado,
-                    concepto,
-                    carrito
-                },
-                () => {
-                    // Success callback
-                    setIsSubmitting(false);
-                    onAccept();
+            // El descuento es un porcentaje (ej: 50 para 50%)
+            const descuentoTotal = descuento.trim() === "" ? 0 : parseFloat(descuento.replace(",", "."));
+            const dataToSend = {
+                fecha,
+                cuenta,
+                tipo,
+                descuento_total: isNaN(descuentoTotal) ? 0 : descuentoTotal,
+                total: total ? parseFloat(total) : 0,
+                concepto,
+                carrito
+            };
+
+            // 1. Crear la factura
+            const dataSubmitted = await createHandleSubmit(
+                dataToSend,
+                async (facturaResponse) => {
+                    // 2. Si corresponde, crear el movimiento de cobranza/pago
+                    if (
+                        (tipo === "factura_venta" && estadoPago === "si") ||
+                        (tipo === "factura_compra" && estadoPago === "si")
+                    ) {
+                        const tipoMovimiento = tipo === "factura_venta" ? "cobranza" : "pago";
+                        const movimientoPagoCobranza = {
+                            fecha,
+                            cuenta,
+                            tipo: tipoMovimiento,
+                            total: total ? parseFloat(total) : 0,
+                            concepto: `Auto generado por ${tipo}`,
+                            descuento_total: 0,
+                            carrito: []
+                        };
+                        await createHandleSubmit(
+                            movimientoPagoCobranza,
+                            () => {
+                                setIsSubmitting(false);
+                                onAccept();
+                            },
+                            (errorMessage: string) => {
+                                setError(`Error al registrar pago/cobranza: ${errorMessage}`);
+                                setIsSubmitting(false);
+                            }
+                        )();
+                    } else {
+                        setIsSubmitting(false);
+                        onAccept();
+                    }
                 },
                 (errorMessage: string) => {
-                    // Error callback
                     setError(`Error en los campos ingresados: ${errorMessage}`);
                     setIsSubmitting(false);
                 }
             );
-
-            // Execute the enhanced submit
-            await dataSubmitted();
         } catch (err) {
             setError("Error inesperado al procesar la transacción");
             setIsSubmitting(false);
         }
+    };
+
+    // Helper para saber si mostrar el input de "Cantidad Abonada"
+    const shouldShowCantidadAbonada = () => {
+        return tipo !== "factura_venta" && tipo !== "factura_compra" && tipo !== "";
     };
 
     return(
@@ -332,8 +366,8 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                         disabled={isSubmitting}
                                     >
                                         <option value="">-- Selecciona un tipo de movimiento --</option>
-                                        <option value="factura venta">Factura Venta</option>
-                                        <option value="factura compra">Factura Compra</option>
+                                        <option value="factura_venta">Factura Venta</option>
+                                        <option value="factura_compra">Factura Compra</option>
                                         <option value="pago">Pago</option>
                                         <option value="cobranza">Cobranza</option>
                                         <option value="jornal">Jornal</option>
@@ -344,19 +378,22 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                     </select>
                                 </div>
     
-                                <div className="entry">
-                                    <div className="entry_label">
-                                        <div className="text open-sans">Detalle</div>
+                                {/* Detalle solo si NO es factura_venta ni factura_compra */}
+                                {tipo !== "factura_venta" && tipo !== "factura_compra" && (
+                                    <div className="entry">
+                                        <div className="entry_label">
+                                            <div className="text open-sans">Detalle</div>
+                                        </div>
+                                        <input 
+                                            type="text" 
+                                            className="custom_input" 
+                                            placeholder="(OPCIONAL) Describir movimiento..."
+                                            value={concepto} 
+                                            onChange={(e) => setConcepto(e.target.value)}
+                                            disabled={isSubmitting}
+                                        />
                                     </div>
-                                    <input 
-                                        type="text" 
-                                        className="custom_input" 
-                                        placeholder="(OPCIONAL) Describir movimiento..."
-                                        value={concepto} 
-                                        onChange={(e) => setConcepto(e.target.value)}
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
+                                )}
     
                                 <div className="entry">
                                     <div className="entry_label">
@@ -375,21 +412,44 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                     />
                                 </div>
     
-                                <div className="entry">
-                                    <div className="entry_label">
-                                        <div className="text open-sans">Cantidad Abonada</div>
+                                {/* Cantidad Abonada solo para tipos distintos a factura_venta/factura_compra */}
+                                {shouldShowCantidadAbonada() && (
+                                    <div className="entry">
+                                        <div className="entry_label">
+                                            <div className="text open-sans">Cantidad Abonada</div>
+                                        </div>
+                                        <input 
+                                            type="number" 
+                                            className="custom_input" 
+                                            placeholder="Ingresar total abonado al registrar..."
+                                            value={total} 
+                                            onChange={(e) => setTotal(e.target.value)}
+                                            disabled={isSubmitting}
+                                            min="0"
+                                            step="0.01"
+                                        />
                                     </div>
-                                    <input 
-                                        type="number" 
-                                        className="custom_input" 
-                                        placeholder="Ingresar total abonado al registrar..."
-                                        value={abonado} 
-                                        onChange={(e) => setAbonado(e.target.value)}
-                                        disabled={isSubmitting}
-                                        min="0"
-                                        step="0.01"
-                                    />
-                                </div>
+                                )}
+    
+                                {/* Estado solo para factura_venta o factura_compra */}
+                                {(tipo === "factura_venta" || tipo === "factura_compra") && (
+                                    <div className="entry">
+                                        <div className="entry_label">
+                                            <div className="text open-sans">
+                                                {tipo === "factura_venta" ? "Cobrado" : "Pagado"}
+                                            </div>
+                                        </div>
+                                        <select
+                                            className="custom_input"
+                                            value={estadoPago}
+                                            onChange={e => setEstadoPago(e.target.value)}
+                                            disabled={isSubmitting}
+                                        >
+                                            <option value="no">{tipo === "factura_venta" ? "No cobrado" : "No pagado"}</option>
+                                            <option value="si">{tipo === "factura_venta" ? "Cobrado" : "Pagado"}</option>
+                                        </select>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         
@@ -498,7 +558,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                                     <ProductGrid productos={data} carrito={carrito} onCarritoUpdate={handleCarritoUpdate}></ProductGrid>
                                                 </div>
                                             </div>
-                                            <ShoppingCartTotal total={totalCarrito}></ShoppingCartTotal>
+                                            <ShoppingCartTotal total={precioBrutoProductos}></ShoppingCartTotal>
                                         </div>
                                     </div>
                                 </div>

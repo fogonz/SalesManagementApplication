@@ -1,39 +1,43 @@
-from rest_framework import viewsets, permissions, viewsets, status
+from django.db import transaction
+from django.db.models import Sum
+from rest_framework import permissions, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import action
-from django.db.models import Sum, Count
-from django.db import transaction
-from .serializers import TransaccionesSerializer, CuentasSerializer, ProductosSerializer, TransaccionItemsSerializer, VentaProductoSerializer, TransaccionesWriteSerializer
-from .models import Transacciones, Cuentas, Productos, TransaccionItems
+
+from .models import Cuentas, Productos, TransaccionItems, Transacciones
+from .serializers import (CuentasSerializer, ProductosSerializer,
+                          TransaccionItemsSerializer, TransaccionesSerializer,
+                          TransaccionesWriteSerializer, VentaProductoSerializer)
+
 
 class TransaccionesViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
     queryset = Transacciones.objects.all().select_related('cuenta').prefetch_related('transaccionitems_set')
-    
+
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return TransaccionesWriteSerializer
         return TransaccionesSerializer
-    
+
     def perform_create(self, serializer):
         """Create transaction and auto-update account balance"""
         with transaction.atomic():
             serializer.save()
             # Balance is automatically updated via signals
-    
+
     def perform_update(self, serializer):
         """Update transaction and auto-update account balance"""
         with transaction.atomic():
             serializer.save()
             # Balance is automatically updated via signals
-    
+
     def perform_destroy(self, instance):
         """Delete transaction and auto-update account balance"""
         with transaction.atomic():
             instance.delete()
             # Balance is automatically updated via signals
-    
+
     @action(detail=False, methods=['post'])
     def batch_recalculate_balances(self, request):
         """
@@ -44,23 +48,23 @@ class TransaccionesViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
                 cuentas = Cuentas.objects.all()
                 updated_count = 0
-                
+
                 for cuenta in cuentas:
                     old_monto = cuenta.monto
                     new_monto = cuenta.recalcular_monto()
                     if old_monto != new_monto:
                         updated_count += 1
-                
+
                 return Response({
                     'message': f'Successfully recalculated balances for {updated_count} accounts',
                     'total_accounts': cuentas.count()
                 }, status=status.HTTP_200_OK)
-        
+
         except Exception as e:
             return Response({
                 'error': f'Error recalculating balances: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
     @action(detail=True, methods=['post'])
     def recalculate_account_balance(self, request, pk=None):
         """
@@ -72,7 +76,7 @@ class TransaccionesViewSet(viewsets.ModelViewSet):
             if transaccion.cuenta:
                 old_monto = transaccion.cuenta.monto
                 new_monto = transaccion.cuenta.recalcular_monto()
-                
+
                 return Response({
                     'message': 'Account balance recalculated successfully',
                     'account_id': transaccion.cuenta.id,
@@ -84,12 +88,30 @@ class TransaccionesViewSet(viewsets.ModelViewSet):
                 return Response({
                     'error': 'Transaction has no associated account'
                 }, status=status.HTTP_400_BAD_REQUEST)
-        
+
         except Exception as e:
             return Response({
                 'error': f'Error recalculating account balance: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
+    def create(self, request, *args, **kwargs):
+        productos_ids = request.data.pop('productos', [])
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        transaccion = serializer.save()
+        # Crear los items en transaccion_items
+        for producto_id in productos_ids:
+            producto = Productos.objects.get(pk=producto_id)
+            TransaccionItems.objects.create(
+                transaccion=transaccion,
+                producto=producto,
+                nombre_producto=producto.tipo_producto,
+                precio_unitario=producto.precio_venta_unitario,
+                cantidad=1  # O ajusta según lógica de tu frontend
+            )
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class TransaccionItemsViewSet(viewsets.ModelViewSet):
     queryset = TransaccionItems.objects.all()
@@ -101,7 +123,7 @@ class CuentasViewSet(viewsets.ModelViewSet):
     queryset = Cuentas.objects.all()
     serializer_class = CuentasSerializer
     permission_classes = [permissions.AllowAny]
-    
+
     @action(detail=True, methods=['post'])
     def recalculate_balance(self, request, pk=None):
         """
@@ -112,7 +134,7 @@ class CuentasViewSet(viewsets.ModelViewSet):
             cuenta = self.get_object()
             old_monto = cuenta.monto
             new_monto = cuenta.recalcular_monto()
-            
+
             return Response({
                 'message': 'Account balance recalculated successfully',
                 'account_id': cuenta.id,
@@ -120,11 +142,12 @@ class CuentasViewSet(viewsets.ModelViewSet):
                 'old_balance': old_monto,
                 'new_balance': new_monto
             }, status=status.HTTP_200_OK)
-        
+
         except Exception as e:
             return Response({
                 'error': f'Error recalculating balance: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class ProductosViewSet(viewsets.ModelViewSet):
     """

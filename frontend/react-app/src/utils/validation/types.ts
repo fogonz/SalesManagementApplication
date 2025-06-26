@@ -1,15 +1,11 @@
 export interface TransactionFormData {
-	tipo: string;
 	fecha: string;
-	numeroComprobante?: string;
-	cuenta: string;
-	productoTipo?: string;
-	cantidad: string;
-	precio: string;
-	descuento?: string;
-	estado?: string;
-	abonado?: string;
-	concepto?: string;
+	cuenta: string | number;
+	tipo: string;
+	descuento_total: number;
+	total: number;
+	concepto: string;
+	carrito: any[];
 }
   
 export interface ValidationResult {

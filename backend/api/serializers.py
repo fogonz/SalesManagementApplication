@@ -84,7 +84,6 @@ class TransaccionItemsSerializer(serializers.ModelSerializer):
 
 class TransaccionesSerializer(serializers.ModelSerializer):
     cantidad_productos = serializers.IntegerField(read_only=True)
-    
     items = TransaccionItemsSerializer(
         source='transaccionitems_set',
         many=True,
@@ -94,14 +93,16 @@ class TransaccionesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transacciones
-        fields = '__all__'
+        fields = [
+            'id', 'tipo', 'fecha', 'cuenta', 'total',
+            'numero_comprobante', 'saldo_diferencia',
+            'descuento_total', 'concepto', 'items',
+            'cantidad_productos',
+        ]
 
     def create(self, validated_data):
-        # 1) Sacamos la lista de items del validated_data
         items_data = validated_data.pop('transaccionitems_set', [])
-        # 2) Creamos la cabecera
         transaccion = Transacciones.objects.create(**validated_data)
-        # 3) Para cada item, asociamos la FK y lo creamos
         for item_data in items_data:
             TransaccionItems.objects.create(
                 transaccion=transaccion,
@@ -112,48 +113,38 @@ class TransaccionesSerializer(serializers.ModelSerializer):
                 descuento_item=item_data.get('descuento_item', 0)
             )
         return transaccion
-    
 
 class TransaccionesWriteSerializer(serializers.ModelSerializer):
     items = TransaccionItemsSerializer(many=True, required=False)
-    
+
     class Meta:
         model = Transacciones
         fields = [
-            'id', 'tipo', 'fecha', 'cuenta', 'total', 
+            'id', 'tipo', 'fecha', 'cuenta', 'total',
+            'numero_comprobante', 'saldo_diferencia',
             'descuento_total', 'concepto', 'items'
         ]
-    
+
     def create(self, validated_data):
         items_data = validated_data.pop('items', [])
         transaccion = Transacciones.objects.create(**validated_data)
-        
         for item_data in items_data:
             TransaccionItems.objects.create(
-                transaccion=transaccion, 
+                transaccion=transaccion,
                 **item_data
             )
-        
         return transaccion
-    
+
     def update(self, instance, validated_data):
         items_data = validated_data.pop('items', None)
-        
-        # Update transaction fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
-        
-        # Update items if provided
         if items_data is not None:
-            # Delete existing items
             instance.transaccionitems_set.all().delete()
-            
-            # Create new items
             for item_data in items_data:
                 TransaccionItems.objects.create(
-                    transaccion=instance, 
+                    transaccion=instance,
                     **item_data
                 )
-        
         return instance
