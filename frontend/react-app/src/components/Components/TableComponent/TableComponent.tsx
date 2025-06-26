@@ -66,6 +66,7 @@ type TableProps = {
   }) => void;
   onRowDelete?: (rowId: number) => void;
   onRefresh?: () => void;
+  disableInteractions?: boolean; // <-- NUEVO
 }
 
 // Helper function to format tipo values
@@ -86,7 +87,8 @@ const TableComponent: React.FC<TableProps> = ({
   onCellEdit,
   onRowDelete,
   rowSelected,
-  onRefresh
+  onRefresh,
+  disableInteractions = false // <-- NUEVO
 }) => {
   const tableRef = useRef<HTMLDivElement>(null)
   const [hoveredCell, setHoveredCell] = useState<any>(null)
@@ -122,6 +124,7 @@ const TableComponent: React.FC<TableProps> = ({
   // This handles cell click, but you want to target the whole row.
   // So, let's add a row click handler below.
   const handleCellClick = (e: React.MouseEvent, rowId: number, columnKey: string, currentValue: any, isEditable: boolean) => {
+    if (disableInteractions) return;
     e.preventDefault()
     e.stopPropagation()
     if (selectMenu?.visible) {
@@ -150,6 +153,7 @@ const TableComponent: React.FC<TableProps> = ({
 
   // NEW: Row click handler to open menu for the whole row
   const handleRowClick = (e: React.MouseEvent, rowId: number) => {
+    if (disableInteractions) return;
     e.preventDefault()
     e.stopPropagation()
     // Open menu for the first cell in the row (or just for the row)
@@ -171,6 +175,7 @@ const TableComponent: React.FC<TableProps> = ({
   }
 
   const handleEditStart = () => {
+    if (disableInteractions) return;
     if (!selectMenu) return
     setEditingCell({ 
       rowId: selectMenu.rowId, 
@@ -271,6 +276,7 @@ const TableComponent: React.FC<TableProps> = ({
   }
 
   const handleEditSubmit = (rowId: number, columnKey: any, prevValue: any) => {
+    if (disableInteractions) return;
     const hasChanges = editValue !== (prevValue?.toString() || '')
     if (hasChanges && onCellEdit) {
       onCellEdit({
@@ -291,6 +297,7 @@ const TableComponent: React.FC<TableProps> = ({
   }
 
   const handleKeyDown = (e: React.KeyboardEvent, rowId: number, columnKey: string, prevValue: any) => {
+    if (disableInteractions) return;
     if (e.key === 'Enter') {
       handleEditSubmit(rowId, columnKey, prevValue)
     } else if (e.key === 'Escape') {
@@ -300,15 +307,27 @@ const TableComponent: React.FC<TableProps> = ({
 
   // Close select menu when clicking outside
   const handleTableClick = () => {
+    if (disableInteractions) return;
     if (selectMenu?.visible) {
       closeSelectMenu()
     }
   }
 
+  // Ordenar las filas por fecha descendente si existe la columna 'fecha'
+  const sortedRows = React.useMemo(() => {
+    if (!rows.length) return rows;
+    if (!('fecha' in rows[0])) return rows;
+    return [...rows].sort((a, b) => {
+      const fechaA = new Date((a as any).fecha);
+      const fechaB = new Date((b as any).fecha);
+      return fechaB.getTime() - fechaA.getTime();
+    });
+  }, [rows]);
+
   if (!rows.length) {
     return (
       <div className="table_wrapper" ref={tableRef} onClick={handleTableClick}>
-        <div className="table_container">
+        <div className="table_scroll">
           <div className="table_header">
             {columns.map(col => (
               <div key={col.key} className="table_header__cell" style={{ width: col.width }}>
@@ -316,8 +335,10 @@ const TableComponent: React.FC<TableProps> = ({
               </div>
             ))}
           </div>
-          <div className="table_body">
-            <div className="no-data-message">No hay datos disponibles</div>
+          <div className="table_container">
+            <div className="table_body">
+              <div className="no-data-message">No hay datos disponibles</div>
+            </div>
           </div>
         </div>
       </div>
@@ -344,192 +365,195 @@ const TableComponent: React.FC<TableProps> = ({
           }}
         />
       )}
-      <div className="table_header">
-        {columns.map(col => (
-          <div key={col.key} className="table_header__cell" style={{ width: col.width }}>
-            {col.label}
-          </div>
-        ))}
-      </div>
-      <div className="table_container">
-        <div className="table_body">
-          {rows.map(row => {
-            // Use 'tipo' for cajachica and movimientos, 'tipo_cuenta' for cuentas
-            let tipoKey = 'tipo'
-            if (tableType === 'cuentas') tipoKey = 'tipo_cuenta'
-            const tipoValue = (row as any)[tipoKey]
-            const tipoContent = columns.find(c => c.key === tipoKey)?.format?.(tipoValue) ?? tipoValue
-            // Use correct tableType for color mapping
-            const colorTableType = tableType === 'cajachica' ? 'cajachica' : tableType
-            const bgColor = getCellColorClass(tipoContent, colorTableType as any)
-            const isSelectedRow = selectedRowId === (row as any).id
-
-            return (
-              <div 
-                key={(row as any).id} 
-                className={`table_row ${isSelectedRow ? 'selected-row' : ''}`}
-                style={{ backgroundColor: bgColor }}
-                onClick={e => handleRowClick(e, (row as any).id)} // <-- Row click for menu
-              >
-                {columns.map(col => {
-                  const raw = (row as any)[col.key]
-                  let content = col.format ? col.format(raw) : raw ?? '-'
-
-                  if (
-                    col.key === 'concepto' &&
-                    (row as any).items &&
-                    ['factura_venta', 'factura_compra'].includes((row as any).tipo)
-                  ) {
-                    content = `${(row as any).items.length} producto/s`
-                  }
-                  
-                  if (col.key === 'tipo' || col.key === 'tipo_cuenta' || col.key === 'tipoMovimiento') {
-                    content = content !== '-' ? formatTipoValue(content) : content
-                  }
-
-                  const symbol = ['total', 'monto', 'estado'].includes(col.key) ? '$' : ''
-                  const symbolAfter = ['descuento', 'descuento_total'].includes(col.key) ? '%' : ''
-                  let isEditable = false
-
-                  if (editableCells.includes(col.key) && isAdmin){
-                    isEditable = true;
-                  }
-
-                  const isCurrentlyEditing = editingCell?.rowId === (row as any).id && editingCell?.columnKey === col.key
-                  const isSelectedCell = selectedCellId === `${(row as any).id}-${col.key}`
-
-                  return (
-                    <div
-                      key={col.key}
-                      className={`table_cell ${isEditable && isAdmin ? 'editable-cell' : ''} ${isSelectedCell ? 'selected-cell' : ''}`}
-                      style={{ width: col.width }}
-                      onClick={e => handleCellClick(e, (row as any).id, col.key, raw, isEditable)}
-                      onMouseEnter={e => {
-                        if (isCurrentlyEditing || selectMenu?.visible) return
-                        const rect = e.currentTarget.getBoundingClientRect()
-                        const wrap = tableRef.current?.getBoundingClientRect()
-                        if (!wrap) return
-                        const items =
-                          col.key === 'concepto' &&
-                          tableType === 'movimientos' &&
-                          (row as MovimientoRow).items
-                            ? (row as MovimientoRow).items
-                            : undefined
-                        setHoveredCell({
-                          x: rect.left - wrap.left,
-                          y: rect.top - wrap.top,
-                          width: rect.width,
-                          height: rect.height,
-                          opacity: 1,
-                          background: bgColor,
-                          symbol,
-                          content,
-                          symbolAfter,
-                          isAdmin,
-                          isEditable,
-                          items,
-                          currentCol: col.key
-                        })
-                      }}
-                      onMouseLeave={e => {
-                        if (isCurrentlyEditing || selectMenu?.visible) return
-                        const rect = e.currentTarget.getBoundingClientRect()
-                        const wrap = tableRef.current?.getBoundingClientRect()
-                        if (!wrap) return
-                        setHoveredCell({ x: 0, y: 0, width: 0, height: 0, opacity: 0, background: '#fff' })
-                      }}
-                      // Remove onClick from cell to avoid double menu
-                    >
-                      {isCurrentlyEditing ? (
-                        <input
-                          type="text"
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          onBlur={() => handleEditSubmit((row as any).id, col.key, editingCell.prevValue)}
-                          onKeyDown={(e) => handleKeyDown(e, (row as any).id, col.key, editingCell.prevValue)}
-                          className="edit-input"
-                          autoFocus
-                          style={{
-                            width: '100%',
-                            border: 'none',
-                            outline: 'none',
-                            backgroundColor: 'transparent',
-                            fontSize: 'inherit',
-                            fontFamily: 'inherit',
-                            padding: '0',
-                            margin: '0'
-                          }}
-                        />
-                      ) : (
-                        <>
-                          {symbol}
-                          {content}
-                          {symbolAfter}
-                        </>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            )
-          })}
+      <div className="table_scroll">
+        <div className="table_header">
+          {columns.map(col => (
+            <div key={col.key} className="table_header__cell" style={{ width: col.width }}>
+              {col.label}
+            </div>
+          ))}
         </div>
+        <div className="table_container">
+          <div className="table_body">
+            {sortedRows.map(row => {
+              // Use 'tipo' for cajachica and movimientos, 'tipo_cuenta' for cuentas
+              let tipoKey = 'tipo'
+              if (tableType === 'cuentas') tipoKey = 'tipo_cuenta'
+              const tipoValue = (row as any)[tipoKey]
+              const tipoContent = columns.find(c => c.key === tipoKey)?.format?.(tipoValue) ?? tipoValue
+              // Use correct tableType for color mapping
+              const colorTableType = tableType === 'cajachica' ? 'cajachica' : tableType
+              const bgColor = getCellColorClass(tipoContent, colorTableType as any)
+              const isSelectedRow = selectedRowId === (row as any).id
 
-        {hoveredCell && !editingCell && !selectMenu?.visible && (
-          <FloatingCell hoveredCell={hoveredCell} isGray={hoveredCell.currentCol === 'id'} />
-        )}
-        
-        {selectMenu?.visible && (
-          <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 1003 }}>
-            <SelectMenu
-              options={getSelectMenuOptions()}
-              position={selectMenu.position}
-              onClose={closeSelectMenu}
-            />
+              return (
+                <div 
+                  key={(row as any).id} 
+                  className={`table_row ${isSelectedRow && !disableInteractions ? 'selected-row' : ''}`}
+                  style={{ backgroundColor: bgColor }}
+                  onClick={e => handleRowClick(e, (row as any).id)} // <-- Row click for menu
+                >
+                  {columns.map(col => {
+                    const raw = (row as any)[col.key]
+                    let content = col.format ? col.format(raw) : raw ?? '-'
+
+                    if (
+                      col.key === 'concepto' &&
+                      (row as any).items &&
+                      ['factura_venta', 'factura_compra'].includes((row as any).tipo)
+                    ) {
+                      content = `${(row as any).items.length} producto/s`
+                    }
+                    
+                    if (col.key === 'tipo' || col.key === 'tipo_cuenta' || col.key === 'tipoMovimiento') {
+                      content = content !== '-' ? formatTipoValue(content) : content
+                    }
+
+                    const symbol = ['total', 'monto', 'estado'].includes(col.key) ? '$' : ''
+                    const symbolAfter = ['descuento', 'descuento_total'].includes(col.key) ? '%' : ''
+                    let isEditable = false
+
+                    if (editableCells.includes(col.key) && isAdmin){
+                      isEditable = true;
+                    }
+
+                    const isCurrentlyEditing = editingCell?.rowId === (row as any).id && editingCell?.columnKey === col.key
+                    const isSelectedCell = selectedCellId === `${(row as any).id}-${col.key}`
+
+                    return (
+                      <div
+                        key={col.key}
+                        className={`table_cell ${isEditable ? 'editable-cell' : ''} ${isSelectedCell && !disableInteractions ? 'selected-cell' : ''}`}
+                        style={{ width: col.width, cursor: disableInteractions ? 'default' : 'pointer' }}
+                        onClick={e => handleCellClick(e, (row as any).id, col.key, raw, isEditable)}
+                        onMouseEnter={e => {
+                          if (disableInteractions) return;
+                          if (isCurrentlyEditing || selectMenu?.visible) return
+                          const rect = e.currentTarget.getBoundingClientRect()
+                          const wrap = tableRef.current?.getBoundingClientRect()
+                          if (!wrap) return
+                          const items =
+                            col.key === 'concepto' &&
+                            tableType === 'movimientos' &&
+                            (row as MovimientoRow).items
+                              ? (row as MovimientoRow).items
+                              : undefined
+                          setHoveredCell({
+                            x: rect.left - wrap.left,
+                            y: rect.top - wrap.top,
+                            width: rect.width,
+                            height: rect.height,
+                            opacity: 1,
+                            background: bgColor,
+                            symbol,
+                            content,
+                            symbolAfter,
+                            isAdmin,
+                            isEditable,
+                            items,
+                            currentCol: col.key
+                          })
+                        }}
+                        onMouseLeave={e => {
+                          if (disableInteractions) return;
+                          if (isCurrentlyEditing || selectMenu?.visible) return
+                          const rect = e.currentTarget.getBoundingClientRect()
+                          const wrap = tableRef.current?.getBoundingClientRect()
+                          if (!wrap) return
+                          setHoveredCell({ x: 0, y: 0, width: 0, height: 0, opacity: 0, background: '#fff' })
+                        }}
+                      >
+                        {isCurrentlyEditing ? (
+                          <input
+                            type="text"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            onBlur={() => handleEditSubmit((row as any).id, col.key, editingCell.prevValue)}
+                            onKeyDown={(e) => handleKeyDown(e, (row as any).id, col.key, editingCell.prevValue)}
+                            className="edit-input"
+                            autoFocus
+                            style={{
+                              width: '100%',
+                              border: 'none',
+                              outline: 'none',
+                              backgroundColor: 'transparent',
+                              fontSize: 'inherit',
+                              fontFamily: 'inherit',
+                              padding: '0',
+                              margin: '0'
+                            }}
+                          />
+                        ) : (
+                          <>
+                            {symbol}
+                            {content}
+                            {symbolAfter}
+                          </>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            })}
           </div>
-        )}
 
-        {/* Delete confirmation modal */}
-        {showDeleteConfirm && deleteRowData && (
-          <div style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 2001,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            pointerEvents: 'none' // allow only the menu to receive pointer events
-          }}>
-            <div style={{ pointerEvents: 'all' }}>
-              <ConfirmDeleteMenu
-                rowId={deleteRowData.rowId}
-                rowValues={deleteRowData.rowValues}
-                currentTable={tableType}
-                onClose={handleDeleteCancel}
-                onAccept={handleDeleteConfirm}
+          {/* Solo mostrar FloatingCell y SelectMenu si no está deshabilitado */}
+          {hoveredCell && !editingCell && !selectMenu?.visible && !disableInteractions && (
+            <FloatingCell hoveredCell={hoveredCell} isGray={hoveredCell.currentCol === 'id'} />
+          )}
+          
+          {selectMenu?.visible && !disableInteractions && (
+            <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 1003 }}>
+              <SelectMenu
+                options={getSelectMenuOptions()}
+                position={selectMenu.position}
+                onClose={closeSelectMenu}
               />
             </div>
-          </div>
-        )}
+          )}
 
-        {modalVisible && selectedCuentaId && (
-          <>
-            <div className="modal-overlay" onClick={closeModal}>
-              <div className="modal">
-                <button className="modal-close" onClick={closeModal}>×</button>
-                <h2>Movimientos de la cuenta #{selectedCuentaId}</h2>
-                <TableComponent
-                  columns={movimientosColumns || columns}
-                  rows={getMovimientosForCuenta(selectedCuentaId)}
-                  tableType="movimientos"
-                  onCellEdit={onCellEdit}
-                  onRowDelete={onRowDelete}
-                  onRefresh={onRefresh}
+          {/* Delete confirmation modal */}
+          {showDeleteConfirm && deleteRowData && (
+            <div style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 2001,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none' // allow only the menu to receive pointer events
+            }}>
+              <div style={{ pointerEvents: 'all' }}>
+                <ConfirmDeleteMenu
+                  rowId={deleteRowData.rowId}
+                  rowValues={deleteRowData.rowValues}
+                  currentTable={tableType}
+                  onClose={handleDeleteCancel}
+                  onAccept={handleDeleteConfirm}
                 />
               </div>
             </div>
-          </>
-        )}
+          )}
+
+          {modalVisible && selectedCuentaId && (
+            <>
+              <div className="modal-overlay" onClick={closeModal}>
+                <div className="modal">
+                  <button className="modal-close" onClick={closeModal}>×</button>
+                  <h2>Movimientos de la cuenta #{selectedCuentaId}</h2>
+                  <TableComponent
+                    columns={movimientosColumns || columns}
+                    rows={getMovimientosForCuenta(selectedCuentaId)}
+                    tableType="movimientos"
+                    isAdmin={false}
+                    disableInteractions={true}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   )

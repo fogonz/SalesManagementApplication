@@ -1,0 +1,322 @@
+/* ExportarExcel.css */
+
+/* Variables CSS para colores y espaciado */
+:root {
+  --primary-blue: #3b82f6;
+  --primary-green: #10b981;
+  --primary-purple: #8b5cf6;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  --white: #ffffff;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+  --border-radius: 16px;
+  --border-radius-lg: 24px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Container principal */
+.export-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+  padding: 24px;
+}
+
+.export-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.export-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.export-header__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+  border-radius: 50%;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-lg);
+}
+
+.export-header__icon span {
+  font-size: 24px;
+  color: var(--white);
+}
+
+.export-header__title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin: 0 0 8px 0;
+  letter-spacing: -0.025em;
+}
+
+.export-header__subtitle {
+  font-size: 1.125rem;
+  color: var(--gray-600);
+  margin: 0;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Grid de tarjetas */
+.export-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+/* Tarjetas de exportación */
+.export-card {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--gray-100);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.export-card:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-4px);
+}
+
+.export-card__content {
+  padding: 24px;
+}
+
+.export-card__header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.export-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-lg);
+  transition: var(--transition);
+}
+
+.export-card__icon span {
+  font-size: 24px;
+}
+
+.export-card__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin: 0 0 8px 0;
+}
+
+.export-card__description {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Variantes de color para cada tarjeta */
+.export-card--movimientos .export-card__icon {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #1d4ed8 100%);
+}
+
+.export-card--cuentas .export-card__icon {
+  background: linear-gradient(135deg, var(--primary-green) 0%, #059669 100%);
+}
+
+.export-card--productos .export-card__icon {
+  background: linear-gradient(135deg, var(--primary-purple) 0%, #7c3aed 100%);
+}
+
+/* Botones de exportación */
+.export-button {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.875rem;
+}
+
+.export-card--movimientos .export-button {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #1d4ed8 100%);
+  color: var(--white);
+}
+
+.export-card--cuentas .export-button {
+  background: linear-gradient(135deg, var(--primary-green) 0%, #059669 100%);
+  color: var(--white);
+}
+
+.export-card--productos .export-button {
+  background: linear-gradient(135deg, var(--primary-purple) 0%, #7c3aed 100%);
+  color: var(--white);
+}
+
+.export-button:hover:not(.export-button--loading) {
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.02);
+}
+
+.export-button:active:not(.export-button--loading) {
+  transform: scale(0.98);
+}
+
+.export-button--loading {
+  background: var(--gray-200) !important;
+  color: var(--gray-600) !important;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.export-button__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.export-button__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.export-button__icon {
+  font-size: 16px;
+}
+
+/* Spinner de carga */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--gray-200);
+  border-top: 2px solid var(--gray-600);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Sección de información */
+.export-info {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--gray-100);
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.export-info__icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: #dbeafe;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.export-info__icon span {
+  font-size: 20px;
+  color: var(--primary-blue);
+}
+
+.export-info__content {
+  flex: 1;
+}
+
+.export-info__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin: 0 0 12px 0;
+}
+
+.export-info__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--gray-600);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.export-info__list li {
+  margin-bottom: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .export-container {
+    padding: 16px;
+  }
+  
+  .export-header__title {
+    font-size: 2rem;
+  }
+  
+  .export-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .export-card__content {
+    padding: 20px;
+  }
+  
+  .export-info {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .export-info__icon {
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .export-header__title {
+    font-size: 1.75rem;
+  }
+  
+  .export-header__subtitle {
+    font-size: 1rem;
+  }
+  
+  .export-card__content {
+    padding: 16px;
+  }
+  
+  .export-info {
+    padding: 20px;
+  }
+}
