@@ -248,6 +248,8 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                         (tipo === "factura_compra" && estadoPago === "si")
                     ) {
                         const tipoMovimiento = tipo === "factura_venta" ? "cobranza" : "pago";
+                        // Mostrar la cantidad de productos diferentes, no la suma de cantidades
+                        const cantidadProductos = carrito.length;
                         const movimientoPagoCobranza = {
                             fecha,
                             cuenta,
@@ -255,8 +257,8 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                             total: totalFinal,
                             concepto: `${
                                 tipo === "factura_venta"
-                                    ? `Cobranza de ${carrito.reduce((sum, item) => sum + item.cantidad, 0)} producto${carrito.reduce((sum, item) => sum + item.cantidad, 0) === 1 ? '' : 's'}`
-                                    : `Pago de ${carrito.reduce((sum, item) => sum + item.cantidad, 0)} producto${carrito.reduce((sum, item) => sum + item.cantidad, 0) === 1 ? '' : 's'}`
+                                    ? `Cobranza de ${cantidadProductos} producto${cantidadProductos === 1 ? '' : 's'}`
+                                    : `Pago de ${cantidadProductos} producto${cantidadProductos === 1 ? '' : 's'}`
                             }`,
                             descuento_total: 0,
                             carrito: []
