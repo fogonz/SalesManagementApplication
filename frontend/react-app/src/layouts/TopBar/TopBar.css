@@ -160,3 +160,91 @@
     margin-left: auto;
     /* Ensure right alignment */
 }
+
+.topbar-gear-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 8px;
+    padding: 6px 8px;
+    font-size: 1.4rem;
+    color: #fff;
+    /* icono blanco */
+    transition: color 0.2s, background 0.2s;
+    outline: none;
+}
+
+.topbar-gear-btn:hover,
+.topbar-gear-btn:focus {
+    color: #007bff;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+}
+
+.saldo-menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.saldo-menu-modal {
+    background: #fff;
+    padding: 28px 24px 20px 24px;
+    border-radius: 10px;
+    min-width: 340px;
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.18);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.saldo-menu-modal h3 {
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.saldo-menu-modal label {
+    font-size: 1rem;
+    color: #333;
+}
+
+.saldo-menu-modal input[type="number"] {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px;
+    font-size: 1.1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.saldo-menu-modal button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    font-size: 1rem;
+    margin-left: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.saldo-menu-modal button:first-child {
+    background: #eee;
+    color: #444;
+}
+
+.saldo-menu-modal button:last-child {
+    background: #007bff;
+    color: #fff;
+}
+
+.saldo-menu-modal button:last-child:hover {
+    background: #0056b3;
+}

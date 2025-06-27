@@ -297,18 +297,15 @@ export const productosAPI = new GenericAPI<ProductoPayload, ProductoResponse>('p
 export const movimientoItemsAPI = new GenericAPI<MovimientoItemPayload, MovimientoItemResponse>('movimiento-items');
 
 // Keep your existing fetchTableData function
-export const fetchTableData = async (activeView: Tabla): Promise<any[]> => {
-  try {
-    // Si es cajachica, usa el endpoint de movimientos
-    const endpoint = activeView === "cajachica" ? "movimientos" : activeView;
-    const response = await fetch(`${API_BASE_URL}/${endpoint}`);
-    const data = await response.json();
-    console.log("DATANEW", data);
-    return data;
-  } catch (err) {
-    console.error(`Error al cargar ${activeView}:`, err);
-    throw err;
-  }
+export const fetchTableData = async (table: string, baseURL = '') => {
+  // Map cajachica to movimientos
+  const realTable = table === 'cajachica' ? 'movimientos' : table;
+  const url = baseURL
+    ? `${baseURL}/api/${realTable}/`
+    : `/api/${realTable}/`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('Error fetching data');
+  return await response.json();
 };
 
 // Helper function to get the appropriate API instance
@@ -325,4 +322,21 @@ export const getAPI = (table: string) => {
     default:
       throw new Error(`Unknown table: ${table}`);
   }
+}
+
+// Helper for saldo fetch/update (no afecta el funcionamiento de GenericAPI ni fetchTableData)
+export const fetchSaldo = async () => {
+  const response = await fetch('http://localhost:8000/api/saldo/');
+  if (!response.ok) throw new Error('Error fetching saldo');
+  return await response.json();
+};
+
+export const patchSaldo = async (saldo_inicial: number) => {
+  const response = await fetch('http://localhost:8000/api/saldo/', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ saldo_inicial }),
+  });
+  if (!response.ok) throw new Error('Error updating saldo');
+  return await response.json();
 };

@@ -251,10 +251,28 @@ class Productos(models.Model):
 class Saldo(models.Model):
     id = models.IntegerField(primary_key=True)
     saldo_actual = models.FloatField()
+    saldo_inicial = models.FloatField(default=0)
 
     class Meta:
         managed = False
         db_table = 'saldo'
+
+    def save(self, *args, **kwargs):
+        # Siempre usar id=1
+        self.id = 1
+        super().save(*args, **kwargs)
+        # Eliminar cualquier otra fila (si existiera)
+        Saldo.objects.exclude(id=1).delete()
+
+    @classmethod
+    def get_singleton(cls):
+        obj = cls.objects.filter(id=1).first()
+        if not obj:
+            # Si no existe, crearla con valores en 0
+            obj = cls(id=1, saldo_actual=0, saldo_inicial=0)
+            # Usar force_insert para asegurar la creación
+            super(Saldo, obj).save(force_insert=True)
+        return obj
 
 
 class Transacciones(models.Model):
@@ -286,6 +304,30 @@ class Transacciones(models.Model):
         managed = False
         db_table = 'transacciones'
 
+    def actualizar_saldo_diferencia(self, skip_signal=False):
+        """
+        For this transaction, if tipo is not 'factura_venta' or 'factura_compra',
+        set saldo_diferencia = saldo_inicial - total, and update saldo_actual.
+        """
+        if self.tipo not in ['factura_venta', 'factura_compra']:
+            saldo_obj = Saldo.get_singleton()
+            self.saldo_diferencia = saldo_obj.saldo_inicial - float(self.total)
+            # Avoid recursion by disabling signals temporarily
+            if skip_signal:
+                super(Transacciones, self).save(update_fields=['saldo_diferencia'])
+            else:
+                self.save(update_fields=['saldo_diferencia'])
+            saldo_obj.saldo_actual = self.saldo_diferencia
+            saldo_obj.save(update_fields=['saldo_actual'])
+
+    @classmethod
+    def actualizar_todos_saldos_diferencia(cls):
+        saldo_obj = Saldo.get_singleton()
+        for trans in cls.objects.exclude(tipo__in=['factura_venta', 'factura_compra']):
+            trans.saldo_diferencia = saldo_obj.saldo_inicial - float(trans.total)
+            trans.save(update_fields=['saldo_diferencia'])
+            saldo_obj.saldo_actual = trans.saldo_diferencia
+            saldo_obj.save(update_fields=['saldo_actual'])
 
 class TransaccionItems(models.Model):
     id = models.AutoField(primary_key=True)
@@ -361,3 +403,17 @@ def actualizar_cantidad_producto_delete(sender, instance, **kwargs):
     """Update product quantity when transaction items are deleted"""
     if instance.producto_id:
         instance.producto.recalcular_cantidad()
+
+
+@receiver(post_save, sender=Transacciones)
+def calcular_saldo_diferencia_post_save(sender, instance, created, **kwargs):
+    """
+    Ensure saldo_diferencia is calculated and updated on every save.
+    Avoid infinite recursion by skipping signal when saving from actualizar_saldo_diferencia.
+    """
+    # Only call if not already updating from signal
+    if not getattr(instance, '_skip_signal', False):
+        # Set a flag to avoid recursion
+        instance._skip_signal = True
+        instance.actualizar_saldo_diferencia(skip_signal=True)
+        instance._skip_signal = False

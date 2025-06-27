@@ -66,13 +66,34 @@ const FloatingCell: React.FC<FloatingCellProps> = ({
           </div>
           <ul className="floating-list">
             <li className="list-header">
-              <span>Producto</span>
-              <span>Cantidad</span>
+              <span className="">Producto</span>
+              <span className="">Cantidad</span>
+              <span className="">Precio</span>
+              <span className="">Total</span>
             </li>
             {items.map((it, i) => (
               <li key={i}>
                 <span>{it.nombre_producto}</span>
-                <span>{it.cantidad}</span>
+                <span>
+                  {Number.isInteger(Number(it.cantidad))
+                    ? Number(it.cantidad)
+                    : Number(it.cantidad).toLocaleString("es-AR", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                </span>
+                <span>
+                  {"$" + it.precio_unitario.toLocaleString("es-AR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
+                <span>
+                  {"$" + (it.precio_unitario * it.cantidad).toLocaleString("es-AR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
               </li>
             ))}
           </ul>

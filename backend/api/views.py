@@ -6,10 +6,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
-from .models import Cuentas, Productos, TransaccionItems, Transacciones
+from .models import Cuentas, Productos, TransaccionItems, Transacciones, Saldo
 from .serializers import (CuentasSerializer, ProductosSerializer,
                           TransaccionItemsSerializer, TransaccionesSerializer,
-                          TransaccionesWriteSerializer, VentaProductoSerializer)
+                          TransaccionesWriteSerializer, VentaProductoSerializer,
+                          SaldoSerializer)
 
 
 class TransaccionesViewSet(viewsets.ModelViewSet):
@@ -225,3 +226,20 @@ class VentasPorProductoAPIView(APIView):
         )
         serializer = VentaProductoSerializer(qs, many=True)
         return Response(serializer.data)
+
+
+class SaldoSingletonView(APIView):
+    permission_classes = [permissions.AllowAny]  # Adjust as needed
+
+    def get(self, request):
+        saldo = Saldo.get_singleton()
+        serializer = SaldoSerializer(saldo)
+        return Response(serializer.data)
+
+    def patch(self, request):
+        saldo = Saldo.get_singleton()
+        serializer = SaldoSerializer(saldo, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

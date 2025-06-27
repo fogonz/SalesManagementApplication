@@ -10,7 +10,7 @@ export interface ColumnDefinition {
   key: string
   label: string
   width?: number | string
-  format?: (value: any) => string
+  format?: (value: any, row?: any) => string // <-- add row param
 }
 
 export interface MovimientoRow {
@@ -393,7 +393,43 @@ const TableComponent: React.FC<TableProps> = ({
                 >
                   {columns.map(col => {
                     const raw = (row as any)[col.key]
-                    let content = col.format ? col.format(raw) : raw ?? '-'
+                    
+                    // Procesar descuento_total = 0, "0", 0.0, "0.00", null o undefined como celda vacía
+                    let isEmptyDescuento =
+                      col.key === 'descuento_total' &&
+                      (
+                        raw === 0 ||
+                        raw === null ||
+                        raw === undefined ||
+                        raw === "0" ||
+                        raw === "0.00" ||
+                        raw === 0.0
+                      )
+                    let content: any
+                    let symbolAfter = ['descuento', 'descuento_total'].includes(col.key) ? '%' : ''
+                    if (isEmptyDescuento) {
+                      content = ''
+                      symbolAfter = ''
+                    } 
+                    // Mostrar 0 si la columna es "monto" y el valor es null, "NULL", undefined o 0
+                    else if (
+                      col.key === 'monto' &&
+                      (
+                        raw === null ||
+                        raw === undefined ||
+                        raw === "NULL" ||
+                        raw === 0
+                      )
+                    ) {
+                      content = 0
+                    } else {
+                      // Use row-aware formatter if present
+                      if (col.format) {
+                        content = col.format(raw, row)
+                      } else {
+                        content = raw ?? '-'
+                      }
+                    }
 
                     if (
                       col.key === 'concepto' &&
@@ -408,7 +444,6 @@ const TableComponent: React.FC<TableProps> = ({
                     }
 
                     const symbol = ['total', 'monto', 'estado'].includes(col.key) ? '$' : ''
-                    const symbolAfter = ['descuento', 'descuento_total'].includes(col.key) ? '%' : ''
                     let isEditable = false
 
                     if (editableCells.includes(col.key) && isAdmin){

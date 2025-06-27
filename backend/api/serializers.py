@@ -57,7 +57,7 @@ class VentaProductoSerializer(serializers.Serializer):
 class SaldoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Saldo
-        fields = ['id', 'saldo_actual']
+        fields = ['id', 'saldo_actual', 'saldo_inicial']
 
 
 class TransaccionItemsSerializer(serializers.ModelSerializer):

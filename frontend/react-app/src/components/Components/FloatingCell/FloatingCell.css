@@ -44,19 +44,45 @@
 
 .floating-list li {
 	display: grid;
-	grid-template-columns: 2fr 1fr;
+	grid-template-columns: 2fr 1fr 1.2fr 1.2fr;
 	padding: 4px 8px;
 	align-items: center;
 	gap: 8px;
 	border-bottom: 1px solid #ddd;
 	white-space: nowrap;
 	background-color: white;
+	font-family: inherit;
+	font-size: 0.9rem;
+	font-weight: 400;
+}
+
+.floating-list .list-header {
+	background-color: #333;
+	color: white;
+	border-bottom: 2px solid #111;
+	font-family: inherit;
+	font-size: 0.9rem;
+	font-weight: 500;
+}
+
+.floating-list .list-header span {
+	font-weight: 500;
+	font-family: inherit;
+	font-size: inherit;
 }
 
 .floating-list li span {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	padding: 2px 4px;
+}
+
+.floating-list li span:nth-child(3),
+.floating-list li span:nth-child(4) {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	font-family: inherit;
+	font-weight: 500;
 }
 
 .floating-cell .list-header {

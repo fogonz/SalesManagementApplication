@@ -43,6 +43,44 @@ const getMovimientosColumns = (cuentas: CuentaRow[]) => {
   ];
 };
 
+// Cajachica columns
+const getCajachicaColumns = (cuentas: CuentaRow[]) => [
+  { key: 'id', label: 'ID' },
+  { key: 'fecha', label: 'FECHA' },
+  { key: 'tipo', label: 'TIPO' },
+  { key: 'concepto', label: 'DETALLE' },
+  { 
+    key: 'cuenta', 
+    label: 'CUENTA',
+    format: (cuenta_id: number) => {
+      if (!cuentas || cuentas.length === 0) {
+        return 'Cargando...';
+      }
+      const cuenta = cuentas.find(c => c.id === cuenta_id);
+      return cuenta ? cuenta.nombre : `ID: ${cuenta_id} (no encontrada)`;
+    }
+  },
+  { 
+    key: 'debe', 
+    label: 'DEBE',
+    format: (_: any, row: any) => 
+      row.tipo === 'cobranza' ? `$${parseFloat(row.total).toFixed(2)}` : ''
+  },
+  { 
+    key: 'haber', 
+    label: 'HABER',
+    format: (_: any, row: any) =>
+      (row.tipo !== 'factura_venta' && row.tipo !== 'factura_compra' && row.tipo !== 'cobranza')
+        ? `$${parseFloat(row.total).toFixed(2)}`
+        : ''
+  },
+  { 
+    key: 'saldo_diferencia', 
+    label: 'SALDO',
+    format: (value: any) => value !== undefined && value !== null ? `$${parseFloat(value).toFixed(2)}` : '-'
+  }
+];
+
 // Custom hooks
 const useCuentas = (activeView: Tabla) => {
   const [cuentas, setCuentas] = useState<CuentaRow[]>([]);
@@ -71,7 +109,7 @@ const useTableData = (activeView: Tabla, cuentas: CuentaRow[], refreshTrigger?: 
 
   const loadData = async () => {
     try {
-      const tableData = await fetchTableData(activeView);
+      const tableData = await fetchTableData(activeView, 'http://localhost:8000');
       setData(tableData);
     } catch (err) {
       console.error(`Error loading ${activeView} data:`, err);
@@ -79,12 +117,13 @@ const useTableData = (activeView: Tabla, cuentas: CuentaRow[], refreshTrigger?: 
   };
 
   useEffect(() => {
-    // Solo cargar movimientos o cajachica si las cuentas ya están cargadas
-    if ((activeView === 'movimientos' || activeView === 'cajachica') && cuentas.length === 0) {
+    // Para cajachica, NO dependas de cuentas.length
+    if ((activeView === 'movimientos') && cuentas.length === 0) {
       return;
     }
+    // Para cajachica, siempre carga los datos aunque cuentas esté vacío
     loadData();
-  }, [activeView, cuentas, refreshTrigger]); // <-- Add refreshTrigger here
+  }, [activeView, cuentas, refreshTrigger]);
 
   return { data, loadData };
 };
@@ -244,7 +283,9 @@ const TableBox: React.FC<TableBoxProps> = ({
     }
     return filterData(data, activeView, searchTerm, selectedDates, cuentas);
   })();
-  const columns = getColumnsForActiveView(activeView, cuentas);
+  const columns = activeView === 'cajachica'
+    ? getCajachicaColumns(cuentas)
+    : getColumnsForActiveView(activeView, cuentas);
   const movimientosColumns = getMovimientosColumns(cuentas);
 
   // Handler para edición de celdas

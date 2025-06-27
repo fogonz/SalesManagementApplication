@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from .views import TransaccionesViewSet, CuentasViewSet, ProductosViewSet, TransaccionItemsViewSet, VentasPorProductoAPIView
+from .views import TransaccionesViewSet, CuentasViewSet, ProductosViewSet, TransaccionItemsViewSet, VentasPorProductoAPIView, SaldoSingletonView
 
 router = routers.DefaultRouter()
 router.register(r'movimientos', TransaccionesViewSet, basename='movimientos')
@@ -15,4 +15,5 @@ urlpatterns = [
         VentasPorProductoAPIView.as_view(),
         name='ventas-producto'
     ),
+    path('saldo/', SaldoSingletonView.as_view(), name='saldo-singleton'),
 ]

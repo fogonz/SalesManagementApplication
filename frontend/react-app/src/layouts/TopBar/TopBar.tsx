@@ -4,10 +4,13 @@ import './TopBar.css';
 import './DarkMode.css';
 import { useState, useEffect } from 'react';
 import { TopBarProps } from '../../types';
+import SaldoMenu from './SaldoMenu';
 
 const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, setOpenMenu }) => {
   const [state, setState] = useState<"1" | "2" | "0">("1");
   const [darkMode, setDarkMode] = useState(false);
+  const [saldoMenuVisible, setSaldoMenuVisible] = useState(false);
+  const [saldoActual, setSaldoActual] = useState<number | null>(null);
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,6 +52,28 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
     }
   }, [darkMode])
 
+  // Fetch saldo actual al abrir el menú
+  useEffect(() => {
+    if (saldoMenuVisible) {
+      fetch('/api/saldo/')
+        .then(res => res.json())
+        .then(data => {
+          setSaldoActual(data.saldo_inicial); // <-- Cambia a saldo_inicial
+        });
+    }
+  }, [saldoMenuVisible]);
+
+  const handleSaveSaldo = async (nuevoSaldo: number) => {
+    await fetch('/api/saldo/', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ saldo_inicial: nuevoSaldo }) // <-- Cambia a saldo_inicial
+    });
+    setSaldoMenuVisible(false);
+    setSaldoActual(nuevoSaldo);
+    // Opcional: notificar o refrescar
+  };
+
   const sectionHelp = () => {
     navigate('/ayuda')
   }
@@ -75,6 +100,15 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
       </div> */}
              
       <div className="header-right-controls">
+        {/* Botón engranaje para saldo */}
+        <button
+          className="topbar-gear-btn"
+          title="Editar saldo"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: 8 }}
+          onClick={() => setSaldoMenuVisible(true)}
+        >
+          <i className="fas fa-gear" />
+        </button>
         {/* Dark Mode Toggle */}
         <div className="dark-mode-container">
                      
@@ -94,6 +128,12 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
         </button>
         */}
       </div>
+      <SaldoMenu
+        visible={saldoMenuVisible}
+        onClose={() => setSaldoMenuVisible(false)}
+        onSave={handleSaveSaldo}
+        saldoActual={saldoActual}
+      />
     </div>
   );
 };
