@@ -243,8 +243,8 @@
 .product-list-item {
   display: flex;
   align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid #eee;
+  padding: 9px;
+  border: 1px solid #c1c2c5;
   background-color: #fff;
   border-radius: 8px;
   margin-bottom: 8px;
