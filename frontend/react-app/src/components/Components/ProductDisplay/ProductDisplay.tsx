@@ -419,6 +419,19 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({
                         )}
                       </span>
                     </div>
+                    {/* NUEVOS CAMPOS: TOTAL PRECIO VENTA Y TOTAL COSTO UNITARIO */}
+                    <div className="product-list-detail-item">
+                      <span className="product-list-detail-label">TOTAL PRECIO VENTA:</span>
+                      <span className="product-list-detail-value total-sale">
+                        ${((product.cantidad || 0) * (product.precio_venta_unitario || 0)).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="product-list-detail-item">
+                      <span className="product-list-detail-label">TOTAL COSTO UNITARIO:</span>
+                      <span className="product-list-detail-value total-cost">
+                        ${((product.cantidad || 0) * (product.costo_unitario || 0)).toFixed(2)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

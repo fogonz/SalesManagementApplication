@@ -88,17 +88,15 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
 
   return (
     <div className="header-top">
-      {/* <div className="header-icons">
-        <div className='row'>
-          <button onClick={() => {sectionHome(); setActive("1")}} className={`topbar-button ${state === "1" ? "active" : "inactive"}`}> 
-            <p>Operador</p>
-          </button>
-          <button onClick={() => {sectionAdmin(); setActive("2")}} className={`topbar-button ${state === "2" ? "active" : "inactive"}`}>
-            <p>Admin</p>
-          </button>
-        </div>
-      </div> */}
-             
+      {/* Botón recargar página completamente a la izquierda */}
+      <button
+        className="topbar-refresh-btn"
+        title="Recargar página"
+        style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: 16 }}
+        onClick={() => window.location.reload()}
+      >
+        <i className="fas fa-rotate-right" style={{ color: 'white' }} />
+      </button>
       <div className="header-right-controls">
         {/* Botón engranaje para saldo */}
         <button

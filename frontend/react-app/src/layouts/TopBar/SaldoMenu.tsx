@@ -66,7 +66,26 @@ const SaldoMenu: React.FC<SaldoMenuProps> = ({ visible, onClose, onSave, saldoAc
 
   return (
     <div className="saldo-menu-overlay">
-      <div className="saldo-menu-modal">
+      <div className="saldo-menu-modal" style={{ position: 'relative' }}>
+        {/* Botón de cerrar */}
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: 8,
+            right: 8,
+            background: 'transparent',
+            border: 'none',
+            fontSize: 22,
+            cursor: 'pointer',
+            color: '#888',
+            zIndex: 2
+          }}
+          aria-label="Cerrar"
+          disabled={loading}
+        >
+          ×
+        </button>
         <h3>Editar Saldo Inicial</h3>
         <div style={{ color: 'red', fontWeight: 600, marginBottom: 12 }}>
           <span>⚠️ No editar, solo para configuración inicial.</span>
