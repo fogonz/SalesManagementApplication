@@ -9,6 +9,115 @@ import { AnimatePresence, motion } from "framer-motion";
 import ShoppingCartTotal from '../../../components/Components/ShoppingCart/ShoppingCartTotal';
 import AccountDropdown from '../Dropdown/AccountDropdown';
 
+// Nuevo componente: FacturaDropdown
+const FacturaDropdown: React.FC<{
+    facturas: any[];
+    selectedFactura: any;
+    onSelectFactura: (factura: any) => void;
+    isSubmitting?: boolean;
+    placeholder?: string;
+    tipo?: string;
+}> = ({ facturas, selectedFactura, onSelectFactura, isSubmitting = false, placeholder = "-- Selecciona una factura --", tipo }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredFacturas, setFilteredFacturas] = useState<any[]>(facturas);
+
+    useEffect(() => {
+        if (!facturas || facturas.length === 0) {
+            setFilteredFacturas([]);
+            return;
+        }
+        if (searchTerm.trim() === "") {
+            setFilteredFacturas(facturas);
+        } else {
+            const filtered = facturas.filter(f =>
+                (f.numero_comprobante && f.numero_comprobante.toString().includes(searchTerm)) ||
+                (f.concepto && f.concepto.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+            setFilteredFacturas(filtered);
+        }
+    }, [searchTerm, facturas]);
+
+    const selectedFacturaObj = React.useMemo(() => {
+        if (!selectedFactura) return null;
+        return facturas.find(f => f.id === selectedFactura?.id || f.id === selectedFactura) || null;
+    }, [selectedFactura, facturas]);
+
+    return (
+        <div className="dropdown">
+            <div
+                className={`selector ${isSubmitting ? 'selector--disabled' : ''}`}
+                onClick={() => { if (!isSubmitting) setIsOpen(!isOpen); }}
+            >
+                <span className="selector__text">
+                    {selectedFacturaObj
+                        ? `N° ${selectedFacturaObj.numero_comprobante || "-"} | ${selectedFacturaObj.fecha} | $${selectedFacturaObj.total} | ${selectedFacturaObj.concepto || ""}`
+                        : placeholder
+                    }
+                </span>
+                <i className={`fas fa-chevron-${isOpen ? 'up' : 'down'} selector__chevron`}></i>
+            </div>
+            {isOpen && (
+                <div className="dropdown__menu">
+                    <div className="search">
+                        <input
+                            type="text"
+                            className="search__input"
+                            placeholder="¿Qué factura buscas?"
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                            onClick={e => e.stopPropagation()}
+                        />
+                        {searchTerm && (
+                            <div className="search__results">
+                                {filteredFacturas.length} factura{filteredFacturas.length !== 1 ? 's' : ''} encontrada{filteredFacturas.length !== 1 ? 's' : ''}
+                            </div>
+                        )}
+                    </div>
+                    <div className="list-container">
+                        <div className="list-header">
+                            <div><span>N°</span></div>
+                            <div><span>Fecha</span></div>
+                            <div><span>Total</span></div>
+                            <div><span>Detalle</span></div>
+                        </div>
+                        <div className="list-wrapper">
+                            {filteredFacturas.length === 0 ? (
+                                <div className="empty-state">
+                                    <i className="fas fa-search"></i>
+                                    {searchTerm ? 'No se encontraron facturas' : 'No hay facturas disponibles'}
+                                </div>
+                            ) : (
+                                filteredFacturas.map((f, idx) => (
+                                    <div
+                                        key={f.id || idx}
+                                        className={`dropdown-item ${selectedFacturaObj?.id === f.id ? 'dropdown-item--selected' : 'dropdown-item--hoverable'}`}
+                                        onClick={() => { onSelectFactura(f); setIsOpen(false); setSearchTerm(""); }}
+                                    >
+                                        <div className="item-content">
+                                            <div className="item-nro"><span>{f.numero_comprobante || "-"}</span></div>
+                                            <div className="item-fecha"><span>{f.fecha}</span></div>
+                                            <div className="item-total"><span>${f.total}</span></div>
+                                            <div className="item-detalle"><span>{f.concepto || ""}</span></div>
+                                        </div>
+                                        <button
+                                            className={`item-action ${selectedFacturaObj?.id === f.id ? 'item-action--selected' : ''}`}
+                                            onClick={e => { e.stopPropagation(); onSelectFactura(f); setIsOpen(false); setSearchTerm(""); }}
+                                            disabled={selectedFacturaObj?.id === f.id}
+                                        >
+                                            <i className={`fas ${selectedFacturaObj?.id === f.id ? 'fa-check' : 'fa-plus'}`}></i>
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 const ProductItem = ({ index, style, data, onAddProduct, carrito }) => {
     // Check if the current product is in the cart
     const isSelected = carrito.some(item => item.id === data[index]?.id);
@@ -78,6 +187,10 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     const [options, setOptions] = useState<CuentaOption[]>([]);
     const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
     const [estadoPago, setEstadoPago] = useState<string>("no"); // "no" | "si"
+    const [numeroComprobante, setNumeroComprobante] = useState<string>("");
+    // Nuevos estados para facturas pendientes
+    const [facturasPendientes, setFacturasPendientes] = useState<any[]>([]);
+    const [facturaSeleccionada, setFacturaSeleccionada] = useState<any>(null);
 
     // Calcula el precio total de los productos en el carrito
     const precioBrutoProductos = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
@@ -198,102 +311,290 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
         }
     }, [tipo]);
     
+    // Buscar facturas pendientes cuando tipo/cuenta cambian
+    useEffect(() => {
+        // Solo buscar si es pago/cobranza y hay cuenta seleccionada
+        if ((tipo === "pago" || tipo === "cobranza") && cuenta) {
+            // SOLO permitir pagos de facturas de compra y cobranzas de facturas de venta
+            const tipoFactura = tipo === "pago" ? "factura_compra" : "factura_venta";
+            fetch(`http://localhost:8000/api/movimientos/?tipo=${tipoFactura}&cuenta=${cuenta}`)
+                .then(res => res.json())
+                .then(data => {
+                    // Filtrar SOLO facturas (no pagos/cobranzas) y con total > 0
+                    const soloFacturas = data.filter(f =>
+                        (f.tipo === "factura_compra" || f.tipo === "factura_venta") && f.total > 0
+                    );
+                    setFacturasPendientes(soloFacturas);
+                })
+                .catch(() => setFacturasPendientes([]));
+        } else {
+            setFacturasPendientes([]);
+            setFacturaSeleccionada(null);
+        }
+    }, [tipo, cuenta]);
+
+    // Cuando se selecciona una factura, setear numero_comprobante y total
+    useEffect(() => {
+        if (facturaSeleccionada) {
+            // Si la factura tiene numero_comprobante, usarlo; si no, sugerir el siguiente número
+            if (facturaSeleccionada.numero_comprobante !== undefined && facturaSeleccionada.numero_comprobante !== null && facturaSeleccionada.numero_comprobante !== "") {
+                setNumeroComprobante(facturaSeleccionada.numero_comprobante.toString());
+            } else {
+                // Buscar el mayor numero_comprobante para ese tipo/cuenta y sugerir el siguiente
+                const sugerirNumero = async () => {
+                    let maxNumero = 0;
+                    try {
+                        const res = await fetch(
+                            `http://localhost:8000/api/movimientos/?tipo=${facturaSeleccionada.tipo}&cuenta=${facturaSeleccionada.cuenta}`
+                        );
+                        if (res.ok) {
+                            const movimientos = await res.json();
+                            movimientos.forEach((mov: any) => {
+                                if (
+                                    mov.numero_comprobante !== undefined &&
+                                    mov.numero_comprobante !== null &&
+                                    !isNaN(Number(mov.numero_comprobante))
+                                ) {
+                                    maxNumero = Math.max(maxNumero, Number(mov.numero_comprobante));
+                                }
+                            });
+                        }
+                    } catch (e) {}
+                    setNumeroComprobante((maxNumero + 1).toString());
+                };
+                sugerirNumero();
+            }
+            setTotal(facturaSeleccionada.total?.toString() || "");
+        }
+    }, [facturaSeleccionada]);
+
     // handleSubmit with validation
     const handleSubmit = async () => {
         setError(""); 
         setIsSubmitting(true);
 
-        try {
-            // Calcula el total real del carrito si es factura_venta o factura_compra
-            let totalFinal = total ? parseFloat(total) : 0;
-            let carritoToSend: { id: number; cantidad: number }[] = [];
+        let reintentos = 0;
+        let ultimoError = "";
 
-            if (tipo === "factura_venta" || tipo === "factura_compra") {
-                // Toma la cantidad real de cada producto del carrito (que se actualiza desde ProductGrid)
-                carritoToSend = carrito.map(item => ({
-                    id: item.id,
-                    cantidad: item.cantidad
-                }));
-                totalFinal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-            }
+        const submitWithAutoComprobante = async () => {
+            try {
+                // Calcula el total real del carrito si es factura_venta o factura_compra
+                let totalFinal = total ? parseFloat(total) : 0;
+                let carritoToSend: { id: number; cantidad: number }[] = [];
 
-            const descuentoTotal = descuento.trim() === "" ? 0 : parseFloat(descuento.replace(",", "."));
-
-            let dataToSend: any = {
-                fecha,
-                cuenta,
-                tipo,
-                descuento_total: isNaN(descuentoTotal) ? 0 : descuentoTotal,
-                total: totalFinal,
-                concepto
-            };
-
-            if (tipo === "factura_venta" || tipo === "factura_compra") {
-                dataToSend.carrito = carritoToSend;
-                // Elimina cualquier campo "productos" del payload si existe
-                if ('productos' in dataToSend) {
-                    delete dataToSend.productos;
+                if (tipo === "factura_venta" || tipo === "factura_compra") {
+                    carritoToSend = carrito.map(item => ({
+                        id: item.id,
+                        cantidad: item.cantidad
+                    }));
+                    totalFinal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
                 }
-            }
 
-            // DEBUG: muestra el payload real
-            console.log("DEBUG - dataToSend:", JSON.stringify(dataToSend));
+                const descuentoTotal = descuento.trim() === "" ? 0 : parseFloat(descuento.replace(",", "."));
 
-            await createHandleSubmit(
-                dataToSend,
-                async () => {
-                    // 2. Si corresponde, crear el movimiento de cobranza/pago
+                let dataToSend: any = {
+                    fecha,
+                    cuenta,
+                    tipo,
+                    descuento_total: isNaN(descuentoTotal) ? 0 : descuentoTotal,
+                    total: totalFinal,
+                    // Si es pago/cobranza y hay factura seleccionada, enviar concepto automático
+                    concepto: ( (tipo === "pago" || tipo === "cobranza") && facturaSeleccionada )
+                        ? (
+                            tipo === "pago"
+                                ? `Pago de ${facturaSeleccionada.carrito?.length || 1} producto${(facturaSeleccionada.carrito?.length === 1) ? '' : 's'}`
+                                : `Cobranza de ${facturaSeleccionada.carrito?.length || 1} producto${(facturaSeleccionada.carrito?.length === 1) ? '' : 's'}`
+                        )
+                        : concepto
+                };
+
+                if (tipo === "factura_venta" || tipo === "factura_compra") {
+                    dataToSend.carrito = carritoToSend;
+
+                    // Si está pagado/cobrado, asignar número automáticamente si está vacío
+                    let numeroComprobanteFinal = numeroComprobante;
                     if (
-                        (tipo === "factura_venta" && estadoPago === "si") ||
-                        (tipo === "factura_compra" && estadoPago === "si")
+                        (estadoPago === "si" || estadoPago === "cobrado" || estadoPago === "pagado") &&
+                        (!numeroComprobante || isNaN(Number(numeroComprobante)))
                     ) {
-                        const tipoMovimiento = tipo === "factura_venta" ? "cobranza" : "pago";
-                        // Mostrar la cantidad de productos diferentes, no la suma de cantidades
-                        const cantidadProductos = carrito.length;
-                        const movimientoPagoCobranza = {
-                            fecha,
-                            cuenta,
-                            tipo: tipoMovimiento,
-                            total: totalFinal,
-                            concepto: `${
-                                tipo === "factura_venta"
-                                    ? `Cobranza de ${cantidadProductos} producto${cantidadProductos === 1 ? '' : 's'}`
-                                    : `Pago de ${cantidadProductos} producto${cantidadProductos === 1 ? '' : 's'}`
-                            }`,
-                            descuento_total: 0,
-                            carrito: []
-                        };
-                        await createHandleSubmit(
-                            movimientoPagoCobranza,
-                            () => {
-                                setIsSubmitting(false);
-                                onAccept();
-                            },
-                            (errorMessage: string) => {
-                                setError(`Error al registrar pago/cobranza: ${errorMessage}`);
-                                setIsSubmitting(false);
+                        // Buscar el mayor numero_comprobante existente para este tipo y cuenta
+                        let maxNumero = 0;
+                        try {
+                            const res = await fetch(
+                                `http://localhost:8000/api/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
+                            );
+                            if (res.ok) {
+                                const movimientos = await res.json();
+                                movimientos.forEach((mov: any) => {
+                                    if (
+                                        mov.numero_comprobante !== undefined &&
+                                        mov.numero_comprobante !== null &&
+                                        !isNaN(Number(mov.numero_comprobante))
+                                    ) {
+                                        maxNumero = Math.max(maxNumero, Number(mov.numero_comprobante));
+                                    }
+                                });
                             }
-                        )();
-                    } else {
-                        setIsSubmitting(false);
-                        onAccept();
+                        } catch (e) {
+                            // Si falla, dejar maxNumero en 0
+                        }
+                        numeroComprobanteFinal = (maxNumero + 1).toString();
+                        setNumeroComprobante(numeroComprobanteFinal);
                     }
-                },
-                (errorMessage: string) => {
-                    setError(`Error en los campos ingresados: ${errorMessage}`);
-                    setIsSubmitting(false);
+
+                    // SOLO obligatorio si NO está pagado/cobrado
+                    if (
+                        (estadoPago === "no" || estadoPago === "no pagado" || estadoPago === "no cobrado") &&
+                        (!numeroComprobante || isNaN(Number(numeroComprobante)))
+                    ) {
+                        setError("Debes ingresar el número de comprobante.");
+                        setIsSubmitting(false);
+                        return;
+                    }
+                    if (numeroComprobanteFinal && !isNaN(Number(numeroComprobanteFinal))) {
+                        dataToSend.numero_comprobante = parseInt(numeroComprobanteFinal, 10);
+                    }
+                    // Elimina cualquier campo "productos" del payload si existe
+                    if ('productos' in dataToSend) {
+                        delete dataToSend.productos;
+                    }
                 }
-            )();
-        } catch (err) {
-            setError("Error inesperado al procesar la transacción");
-            setIsSubmitting(false);
-        }
+
+                if ((tipo === "pago" || tipo === "cobranza") && numeroComprobante) {
+                    dataToSend.numero_comprobante = parseInt(numeroComprobante, 10);
+                }
+
+                // --- AGREGADO: LOG para depuración ---
+                console.log("DEBUG - dataToSend antes de validación:", dataToSend);
+
+                await createHandleSubmit(
+                    dataToSend,
+                    async () => {
+                        // 2. Si corresponde, crear el movimiento de cobranza/pago
+                        if (
+                            (tipo === "factura_venta" && estadoPago === "si") ||
+                            (tipo === "factura_compra" && estadoPago === "si")
+                        ) {
+                            const tipoMovimiento = tipo === "factura_venta" ? "cobranza" : "pago";
+                            const cantidadProductos = carrito.length;
+                            const movimientoPagoCobranza = {
+                                fecha,
+                                cuenta,
+                                tipo: tipoMovimiento,
+                                total: totalFinal,
+                                // Mantener el mismo número de comprobante
+                                numero_comprobante: numeroComprobante ? parseInt(numeroComprobante, 10) : undefined,
+                                concepto: `${
+                                    tipo === "factura_venta"
+                                        ? `Cobranza de ${cantidadProductos} producto${cantidadProductos === 1 ? '' : 's'}`
+                                        : `Pago de ${cantidadProductos} producto${cantidadProductos === 1 ? '' : 's'}`
+                                }`,
+                                descuento_total: 0,
+                                carrito: []
+                            };
+                            await createHandleSubmit(
+                                movimientoPagoCobranza,
+                                () => {
+                                    setIsSubmitting(false);
+                                    onAccept();
+                                },
+                                (errorMessage: string) => {
+                                    setError(`Error al registrar pago/cobranza: ${errorMessage}`);
+                                    setIsSubmitting(false);
+                                }
+                            )();
+                        } else {
+                            setIsSubmitting(false);
+                            onAccept();
+                        }
+                    },
+                    async (errorMessage: string) => {
+                        // Si el error es por comprobante duplicado, sugerir y reintentar una vez
+                        if (
+                            errorMessage &&
+                            errorMessage.toLowerCase().includes("comprobante") &&
+                            errorMessage.toLowerCase().includes("existe") &&
+                            reintentos < 1
+                        ) {
+                            // Buscar el siguiente número disponible
+                            let maxNumero = 0;
+                            try {
+                                const res = await fetch(
+                                    `http://localhost:8000/api/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
+                            );
+                            if (res.ok) {
+                                const movimientos = await res.json();
+                                movimientos.forEach((mov: any) => {
+                                    if (
+                                        mov.numero_comprobante !== undefined &&
+                                        mov.numero_comprobante !== null &&
+                                        !isNaN(Number(mov.numero_comprobante))
+                                    ) {
+                                        maxNumero = Math.max(maxNumero, Number(mov.numero_comprobante));
+                                    }
+                                });
+                            }
+                        } catch (e) {}
+                        const nuevoNumero = (maxNumero + 1).toString();
+                        setNumeroComprobante(nuevoNumero);
+                        reintentos++;
+                        // Espera a que el estado se actualice antes de reintentar
+                        setTimeout(submitWithAutoComprobante, 100);
+                        return;
+                        } else {
+                            setError(errorMessage || "Error en los campos ingresados");
+                            setIsSubmitting(false);
+                        }
+                    }
+                )();
+            } catch (err) {
+                setError("Error inesperado al procesar la transacción");
+                setIsSubmitting(false);
+            }
+        };
+
+        submitWithAutoComprobante();
     };
 
     // Helper para saber si mostrar el input de "Cantidad Abonada"
     const shouldShowCantidadAbonada = () => {
         return tipo !== "factura_venta" && tipo !== "factura_compra" && tipo !== "";
     };
+
+    // Sugerir número de comprobante cuando cambia tipo o cuenta (para factura_venta/factura_compra)
+    useEffect(() => {
+        // Si la cuenta cambia a vacío, limpiar el número
+        if (!cuenta) {
+            setNumeroComprobante("");
+            return;
+        }
+        const sugerirNumeroComprobante = async () => {
+            if ((tipo === "factura_venta" || tipo === "factura_compra") && cuenta) {
+                let maxNumero = 0;
+                try {
+                    const res = await fetch(
+                        `http://localhost:8000/api/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
+                    );
+                    if (res.ok) {
+                        const movimientos = await res.json();
+                        movimientos.forEach((mov: any) => {
+                            if (
+                                mov.numero_comprobante !== undefined &&
+                                mov.numero_comprobante !== null &&
+                                !isNaN(Number(mov.numero_comprobante))
+                            ) {
+                                maxNumero = Math.max(maxNumero, Number(mov.numero_comprobante));
+                            }
+                        });
+                    }
+                } catch (e) {}
+                setNumeroComprobante((maxNumero + 1).toString());
+            } else if (!(tipo === "factura_venta" || tipo === "factura_compra")) {
+                setNumeroComprobante(""); // Limpiar si no corresponde
+            }
+        };
+        sugerirNumeroComprobante();
+    }, [tipo, cuenta]);
 
     return(
         <div className="page">
@@ -346,7 +647,36 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                     <AccountDropdown 
                                         options={options}
                                         selectedAccount={cuenta}
-                                        onSelectAccount={setCuenta}
+                                        onSelectAccount={acc => {
+                                            setCuenta(acc);
+                                            setFacturaSeleccionada(null); // Limpiar selección de factura al cambiar cuenta
+                                            // Sugerir número de comprobante si corresponde
+                                            if ((tipo === "factura_venta" || tipo === "factura_compra") && acc) {
+                                                (async () => {
+                                                    let maxNumero = 0;
+                                                    try {
+                                                        const res = await fetch(
+                                                            `http://localhost:8000/api/movimientos/?tipo=${tipo}&cuenta=${acc}`
+                                                        );
+                                                        if (res.ok) {
+                                                            const movimientos = await res.json();
+                                                            movimientos.forEach((mov: any) => {
+                                                                if (
+                                                                    mov.numero_comprobante !== undefined &&
+                                                                    mov.numero_comprobante !== null &&
+                                                                    !isNaN(Number(mov.numero_comprobante))
+                                                                ) {
+                                                                    maxNumero = Math.max(maxNumero, Number(mov.numero_comprobante));
+                                                                }
+                                                            });
+                                                        }
+                                                    } catch (e) {}
+                                                    setNumeroComprobante((maxNumero + 1).toString());
+                                                })();
+                                            } else if (!(tipo === "factura_venta" || tipo === "factura_compra")) {
+                                                setNumeroComprobante("");
+                                            }
+                                        }}
                                         isSubmitting={isSubmitting}
                                         placeholder="-- Selecciona una cuenta --"
                                     />
@@ -359,7 +689,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                     <select 
                                         className="custom_input" 
                                         value={tipo} 
-                                        onChange={(e) => setTipo(e.target.value)}
+                                        onChange={e => setTipo(e.target.value)}
                                         disabled={isSubmitting}
                                     >
                                         <option value="">-- Selecciona un tipo de movimiento --</option>
@@ -376,22 +706,109 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                         <option value="aguinaldo">Aguinaldo</option>
                                     </select>
                                 </div>
-    
-                                {/* Detalle solo si NO es factura_venta ni factura_compra */}
-                                {tipo !== "factura_venta" && tipo !== "factura_compra" && (
+
+                                {/* Mostrar input para número de comprobante SOLO para factura_venta y factura_compra */}
+                                {(tipo === "factura_venta" || tipo === "factura_compra") && (
                                     <div className="entry">
                                         <div className="entry_label">
-                                            <div className="text open-sans">Detalle</div>
+                                            <div className="text open-sans">Número de Comprobante</div>
                                         </div>
-                                        <input 
-                                            type="text" 
-                                            className="custom_input" 
-                                            placeholder="(OPCIONAL) Describir movimiento..."
-                                            value={concepto} 
-                                            onChange={(e) => setConcepto(e.target.value)}
+                                        <input
+                                            type="number"
+                                            className="custom_input"
+                                            placeholder="Ingresar número de comprobante"
+                                            value={numeroComprobante}
+                                            onChange={e => setNumeroComprobante(e.target.value)}
                                             disabled={isSubmitting}
+                                            min="1"
+                                            step="1"
                                         />
                                     </div>
+                                )}
+
+                                {/* Dropdown para seleccionar factura a abonar/cobrar */}
+                                {(tipo === "pago" || tipo === "cobranza") && (
+                                    <div className="entry">
+                                        <div className="entry_label">
+                                            <div className="text open-sans">
+                                                Seleccionar factura {tipo === "pago" ? "de compra" : "de venta"}
+                                            </div>
+                                        </div>
+                                        <FacturaDropdown
+                                            facturas={facturasPendientes
+                                                .filter(f =>
+                                                    // Solo mostrar facturas de la cuenta seleccionada
+                                                    f.cuenta == cuenta &&
+                                                    (
+                                                        (tipo === "pago" && f.tipo === "factura_compra") ||
+                                                        (tipo === "cobranza" && f.tipo === "factura_venta")
+                                                    )
+                                                )}
+                                            selectedFactura={facturaSeleccionada}
+                                            onSelectFactura={f => {
+                                                setFacturaSeleccionada(f);
+                                                if (f && f.numero_comprobante) {
+                                                    setNumeroComprobante(f.numero_comprobante.toString());
+                                                } else {
+                                                    setNumeroComprobante("");
+                                                }
+                                            }}
+                                            isSubmitting={isSubmitting}
+                                            placeholder="-- Selecciona una factura --"
+                                            tipo={tipo}
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Mostrar el número de comprobante como solo lectura para pago/cobranza */}
+                                {(tipo === "pago" || tipo === "cobranza") && facturaSeleccionada && (
+                                    <div className="entry">
+                                        <div className="entry_label">
+                                            <div className="text open-sans">Número de Comprobante</div>
+                                        </div>
+                                        <input
+                                            type="number"
+                                            className="custom_input"
+                                            value={numeroComprobante}
+                                            readOnly
+                                            disabled
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Detalle solo si NO es factura_venta ni factura_compra */}
+                                {tipo !== "factura_venta" && tipo !== "factura_compra" && (
+                                    <>
+                                        {/* Si es pago/cobranza y hay factura seleccionada, mostrar texto automático */}
+                                        {( (tipo === "pago" || tipo === "cobranza") && facturaSeleccionada ) ? (
+                                            // NO mostrar input de detalle, solo mostrar el texto
+                                            <div className="entry">
+                                                <div className="entry_label">
+                                                    <div className="text open-sans">
+                                                        {tipo === "pago"
+                                                            ? `Pago de ${facturaSeleccionada.carrito?.length || 1} producto${(facturaSeleccionada.carrito?.length === 1) ? '' : 's'}`
+                                                            : `Cobranza de ${facturaSeleccionada.carrito?.length || 1} producto${(facturaSeleccionada.carrito?.length === 1) ? '' : 's'}`
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            // Si no, mostrar input editable de detalle
+                                            <div className="entry">
+                                                <div className="entry_label">
+                                                    <div className="text open-sans">Detalle</div>
+                                                </div>
+                                                <input 
+                                                    type="text" 
+                                                    className="custom_input" 
+                                                    placeholder="(OPCIONAL) Describir movimiento..."
+                                                    value={concepto} 
+                                                    onChange={(e) => setConcepto(e.target.value)}
+                                                    disabled={isSubmitting}
+                                                />
+                                            </div>
+                                        )}
+                                    </>
                                 )}
     
                                 <div className="entry">

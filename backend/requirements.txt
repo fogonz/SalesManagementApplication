@@ -12,5 +12,9 @@ psycopg2-binary==2.9.10
 PyJWT==2.9.0
 python-dotenv==1.1.0
 pytz==2025.2
+flask
+flask_cors
 sqlparse==0.5.3
 virtualenv==20.31.2
+sshtunnel
+mysqlclient

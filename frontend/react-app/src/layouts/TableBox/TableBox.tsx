@@ -32,10 +32,14 @@ const getMovimientosColumns = (cuentas: CuentaRow[]) => {
         if (!cuentas || cuentas.length === 0) {
           return 'Cargando...';
         }
-        
         const cuenta = cuentas.find(c => c.id === cuenta_id);
         return cuenta ? cuenta.nombre : `ID: ${cuenta_id} (no encontrada)`;
       }
+    },
+    { 
+      key: 'numero_comprobante', 
+      label: 'N° COMPROBANTE',
+      format: (value: any) => value !== undefined && value !== null && value !== "" ? value : "-"
     },
     { key: 'concepto', label: 'CONCEPTO' },
     { key: 'descuento_total', label: 'DESCUENTO', format: (value: any) => (value ? `${parseFloat(value).toFixed(2)}` : '-')},
@@ -286,7 +290,10 @@ const TableBox: React.FC<TableBoxProps> = ({
   })();
   const columns = activeView === 'cajachica'
     ? getCajachicaColumns(cuentas)
-    : getColumnsForActiveView(activeView, cuentas);
+    : (activeView === 'movimientos'
+        ? getMovimientosColumns(cuentas) // <-- Usa SIEMPRE getMovimientosColumns para movimientos
+        : getColumnsForActiveView(activeView, cuentas)
+      );
   const movimientosColumns = getMovimientosColumns(cuentas);
 
   // Handler para edición de celdas

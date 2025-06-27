@@ -12,17 +12,18 @@
 	z-index: 1000;
 	/* Allow pointer events to pass through except for the modal box */
 	pointer-events: none;
+	overflow: auto;
 }
 
 /* Caja del formulario centrada */
 .ssh-tunnel-menu__form {
-	background-color: #ffffff;
-	border-radius: 0.5rem;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	background-color: transparent;
+	border-radius: 0;
+	box-shadow: none;
 	width: 100%;
-	max-width: 28rem;
-	margin: 0 auto;
-	padding: 1rem;
+	max-width: none;
+	margin: 0;
+	padding: 0;
 	display: flex;
 	flex-direction: column;
 	gap: 0.75rem;
@@ -33,6 +34,16 @@
 	font-size: 1.25rem;
 	font-weight: 600;
 	margin-bottom: 1rem;
+}
+
+.ssh-tunnel-menu__title,
+.ssh-tunnel-menu__label,
+.ssh-tunnel-menu__field,
+.ssh-tunnel-menu__actions,
+.ssh-tunnel-menu__error,
+.ssh-tunnel-menu__grid,
+.ssh-tunnel-menu__form {
+	color: #111;
 }
 
 /* Formulario y espaciado entre campos */
@@ -59,11 +70,13 @@
 .ssh-tunnel-menu__textarea {
 	margin-top: 0.25rem;
 	padding: 0.5rem;
-	border: 1px solid #d1d5db;
+	border: 1.5px solid #222;
 	border-radius: 0.375rem;
 	font-size: 1rem;
 	width: 100%;
 	box-sizing: border-box;
+	color: #111;
+	background: #fff;
 }
 
 .ssh-tunnel-menu__textarea {
@@ -91,6 +104,7 @@
 	justify-content: flex-end;
 	gap: 0.5rem;
 	margin-top: 1rem;
+	flex-wrap: wrap;
 }
 
 /* Botones */
@@ -125,7 +139,31 @@
 	background-color: #dc2626;
 }
 
+/* Botón de estado/instalación extra */
+.ssh-tunnel-menu__button--status {
+	background-color: #64748b;
+}
+
+.ssh-tunnel-menu__button--status:hover:not(:disabled) {
+	background-color: #334155;
+}
+
 /* Modal box */
 .ssh-tunnel-menu__modal {
 	pointer-events: auto;
+	background: #fff;
+	border-radius: 0.5rem;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	max-width: 32rem;
+	width: 100%;
+	margin: 0 auto;
+	padding: 2rem 1.5rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: stretch;
+	overflow: auto;
+	box-sizing: border-box;
+	color: #111;
+	/* <-- Asegura texto negro en todo el modal */
 }

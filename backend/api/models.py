@@ -299,6 +299,7 @@ class Transacciones(models.Model):
     saldo_diferencia = models.FloatField(null=True, blank=True)
     descuento_total = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     concepto = models.CharField(max_length=255, blank=True, null=True)
+    estado = models.CharField(max_length=20, default='pendiente')  # 'pendiente', 'pagado', 'cobrado'
 
     class Meta:
         managed = False
@@ -328,6 +329,26 @@ class Transacciones(models.Model):
             trans.save(update_fields=['saldo_diferencia'])
             saldo_obj.saldo_actual = trans.saldo_diferencia
             saldo_obj.save(update_fields=['saldo_actual'])
+
+    def actualizar_estado_pago(self):
+        """
+        Si es factura_venta o factura_compra, verifica si está totalmente cobrada/pagada.
+        """
+        if self.tipo not in ['factura_venta', 'factura_compra']:
+            return
+        # Buscar todos los pagos/cobranza asociados a este comprobante y cuenta
+        pagos = Transacciones.objects.filter(
+            cuenta=self.cuenta,
+            numero_comprobante=self.numero_comprobante,
+            tipo='pago' if self.tipo == 'factura_compra' else 'cobranza'
+        )
+        total_abonado = sum([float(p.total) for p in pagos])
+        if total_abonado >= float(self.total):
+            self.estado = 'pagado' if self.tipo == 'factura_compra' else 'cobrado'
+        else:
+            self.estado = 'pendiente'
+        self.save(update_fields=['estado'])
+
 
 class TransaccionItems(models.Model):
     id = models.AutoField(primary_key=True)

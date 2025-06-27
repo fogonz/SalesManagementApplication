@@ -1,5 +1,28 @@
 import { TransactionFormData, ValidationResult, Tipo } from "./types";
 
+const allowedFields = [
+    "fecha",
+    "cuenta",
+    "tipo",
+    "descuento_total",
+    "total",
+    "concepto",
+    "carrito",
+    "productos",
+    "numero_comprobante" // <-- asegúrate de incluirlo aquí
+];
+
+// Si hay una función que limpia el objeto:
+function cleanPayload(payload: any) {
+    const cleaned: any = {};
+    for (const key of allowedFields) {
+        if (payload[key] !== undefined) {
+            cleaned[key] = payload[key];
+        }
+    }
+    return cleaned;
+}
+
 export function createHandleSubmit(
     data: {
         fecha: string,
@@ -8,7 +31,8 @@ export function createHandleSubmit(
         descuento_total: number,
         total: number,
         concepto: string,
-        carrito: any[]
+        carrito: any[],
+        numero_comprobante?: number // <-- Añade el campo opcional
     },
     onSuccess: (response?: any) => void,
     onError: (msg: string) => void
@@ -30,20 +54,25 @@ export function createHandleSubmit(
             return;
         }
 
-        // El error está aquí: el payload enviado al backend NO incluye la cantidad, solo los ids.
-        // Debe enviar el array carrito tal cual, no mapear a productos.
-        const movimientoPayload = {
+        // Construye el payload incluyendo numero_comprobante si existe
+        let movimientoPayload: any = {
             fecha: data.fecha,
             cuenta: data.cuenta,
             tipo: data.tipo,
             descuento_total: data.descuento_total,
             total: data.total,
             concepto: data.concepto,
-            // Enviar carrito SOLO para factura_venta/factura_compra, nunca productos
             ...(data.tipo === "factura_venta" || data.tipo === "factura_compra"
                 ? { carrito: data.carrito }
                 : {})
         };
+
+        // --- INCLUYE SIEMPRE numero_comprobante SI EXISTE ---
+        if (typeof data.numero_comprobante !== "undefined" && data.numero_comprobante !== null) {
+            movimientoPayload.numero_comprobante = data.numero_comprobante;
+        }
+
+        // payload = cleanPayload(payload); // Si usas cleanPayload, debe incluir numero_comprobante
 
         try {
             // DEBUG: log el payload que realmente se envía

@@ -1,6 +1,23 @@
 {
+  "name": "webstock",
+  "version": "1.0.0",
+  "main": "electron/main.cjs",
+  "homepage": "./",
   "dependencies": {
     "gridstack": "^12.2.1",
     "lucid": "^2.21.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fogonz/SalesManagementApplication.git"
+  },
+  "build": {
+    "appId": "com.fogonz.webstock",
+    "productName": "WebStock",
+    "publish": {
+      "provider": "github",
+      "owner": "fogonz",
+      "repo": "SalesManagementApplication"
+    }
   }
 }
