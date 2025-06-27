@@ -340,7 +340,6 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           <div className="dashboard-container">
             <SshTunnelMenu
               onConnect={handleSshConnect}
-              onDisconnect={handleSshDisconnect}
               isConnected={sshConnected}
             />
           </div>
