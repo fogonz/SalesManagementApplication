@@ -237,18 +237,27 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
         try {
             // El descuento es un porcentaje (ej: 50 para 50%)
             const descuentoTotal = descuento.trim() === "" ? 0 : parseFloat(descuento.replace(",", "."));
+
+            // Para factura_venta/factura_compra, el total es el valor de los productos con descuento aplicado
+            let totalValue = 0;
+            if (tipo === "factura_venta" || tipo === "factura_compra") {
+                totalValue = precioBrutoProductos * (1 - (isNaN(descuentoTotal) ? 0 : descuentoTotal) / 100);
+            } else {
+                totalValue = total ? parseFloat(total) : 0;
+            }
+
             const dataToSend = {
                 fecha,
                 cuenta,
                 tipo,
                 descuento_total: isNaN(descuentoTotal) ? 0 : descuentoTotal,
-                total: total ? parseFloat(total) : 0,
+                total: totalValue,
                 concepto,
                 carrito
             };
 
             // 1. Crear la factura
-            const dataSubmitted = await createHandleSubmit(
+            await createHandleSubmit(
                 dataToSend,
                 async (facturaResponse) => {
                     // 2. Si corresponde, crear el movimiento de cobranza/pago
@@ -261,11 +270,12 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                             fecha,
                             cuenta,
                             tipo: tipoMovimiento,
-                            total: total ? parseFloat(total) : 0,
+                            total: totalValue,
                             concepto: `Auto generado por ${tipo}`,
                             descuento_total: 0,
                             carrito: []
                         };
+                        // Espera a que termine el segundo submit antes de cerrar
                         await createHandleSubmit(
                             movimientoPagoCobranza,
                             () => {
@@ -286,7 +296,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                     setError(`Error en los campos ingresados: ${errorMessage}`);
                     setIsSubmitting(false);
                 }
-            );
+            )();
         } catch (err) {
             setError("Error inesperado al procesar la transacción");
             setIsSubmitting(false);
