@@ -313,14 +313,12 @@ const TableComponent: React.FC<TableProps> = ({
     }
   }
 
-  // Ordenar las filas por fecha descendente si existe la columna 'fecha'
+  // Ordenar las filas por id de menor a mayor para todos los tipos de tabla
   const sortedRows = React.useMemo(() => {
     if (!rows.length) return rows;
-    if (!('fecha' in rows[0])) return rows;
+    if (!('id' in rows[0])) return rows;
     return [...rows].sort((a, b) => {
-      const fechaA = new Date((a as any).fecha);
-      const fechaB = new Date((b as any).fecha);
-      return fechaB.getTime() - fechaA.getTime();
+      return (a as any).id - (b as any).id;
     });
   }, [rows]);
 
