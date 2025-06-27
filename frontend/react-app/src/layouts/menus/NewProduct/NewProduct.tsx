@@ -13,7 +13,7 @@ interface ProductData {
     tipo_producto: string;
     precio_venta_unitario: number;
     costo_unitario: number;
-    cantidad: number;
+    cantidad_inicial: number; // Cambia a cantidad_inicial
 }
 
 const NewProduct: React.FC<ProductProps> = ({ onClose, onAccept, editingProduct }) => {
@@ -21,8 +21,6 @@ const NewProduct: React.FC<ProductProps> = ({ onClose, onAccept, editingProduct 
     const [precioVentaUnitario, setPrecioVentaUnitario] = useState<string>("");
     const [costoUnitario, setCostoUnitario] = useState<string>("");
     const [cantidad, setCantidad] = useState<string>("");
-    const [error, setError] = useState<string>("");
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     // Load data if editing existing product
     useEffect(() => {
@@ -30,9 +28,17 @@ const NewProduct: React.FC<ProductProps> = ({ onClose, onAccept, editingProduct 
             setTipoProducto(editingProduct.tipo_producto);
             setPrecioVentaUnitario(editingProduct.precio_venta_unitario.toString());
             setCostoUnitario(editingProduct.costo_unitario.toString());
-            setCantidad(editingProduct.cantidad.toString());
+            // Usa cantidad_inicial, si no existe deja vacío
+            setCantidad(
+                editingProduct.cantidad_inicial !== undefined
+                    ? editingProduct.cantidad_inicial.toString()
+                    : ""
+            );
         }
     }, [editingProduct]);
+
+    const [error, setError] = useState<string>("");
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const handleSubmit = async () => {
         setError("");
@@ -65,8 +71,11 @@ const NewProduct: React.FC<ProductProps> = ({ onClose, onAccept, editingProduct 
                 tipo_producto: tipoProducto.trim(),
                 precio_venta_unitario: parseFloat(precioVentaUnitario),
                 costo_unitario: parseFloat(costoUnitario),
-                cantidad: parseInt(cantidad)
+                cantidad_inicial: parseInt(cantidad)
             };
+
+            // Imprime el payload antes de enviar
+            console.log("DEBUG FRONTEND - PAYLOAD ENVIADO:", productData);
 
             const url = editingProduct 
                 ? `http://localhost:8000/api/productos/${editingProduct.id}`

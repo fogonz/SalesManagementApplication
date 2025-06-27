@@ -44,8 +44,10 @@ class ProductosSerializer(serializers.ModelSerializer):
         model = Productos
         fields = [
             'id', 'tipo_producto', 'precio_venta_unitario',
-            'costo_unitario', 'cantidad'
+            'costo_unitario', 'cantidad_inicial', 'cantidad'
         ]
+        read_only_fields = ['cantidad']
+
 
 class VentaProductoSerializer(serializers.Serializer):
     nombre_producto = serializers.CharField()

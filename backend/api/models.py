@@ -211,10 +211,41 @@ class Productos(models.Model):
     precio_venta_unitario = models.FloatField()
     costo_unitario = models.FloatField()
     cantidad = models.IntegerField(blank=True, null=True)
+    cantidad_inicial = models.IntegerField(default=0)
 
     class Meta:
         managed = False
         db_table = 'productos'
+
+    def save(self, *args, **kwargs):
+        # Si es un producto nuevo (no tiene id), inicializa cantidad con cantidad_inicial
+        if self.pk is None and (self.cantidad is None or self.cantidad == 0):
+            self.cantidad = self.cantidad_inicial
+        super().save(*args, **kwargs)
+
+    def recalcular_cantidad(self):
+        """
+        Calcula la cantidad actual como:
+        cantidad = cantidad_inicial + sum(factura_compra) - sum(factura_venta)
+        """
+        from decimal import Decimal
+
+        cantidad_total = Decimal(self.cantidad_inicial or 0)
+
+        compras = self.transaccionitems_set.select_related('transaccion').filter(
+            transaccion__tipo='factura_compra'
+        ).aggregate(total=models.Sum('cantidad'))['total'] or Decimal('0.00')
+
+        ventas = self.transaccionitems_set.select_related('transaccion').filter(
+            transaccion__tipo='factura_venta'
+        ).aggregate(total=models.Sum('cantidad'))['total'] or Decimal('0.00')
+
+        cantidad_total += compras
+        cantidad_total -= ventas
+
+        self.cantidad = int(cantidad_total)
+        super().save(update_fields=['cantidad'])
+        return self.cantidad
 
 
 class Saldo(models.Model):
@@ -317,3 +348,16 @@ def actualizar_balance_item_delete(sender, instance, **kwargs):
         except (Cuentas.DoesNotExist, Transacciones.DoesNotExist):
             # Parent objects were deleted, nothing to update
             pass
+
+# Optionally, update product quantity when items are saved or deleted
+@receiver(post_save, sender=TransaccionItems)
+def actualizar_cantidad_producto_save(sender, instance, created, **kwargs):
+    """Update product quantity when transaction items are created or updated"""
+    if instance.producto_id:
+        instance.producto.recalcular_cantidad()
+
+@receiver(post_delete, sender=TransaccionItems)
+def actualizar_cantidad_producto_delete(sender, instance, **kwargs):
+    """Update product quantity when transaction items are deleted"""
+    if instance.producto_id:
+        instance.producto.recalcular_cantidad()

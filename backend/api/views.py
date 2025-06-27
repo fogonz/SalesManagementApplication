@@ -4,6 +4,7 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 
 from .models import Cuentas, Productos, TransaccionItems, Transacciones
 from .serializers import (CuentasSerializer, ProductosSerializer,
@@ -191,6 +192,24 @@ class ProductosViewSet(viewsets.ModelViewSet):
     queryset = Productos.objects.all()
     serializer_class = ProductosSerializer
     permission_classes = [permissions.AllowAny]
+
+    def list(self, request, *args, **kwargs):
+        # Log and recalculate cantidad for all products before returning
+        import logging
+        logger = logging.getLogger(__name__)
+        for producto in Productos.objects.all():
+            logger.info(f"Verificando cantidad para producto {producto.id} ({producto.tipo_producto}) antes de listar")
+            # If you want to force recalculation and log, uncomment the next line:
+            # producto.recalcular_cantidad()
+        return super().list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        print("DEBUG BACKEND - PRODUCTO PAYLOAD:", request.data)
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        print("DEBUG BACKEND - PRODUCTO PAYLOAD (UPDATE):", request.data)
+        return super().update(request, *args, **kwargs)
 
 
 class VentasPorProductoAPIView(APIView):
