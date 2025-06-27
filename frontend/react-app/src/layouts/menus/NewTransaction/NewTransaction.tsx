@@ -54,12 +54,6 @@ export interface ProductoRow {
     costo_unitario: any;
 }
 
-interface Producto {
-    id: number;
-    tipo_producto: string;
-    precio_venta_unitario: number;
-}
-
 interface CuentaOption {
     id: number;
     nombre: string;
@@ -68,41 +62,6 @@ interface CuentaOption {
     monto: number;
     tipo_cuenta: string;
 }
-
-const AccountItem = ({ index, style, data, onSelectAccount, selectedAccount }) => {
-    const account = data[index];
-    const isSelected = selectedAccount?.id === account?.id;
-    
-    return (
-        <div 
-            style={style} 
-            className={`productDB ${isSelected ? 'selected' : 'hoverable'}`}
-            onClick={() => onSelectAccount(account)}
-        >
-            <div className='wrapper'>
-                <div className='scroll_content'>
-                    <span className='show'>{account?.nombre}</span>
-                </div>
-                <div className='hide'>
-                    <span>({account?.tipo_cuenta})</span>
-                </div>
-                <div className='hide'>
-                    <span>${account?.monto}</span>
-                </div>
-            </div>
-            <button 
-                className={`add_button ${isSelected ? 'selected-button' : ''}`}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onSelectAccount(account);
-                }}
-                disabled={!account || isSelected}
-            > 
-                <i className={`fas ${isSelected ? 'fa-check' : 'fa-plus'}`}></i> 
-            </button>
-        </div>
-    );
-};
 
 const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]);
@@ -167,8 +126,18 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
         handleCarritoUpdate(nuevoCarrito);
     };
 
+    // Remove unused declarations
+    // Remove: interface Producto
+    // Remove: const AccountItem
+
     // Create a wrapper component for ProductItem to pass the onAddProduct function
-    const ProductItemWithAdd = (props) => (
+    const ProductItemWithAdd: React.FC<{
+        index: number;
+        style: React.CSSProperties;
+        data: ProductoRow[];
+        onAddProduct: (producto: ProductoRow) => void;
+        carrito: ItemCarrito[];
+    }> = (props) => (
         <ProductItem {...props} onAddProduct={handleAddProduct} carrito={carrito} />
     );
 
@@ -235,31 +204,44 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
         setIsSubmitting(true);
 
         try {
-            // El descuento es un porcentaje (ej: 50 para 50%)
-            const descuentoTotal = descuento.trim() === "" ? 0 : parseFloat(descuento.replace(",", "."));
+            // Calcula el total real del carrito si es factura_venta o factura_compra
+            let totalFinal = total ? parseFloat(total) : 0;
+            let carritoToSend: { id: number; cantidad: number }[] = [];
 
-            // Para factura_venta/factura_compra, el total es el valor de los productos con descuento aplicado
-            let totalValue = 0;
             if (tipo === "factura_venta" || tipo === "factura_compra") {
-                totalValue = precioBrutoProductos * (1 - (isNaN(descuentoTotal) ? 0 : descuentoTotal) / 100);
-            } else {
-                totalValue = total ? parseFloat(total) : 0;
+                // Toma la cantidad real de cada producto del carrito (que se actualiza desde ProductGrid)
+                carritoToSend = carrito.map(item => ({
+                    id: item.id,
+                    cantidad: item.cantidad
+                }));
+                totalFinal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
             }
 
-            const dataToSend = {
+            const descuentoTotal = descuento.trim() === "" ? 0 : parseFloat(descuento.replace(",", "."));
+
+            let dataToSend: any = {
                 fecha,
                 cuenta,
                 tipo,
                 descuento_total: isNaN(descuentoTotal) ? 0 : descuentoTotal,
-                total: totalValue,
-                concepto,
-                carrito
+                total: totalFinal,
+                concepto
             };
 
-            // 1. Crear la factura
+            if (tipo === "factura_venta" || tipo === "factura_compra") {
+                dataToSend.carrito = carritoToSend;
+                // Elimina cualquier campo "productos" del payload si existe
+                if ('productos' in dataToSend) {
+                    delete dataToSend.productos;
+                }
+            }
+
+            // DEBUG: muestra el payload real
+            console.log("DEBUG - dataToSend:", JSON.stringify(dataToSend));
+
             await createHandleSubmit(
                 dataToSend,
-                async (facturaResponse) => {
+                async () => {
                     // 2. Si corresponde, crear el movimiento de cobranza/pago
                     if (
                         (tipo === "factura_venta" && estadoPago === "si") ||
@@ -270,12 +252,15 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                             fecha,
                             cuenta,
                             tipo: tipoMovimiento,
-                            total: totalValue,
-                            concepto: `Auto generado por ${tipo}`,
+                            total: totalFinal,
+                            concepto: `${
+                                tipo === "factura_venta"
+                                    ? `Cobranza de ${carrito.reduce((sum, item) => sum + item.cantidad, 0)} producto${carrito.reduce((sum, item) => sum + item.cantidad, 0) === 1 ? '' : 's'}`
+                                    : `Pago de ${carrito.reduce((sum, item) => sum + item.cantidad, 0)} producto${carrito.reduce((sum, item) => sum + item.cantidad, 0) === 1 ? '' : 's'}`
+                            }`,
                             descuento_total: 0,
                             carrito: []
                         };
-                        // Espera a que termine el segundo submit antes de cerrar
                         await createHandleSubmit(
                             movimientoPagoCobranza,
                             () => {
@@ -584,3 +569,9 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
 };
 
 export default Transaction;
+
+// NOTA IMPORTANTE:
+// Asegúrate de que el componente <ProductGrid productos={data} carrito={carrito} onCarritoUpdate={handleCarritoUpdate} />
+// realmente actualiza el array carrito con la cantidad correcta de cada producto.
+// El submit toma la cantidad de cada producto directamente de carrito.
+// Si la cantidad no se refleja correctamente en carrito, revisa la implementación de ProductGrid y onCarritoUpdate.

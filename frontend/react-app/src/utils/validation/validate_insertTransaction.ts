@@ -30,6 +30,8 @@ export function createHandleSubmit(
             return;
         }
 
+        // El error está aquí: el payload enviado al backend NO incluye la cantidad, solo los ids.
+        // Debe enviar el array carrito tal cual, no mapear a productos.
         const movimientoPayload = {
             fecha: data.fecha,
             cuenta: data.cuenta,
@@ -37,10 +39,15 @@ export function createHandleSubmit(
             descuento_total: data.descuento_total,
             total: data.total,
             concepto: data.concepto,
-            productos: data.carrito.map(item => item.id)
+            // Enviar carrito SOLO para factura_venta/factura_compra, nunca productos
+            ...(data.tipo === "factura_venta" || data.tipo === "factura_compra"
+                ? { carrito: data.carrito }
+                : {})
         };
 
         try {
+            // DEBUG: log el payload que realmente se envía
+            console.log("DEBUG - PAYLOAD ENVIADO AL BACKEND:", JSON.stringify(movimientoPayload));
             const response = await fetch('http://localhost:8000/api/movimientos/', {
                 method: 'POST',
                 headers: {

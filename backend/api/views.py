@@ -95,20 +95,52 @@ class TransaccionesViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def create(self, request, *args, **kwargs):
-        productos_ids = request.data.pop('productos', [])
-        serializer = self.get_serializer(data=request.data)
+        # LOG: muestra el payload recibido antes de cualquier procesamiento
+        print("DEBUG BACKEND - RAW PAYLOAD:", request.data)
+
+        tipo = request.data.get('tipo')
+        carrito = request.data.get('carrito', None)
+        # Si no hay carrito pero hay productos, agrupa productos y suma cantidades
+        if not carrito:
+            productos = request.data.get('productos', None)
+            if productos and (tipo in ['factura_venta', 'factura_compra']):
+                from collections import Counter
+                carrito = []
+                if isinstance(productos, list):
+                    counter = Counter(productos)
+                    for pid, cantidad in counter.items():
+                        carrito.append({"id": pid, "cantidad": cantidad})
+        data = request.data.copy()
+        data.pop('carrito', None)
+        data.pop('productos', None)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-        transaccion = serializer.save()
-        # Crear los items en transaccion_items
-        for producto_id in productos_ids:
-            producto = Productos.objects.get(pk=producto_id)
-            TransaccionItems.objects.create(
-                transaccion=transaccion,
-                producto=producto,
-                nombre_producto=producto.tipo_producto,
-                precio_unitario=producto.precio_venta_unitario,
-                cantidad=1  # O ajusta según lógica de tu frontend
-            )
+        with transaction.atomic():
+            transaccion = serializer.save()
+            if tipo in ['factura_venta', 'factura_compra'] and carrito:
+                print("DEBUG BACKEND - PROCESSED CARRITO:", carrito)
+                for item in carrito:
+                    producto_id = None
+                    cantidad = 1
+                    if isinstance(item, dict):
+                        producto_id = item.get('id') or item.get('producto_id')
+                        try:
+                            cantidad = int(item.get('cantidad', 1))
+                        except Exception:
+                            cantidad = 1
+                    if not producto_id:
+                        continue
+                    try:
+                        producto = Productos.objects.get(pk=producto_id)
+                    except Productos.DoesNotExist:
+                        continue
+                    TransaccionItems.objects.create(
+                        transaccion=transaccion,
+                        producto=producto,
+                        nombre_producto=producto.tipo_producto,
+                        precio_unitario=producto.precio_venta_unitario,
+                        cantidad=cantidad
+                    )
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 

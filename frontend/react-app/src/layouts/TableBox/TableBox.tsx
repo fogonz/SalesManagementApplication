@@ -44,7 +44,7 @@ const getMovimientosColumns = (cuentas: CuentaRow[]) => {
 };
 
 // Custom hooks
-const useCuentas = () => {
+const useCuentas = (activeView: Tabla) => {
   const [cuentas, setCuentas] = useState<CuentaRow[]>([]);
   const [error, setError] = useState<string>("");
 
@@ -57,8 +57,11 @@ const useCuentas = () => {
         setError("Error al cargar cuentas");
       }
     };
-    loadCuentas();
-  }, []);
+    // Always reload cuentas when switching to movimientos or cajachica
+    if (activeView === "movimientos" || activeView === "cajachica" || activeView === "cuentas") {
+      loadCuentas();
+    }
+  }, [activeView]);
 
   return { cuentas, error };
 };
@@ -172,7 +175,7 @@ const TableBox: React.FC<TableBoxProps> = ({
   onRefresh
 }) => {
   // Custom hooks
-  const { cuentas, error } = useCuentas();
+  const { cuentas, error } = useCuentas(activeView);
   const { data, loadData } = useTableData(activeView, cuentas, refreshTrigger);
   const { movimientosData } = useMovimientosData();
   const { 
