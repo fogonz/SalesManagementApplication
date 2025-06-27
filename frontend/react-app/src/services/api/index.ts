@@ -296,16 +296,32 @@ export const cuentasAPI = new GenericAPI<CuentaPayload, CuentaResponse>('cuentas
 export const productosAPI = new GenericAPI<ProductoPayload, ProductoResponse>('productos');
 export const movimientoItemsAPI = new GenericAPI<MovimientoItemPayload, MovimientoItemResponse>('movimiento-items');
 
-// Keep your existing fetchTableData function
+// Mejorada: fetchTableData usa los endpoints correctos y retorna todos los campos relevantes
 export const fetchTableData = async (table: string, baseURL = '') => {
   // Map cajachica to movimientos
   const realTable = table === 'cajachica' ? 'movimientos' : table;
-  const url = baseURL
-    ? `${baseURL}/api/${realTable}/`
-    : `/api/${realTable}/`;
-  const response = await fetch(url);
-  if (!response.ok) throw new Error('Error fetching data');
-  return await response.json();
+
+  // Si se pasa un baseURL, usar fetch directo (modo legacy)
+  if (baseURL) {
+    const url = `${baseURL}/api/${realTable}/`;
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Error fetching data');
+    return await response.json();
+  }
+
+  // Usar los métodos listar() de las instancias API para obtener todos los campos
+  switch (realTable) {
+    case 'movimientos':
+      return await movimientosAPI.listar();
+    case 'cuentas':
+      return await cuentasAPI.listar();
+    case 'productos':
+      return await productosAPI.listar();
+    case 'movimiento-items':
+      return await movimientoItemsAPI.listar();
+    default:
+      throw new Error(`Unknown table: ${realTable}`);
+  }
 };
 
 // Helper function to get the appropriate API instance

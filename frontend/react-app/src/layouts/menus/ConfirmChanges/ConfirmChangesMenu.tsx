@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { movimientosAPI, cuentasAPI, productosAPI, movimientoItemsAPI } from "../../../services/api";
+import "./ConfirmChanges.css"; // Importa el CSS
 
 interface ConfirmProps {
 	onClose: () => void;
@@ -77,37 +78,35 @@ export const ConfirmChangesMenu: React.FC<ConfirmProps> = ({
 	};
 
 	return(
-		<div className="popup">
-			<div className="wrapper">
-				<div className="menu_confirmChanges">
-					<div className="menu_topBar">
+		<div className="confirm-popup">
+			<div className="confirm-wrapper">
+				<div className="confirm-menu">
+					<div className="confirm-topBar">
 						<span> Confirmar Cambios </span> 
 					</div>
-					<div className="wrapper">
-						<main className="valuesContainer">
-							<div className="values"> {prevValue} </div>
-							<i className="fas fa-arrow-down"></i>
-							<div className="values"> {newValue} </div>
+					<div className="confirm-content">
+						<main className="confirm-valuesContainer">
+							<div className="confirm-value confirm-value-old"> {prevValue} </div>
+							<i className="fas fa-arrow-down confirm-arrow"></i>
+							<div className="confirm-value confirm-value-new"> {newValue} </div>
 						</main>
-						
-						{/* Show error message if there's an error */}
 						{error && (
-							<div className="error-message" style={{ color: 'red', marginTop: '10px', textAlign: 'center' }}>
+							<div className="confirm-error-message">
 								{error}
 							</div>
 						)}
 					</div>
-					<div className="menu_bottomBar">
+					<div className="confirm-bottomBar">
 						<button 
 							onClick={onClose} 
-							className="bigButton button-shadow gray"
+							className="confirm-btn confirm-btn-gray"
 							disabled={isLoading}
 						> 
 							CERRAR 
 						</button>
 						<button 
 							onClick={handleSubmit} 
-							className="bigButton button-shadow green"
+							className="confirm-btn confirm-btn-green"
 							disabled={isLoading}
 						> 
 							{isLoading ? 'ACTUALIZANDO...' : 'ACEPTAR'}

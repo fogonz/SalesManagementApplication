@@ -68,6 +68,11 @@ const ExportarExcel: React.FC = () => {
         data = data.sort((a: any, b: any) => a.id - b.id);
       }
 
+      // Ocultar cantidad_inicial en productos
+      if (table === 'productos') {
+        data = data.map(({ cantidad_inicial, ...rest }: any) => rest);
+      }
+
       // Convertir a hoja de Excel
       const ws = XLSX.utils.json_to_sheet(data);
       const wb = XLSX.utils.book_new();
