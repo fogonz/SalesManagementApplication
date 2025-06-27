@@ -35,6 +35,9 @@ import { fetchTableData } from '../../services/api';
 import { ValidTabla, Tabla, Menu, AdminProps, AdminView } from '../../types';
 import SshTunnelMenu from '../../layouts/menus/ConnectionMenu/SshTunnelMenu';
 
+// Importar el componente de exportación de Excel
+import ExportarExcel from '../../components/Components/ExportarExcel/ExportarExcel';
+
 // Interfaz para datos agrupados
 interface GroupedData {
   [key: string]: {
@@ -318,8 +321,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
       case 'exportar':
         return (
           <div className="dashboard-container">
-            <h2>Exportar a Excel</h2>
-            <p>Opciones de exportación...</p>
+            <ExportarExcel />
             <button onClick={refreshData}>
               Refrescar Datos
             </button>

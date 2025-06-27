@@ -48,12 +48,8 @@ const ExportarExcel: React.FC = () => {
             total,
           };
         });
-        // Ordenar por fecha descendente
-        data = data.sort((a: any, b: any) => {
-          const fechaA = new Date(a.fecha);
-          const fechaB = new Date(b.fecha);
-          return fechaB.getTime() - fechaA.getTime();
-        });
+        // Ordenar por id ascendente
+        data = data.sort((a: any, b: any) => a.id - b.id);
         const columnsOrder = [
           'id', 'fecha', 'tipo', 'cuenta', 'concepto', 'descuento_total', 'total'
         ];
@@ -67,13 +63,9 @@ const ExportarExcel: React.FC = () => {
         });
       }
 
-      // Ordenar por fecha descendente para cuentas y productos si tienen fecha
-      if ((table === 'cuentas' || table === 'productos') && data.length > 0 && data[0].fecha) {
-        data = data.sort((a: any, b: any) => {
-          const fechaA = new Date(a.fecha);
-          const fechaB = new Date(b.fecha);
-          return fechaB.getTime() - fechaA.getTime();
-        });
+      // Ordenar por id ascendente para cuentas y productos
+      if ((table === 'cuentas' || table === 'productos') && data.length > 0 && data[0].id) {
+        data = data.sort((a: any, b: any) => a.id - b.id);
       }
 
       // Convertir a hoja de Excel
