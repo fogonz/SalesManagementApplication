@@ -134,7 +134,8 @@ const useMovimientosData = () => {
 
   const loadMovimientosData = async () => {
     try {
-      const data = await fetchTableData('movimientos');
+      // Pasa la URL base igual que en fetchTableData de useTableData
+      const data = await fetchTableData('movimientos', 'http://localhost:8000');
       setMovimientosData(data as MovimientoRow[]);
       console.log(`MOVIMIENTOS DATA: ${JSON.stringify(data)}`)
     } catch (err) {

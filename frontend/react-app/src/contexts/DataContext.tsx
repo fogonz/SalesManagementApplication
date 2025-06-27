@@ -140,7 +140,10 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       const data = await response.json();
       
       // Filter by the specified expense types
-      const expenseTypes = ['pago', 'sueldo', 'aguinaldo', 'impuestos', 'jornal', 'alquiler'];
+      const expenseTypes = [
+        'pago', 'sueldo', 'aguinaldo', 'impuestos', 'jornal', 'alquiler',
+        'factura_c_varios', 'servicio_cepillado'
+      ];
       const filteredData = data.filter((item: any) => expenseTypes.includes(item.tipo));
       
       // Group by tipo and sum the totals

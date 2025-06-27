@@ -13,6 +13,9 @@
 	justify-content: center;
 	color: var(--font-color-table);
 	text-wrap: nowrap;
+	width: fit-content;
+	max-width: 90vw;
+	/* Opcional: no exceder el viewport */
 }
 
 .floating-cell.visible {
@@ -40,6 +43,10 @@
 	width: 100%;
 	border-collapse: collapse;
 	font-size: 0.9rem;
+	width: max-content;
+	/* Permite que la lista crezca según el contenido */
+	min-width: 100%;
+	/* Pero nunca menor al ancho del contenedor */
 }
 
 .floating-list li {

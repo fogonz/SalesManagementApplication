@@ -10,7 +10,7 @@ export interface ColumnDefinition {
   key: string
   label: string
   width?: number | string
-  format?: (value: any, row?: any) => string // <-- add row param
+  format?: (value: any, row?: any) => string
 }
 
 export interface MovimientoRow {
@@ -94,6 +94,7 @@ const TableComponent: React.FC<TableProps> = ({
   const [hoveredCell, setHoveredCell] = useState<any>(null)
   const [modalVisible, setModalVisible] = useState(false)
   const [selectedCuentaId, setSelectedCuentaId] = useState<number | null>(null)
+  const [selectedCuentaNombre, setSelectedCuentaNombre] = useState<string | null>(null) // NUEVO
   const [editingCell, setEditingCell] = useState<{rowId: number, columnKey: string, prevValue: any} | null>(null)
   const [editValue, setEditValue] = useState<string>('')
   const [selectMenu, setSelectMenu] = useState<{
@@ -111,13 +112,20 @@ const TableComponent: React.FC<TableProps> = ({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteRowData, setDeleteRowData] = useState<{rowId: number, rowValues: any} | null>(null)
 
-  const openModal = (cuentaId: number) => {
+  // New states for large product list modal
+  const [showLargeList, setShowLargeList] = useState(false);
+  const [largeListItems, setLargeListItems] = useState<any[] | null>(null);
+  const [largeListTitle, setLargeListTitle] = useState<string>("");
+
+  const openModal = (cuentaId: number, cuentaNombre: string) => {
     setSelectedCuentaId(cuentaId)
+    setSelectedCuentaNombre(cuentaNombre)
     setModalVisible(true)
   }
   
   const closeModal = () => {
     setSelectedCuentaId(null)
+    setSelectedCuentaNombre(null)
     setModalVisible(false)
   }
 
@@ -205,15 +213,25 @@ const TableComponent: React.FC<TableProps> = ({
 
   const handleViewDetails = () => {
     if (!selectMenu) return
-    // Fix: get cuentaId from the row when in movimientos table
+    // Fix: get cuentaId and cuentaNombre from the row when in movimientos table
     if (tableType === 'cuentas' && selectMenu.columnKey === 'nombre') {
-      openModal(selectMenu.rowId)
+      // Buscar el nombre de la cuenta
+      const row = rows.find(r => (r as any).id === selectMenu.rowId)
+      const cuentaNombre = row ? (row as any).nombre : ''
+      openModal(selectMenu.rowId, cuentaNombre)
     } else if (tableType === 'movimientos' && selectMenu.columnKey === 'cuenta') {
       // Find the row and get its 'cuenta' property
       const row = rows.find(r => (r as any).id === selectMenu.rowId)
       const cuentaId = row ? (row as any).cuenta : null
+      // Buscar el nombre de la cuenta en movimientosData o rows si está disponible
+      let cuentaNombre = ''
       if (cuentaId) {
-        openModal(cuentaId)
+        // Buscar en rows si son cuentas, si no, buscar en movimientosData
+        const cuentaRow = rows.find(r => (r as any).id === cuentaId) || (movimientosData && movimientosData.find(m => m.cuenta === cuentaId))
+        cuentaNombre = cuentaRow ? (cuentaRow as any).nombre || '' : ''
+      }
+      if (cuentaId) {
+        openModal(cuentaId, cuentaNombre)
       }
     }
     setSelectMenu(null)
@@ -224,6 +242,13 @@ const TableComponent: React.FC<TableProps> = ({
     setSelectedRowId(null)
     setSelectedCellId(null)
   }
+
+  // Handler para mostrar el modal grande de productos
+  const handleShowLargeList = (items: any[], title: string) => {
+    setLargeListItems(items);
+    setLargeListTitle(title);
+    setShowLargeList(true);
+  };
 
   const getSelectMenuOptions = (): SelectMenuOption[] => {
     if (!selectMenu) return []
@@ -246,6 +271,21 @@ const TableComponent: React.FC<TableProps> = ({
         action: handleViewDetails,
         icon: '👁️'
       })
+    }
+    // Opción "Ver más" para celdas con lista de productos
+    if (
+      selectMenu.columnKey === 'concepto' &&
+      tableType === 'movimientos'
+    ) {
+      const row = rows.find(r => (r as any).id === selectMenu.rowId);
+      const items = row && (row as any).items;
+      if (items && items.length > 0) {
+        options.push({
+          label: 'Ver más',
+          action: () => handleShowLargeList(items, `Detalle de productos (${items.length})`),
+          icon: '🔍'
+        });
+      }
     }
     // Delete option (always available)
     options.push({
@@ -533,7 +573,15 @@ const TableComponent: React.FC<TableProps> = ({
 
           {/* Solo mostrar FloatingCell y SelectMenu si no está deshabilitado */}
           {hoveredCell && !editingCell && !selectMenu?.visible && !disableInteractions && (
-            <FloatingCell hoveredCell={hoveredCell} isGray={hoveredCell.currentCol === 'id'} />
+            <FloatingCell
+              hoveredCell={hoveredCell}
+              isGray={hoveredCell.currentCol === 'id'}
+              onShowLargeList={
+                hoveredCell.items && hoveredCell.items.length > 0
+                  ? () => handleShowLargeList(hoveredCell.items, `Detalle de productos (${hoveredCell.items.length})`)
+                  : undefined
+              }
+            />
           )}
           
           {selectMenu?.visible && !disableInteractions && (
@@ -574,7 +622,9 @@ const TableComponent: React.FC<TableProps> = ({
               <div className="modal-overlay" onClick={closeModal}>
                 <div className="modal">
                   <button className="modal-close" onClick={closeModal}>×</button>
-                  <h2>Movimientos de la cuenta #{selectedCuentaId}</h2>
+                  <h2>
+                    Movimientos de la cuenta{selectedCuentaNombre ? `: ${selectedCuentaNombre}` : ` #${selectedCuentaId}`}
+                  </h2>
                   <TableComponent
                     columns={movimientosColumns || columns}
                     rows={getMovimientosForCuenta(selectedCuentaId)}
@@ -585,6 +635,87 @@ const TableComponent: React.FC<TableProps> = ({
                 </div>
               </div>
             </>
+          )}
+
+          {/* Modal grande para lista de productos */}
+          {showLargeList && largeListItems && (
+            <div
+              style={{
+                position: "fixed",
+                top: 0, left: 0, right: 0, bottom: 0,
+                background: "rgba(0,0,0,0.5)",
+                zIndex: 9999,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+              onClick={() => setShowLargeList(false)}
+            >
+              <div
+                style={{
+                  background: "#fff",
+                  borderRadius: 12,
+                  padding: 32,
+                  minWidth: 400,
+                  maxWidth: "90vw",
+                  maxHeight: "80vh",
+                  overflowY: "auto",
+                  boxShadow: "0 4px 32px rgba(0,0,0,0.2)",
+                  position: "relative"
+                }}
+                onClick={e => e.stopPropagation()}
+              >
+                <button
+                  onClick={() => setShowLargeList(false)}
+                  style={{
+                    position: "absolute",
+                    top: 12,
+                    right: 12,
+                    background: "transparent",
+                    border: "none",
+                    fontSize: 24,
+                    cursor: "pointer"
+                  }}
+                  aria-label="Cerrar"
+                >
+                  &times;
+                </button>
+                <h2 style={{ marginTop: 0, marginBottom: 24 }}>{largeListTitle}</h2>
+                <ul className="floating-list" style={{ cursor: "default" }}>
+                  <li className="list-header">
+                    <span>Producto</span>
+                    <span>Cantidad</span>
+                    <span>Precio</span>
+                    <span>Total</span>
+                  </li>
+                  {largeListItems.map((it, i) => (
+                    <li key={i}>
+                      <span>{it.nombre_producto}</span>
+                      <span>
+                        {Number.isInteger(Number(it.cantidad))
+                          ? Number(it.cantidad)
+                          : Number(it.cantidad).toLocaleString("es-AR", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
+                      </span>
+                      <span>
+                        {"$" + Number(it.precio_unitario).toLocaleString("es-AR", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </span>
+                      <span>
+                        {"$" + (Number(it.precio_unitario) * Number(it.cantidad)).toLocaleString("es-AR", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           )}
         </div>
       </div>
