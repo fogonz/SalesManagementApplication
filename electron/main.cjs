@@ -33,7 +33,8 @@ function createWindow() {
     webPreferences: { nodeIntegration: false }
   })
   win.loadFile(frontendPath)
-  win.removeMenu()
+  // win.removeMenu()  // Comentado para poder ver el menú y abrir devtools
+  win.webContents.openDevTools()  // Abre automáticamente las herramientas de desarrollador
   console.log('Ventana creada y frontend cargado.')
 }
 
