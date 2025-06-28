@@ -34,7 +34,7 @@ function App() {
       />
 
       <Routes>
-        {/* Ruta raíz */}
+        {/* Ruta raíz + */}
         <Route
           path="/"
           element={

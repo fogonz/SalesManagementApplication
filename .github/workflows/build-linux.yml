@@ -1,4 +1,4 @@
-name: Build Electron App for Mac
+name: Build Electron App for Linux
 
 on:
   push:
@@ -6,31 +6,32 @@ on:
       - "v*.*.*"
 
 jobs:
-  build-mac:
-    runs-on: macos-latest
+  build-linux:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Instalar Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Instalar dependencias frontend
+      - name: Install frontend dependencies
         run: npm install
         working-directory: frontend/react-app
-      - name: Instalar dependencias
+      - name: Install Electron dependencies
         run: npm install
         working-directory: electron
       - name: Build frontend
         run: npm run build
         working-directory: frontend/react-app
-      - name: Build Electron app (Mac)
-        run: npm run build:frontend && CI=true npx electron-builder --publish never
+      - name: Build Electron app (Linux)
+        run: npm run build:frontend && CI=true npx electron-builder --linux --publish never
         working-directory: electron
-      - name: Subir artefactos a la release
+      - name: Upload artifacts to release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            electron/dist/*.dmg
-            electron/dist/latest-mac.yml
+            electron/dist/*.AppImage
+            electron/dist/*.deb
+            electron/dist/latest-linux.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
