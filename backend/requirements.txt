@@ -17,3 +17,4 @@ flask_cors
 sqlparse==0.5.3
 virtualenv==20.31.2
 sshtunnel
+dj_database_url
