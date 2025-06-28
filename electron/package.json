@@ -63,7 +63,7 @@
       "category": "public.app-category.business"
     },
     "dmg": {
-      "format": "APFS"
+      "format": "ULFO"
     },
     "linux": {
       "target": [
