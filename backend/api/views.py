@@ -78,13 +78,13 @@ class TransaccionesViewSet(viewsets.ModelViewSet):
                         updated_count += 1
 
                 return Response({
-                    'message': f'Successfully recalculated balances for {updated_count} accounts',
+                    'message': f'Balances recalculados exitosamente para {updated_count} cuentas',
                     'total_accounts': cuentas.count()
                 }, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({
-                'error': f'Error recalculating balances: {str(e)}'
+                'error': f'Error recalculando balances: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=True, methods=['post'])
@@ -100,7 +100,7 @@ class TransaccionesViewSet(viewsets.ModelViewSet):
                 new_monto = transaccion.cuenta.recalcular_monto()
 
                 return Response({
-                    'message': 'Account balance recalculated successfully',
+                    'message': 'Balance de cuenta recalculado exitosamente',
                     'account_id': transaccion.cuenta.id,
                     'account_name': transaccion.cuenta.nombre,
                     'old_balance': old_monto,
@@ -108,12 +108,12 @@ class TransaccionesViewSet(viewsets.ModelViewSet):
                 }, status=status.HTTP_200_OK)
             else:
                 return Response({
-                    'error': 'Transaction has no associated account'
+                    'error': 'La transacción no tiene una cuenta asociada'
                 }, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
             return Response({
-                'error': f'Error recalculating account balance: {str(e)}'
+                'error': f'Error recalculando balance de cuenta: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def create(self, request, *args, **kwargs):
@@ -225,7 +225,7 @@ class CuentasViewSet(viewsets.ModelViewSet):
             new_monto = cuenta.recalcular_monto()
 
             return Response({
-                'message': 'Account balance recalculated successfully',
+                'message': 'Balance de cuenta recalculado exitosamente',
                 'account_id': cuenta.id,
                 'account_name': cuenta.nombre,
                 'old_balance': old_monto,
@@ -234,7 +234,7 @@ class CuentasViewSet(viewsets.ModelViewSet):
 
         except Exception as e:
             return Response({
-                'error': f'Error recalculating balance: {str(e)}'
+                'error': f'Error recalculando balance: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -285,13 +285,13 @@ class ProductosViewSet(viewsets.ModelViewSet):
                         updated_count += 1
 
                 return Response({
-                    'message': f'Successfully recalculated quantities for {updated_count} products',
+                    'message': f'Cantidades recalculadas exitosamente para {updated_count} productos',
                     'total_products': productos.count()
                 }, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({
-                'error': f'Error recalculating quantities: {str(e)}'
+                'error': f'Error recalculando cantidades: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -609,3 +609,100 @@ def create_admin_users(request):
         })
     except Exception as e:
         return Response({'success': False, 'error': str(e)}, status=500)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])  # Solo usuarios autenticados pueden crear otros usuarios
+def create_user(request):
+    """
+    Crear un nuevo usuario desde el backend
+    POST /api/create-user/
+    Payload: {
+        "username": "nombre_usuario",
+        "password": "contraseña",
+        "email": "email@ejemplo.com",
+        "is_staff": false,
+        "is_superuser": false,
+        "first_name": "Nombre",
+        "last_name": "Apellido"
+    }
+    """
+    try:
+        User = get_user_model()
+        
+        # Validar datos requeridos
+        username = request.data.get('username')
+        password = request.data.get('password')
+        email = request.data.get('email', '')
+        
+        if not username:
+            return Response({
+                'success': False, 
+                'error': 'El nombre de usuario es obligatorio'
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
+        if not password:
+            return Response({
+                'success': False, 
+                'error': 'La contraseña es obligatoria'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verificar que el usuario no existe
+        if User.objects.filter(username=username).exists():
+            return Response({
+                'success': False, 
+                'error': f'El usuario "{username}" ya existe'
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
+        # Crear el usuario
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            first_name=request.data.get('first_name', ''),
+            last_name=request.data.get('last_name', ''),
+            is_staff=request.data.get('is_staff', False),
+            is_superuser=request.data.get('is_superuser', False),
+            is_active=True
+        )
+        
+        return Response({
+            'success': True,
+            'user_id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'is_staff': user.is_staff,
+            'is_superuser': user.is_superuser,
+            'message': f'Usuario "{username}" creado exitosamente'
+        }, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        return Response({
+            'success': False, 
+            'error': f'Error al crear usuario: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_users(request):
+    """
+    Listar todos los usuarios
+    GET /api/users/
+    """
+    try:
+        User = get_user_model()
+        users = User.objects.all().values(
+            'id', 'username', 'email', 'first_name', 'last_name', 
+            'is_staff', 'is_superuser', 'is_active', 'date_joined'
+        )
+        
+        return Response({
+            'success': True,
+            'users': list(users),
+            'total': users.count()
+        })
+        
+    except Exception as e:
+        return Response({
+            'success': False, 
+            'error': f'Error al listar usuarios: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
