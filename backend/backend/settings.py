@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     "django_vite",
 
     # Aplicaciones locales
-    "backend.api",
+    "api",
 ]
 
 # CORS
