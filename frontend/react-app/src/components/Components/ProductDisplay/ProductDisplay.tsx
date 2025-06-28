@@ -1,6 +1,7 @@
 import React, { useState, forwardRef, useImperativeHandle, useEffect } from "react";
 import "./ProductDisplay.css";
 import { API_BASE_URL } from '../../../services/api';
+import { authFetch } from '../../../utils/authFetch';
 
 export interface ProductDisplayRef {
   addProduct: () => void;
@@ -37,7 +38,7 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/productos/`);
+      const response = await authFetch(`${API_BASE_URL}/productos/`);
       if (!response.ok) throw new Error('Error al obtener productos');
 
       const data = await response.json();

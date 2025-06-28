@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { API_BASE_URL } from '../services/api';
+import { authFetch } from '../utils/authFetch';
 
 // Tipos para los datos
 interface ExpenseData {
@@ -132,7 +133,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       setExpensesLoading(true);
       setExpensesError(null);
       
-      const response = await fetch(`${API_BASE_URL}/movimientos/`);
+      const response = await authFetch(`${API_BASE_URL}/movimientos/`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -188,7 +189,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       setProductError(null);
       
       // Use the sales per product endpoint
-      const response = await fetch(`${API_BASE_URL}/ventas-producto/`);
+      const response = await authFetch(`${API_BASE_URL}/ventas-producto/`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -221,7 +222,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       setVentasLoading(true);
       setVentasError(null);
       
-      const response = await fetch(`${API_BASE_URL}/movimientos/`);
+      const response = await authFetch(`${API_BASE_URL}/movimientos/`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

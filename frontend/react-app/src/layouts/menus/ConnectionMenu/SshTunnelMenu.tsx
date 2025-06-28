@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SshTunnelMenu.css';
 import { API_BASE_URL } from '../../../services/api';
+import { authFetch } from '../../../utils/authFetch';
 
 type SshTunnelMenuProps = {
   onConnect: (config: any) => Promise<void>;
@@ -43,7 +44,7 @@ const SshTunnelMenu: React.FC<SshTunnelMenuProps> = ({ onConnect, onCancel }) =>
       setSshInstalled(null);
       setSshRunning(null);
       // Detect OS and check SSH status
-      fetch(`${API_BASE_URL}/api/ssh-status/`)
+      authFetch(`${API_BASE_URL}/api/ssh-status/`)
         .then(res => res.json())
         .then(data => {
           // Si el backend no puede detectar correctamente, pero el usuario está en Linux, asumimos instalado
@@ -68,7 +69,7 @@ const SshTunnelMenu: React.FC<SshTunnelMenuProps> = ({ onConnect, onCancel }) =>
     setSshActionLoading(true);
     setSshError(null);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/ssh-install/`, { method: 'POST' });
+      const res = await authFetch(`${API_BASE_URL}/api/ssh-install/`, { method: 'POST' });
       const data = await res.json();
       if (!data.success) {
         // Si el backend no soporta instalación automática, muestra instrucciones manuales según OS detectado
@@ -98,7 +99,7 @@ const SshTunnelMenu: React.FC<SshTunnelMenuProps> = ({ onConnect, onCancel }) =>
     setSshActionLoading(true);
     setSshError(null);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/ssh-start/`, { method: 'POST' });
+      const res = await authFetch(`${API_BASE_URL}/api/ssh-start/`, { method: 'POST' });
       const data = await res.json();
       if (!data.success) setSshError(data.error || 'Error al iniciar OpenSSH');
       else setSshRunning(true);
@@ -112,7 +113,7 @@ const SshTunnelMenu: React.FC<SshTunnelMenuProps> = ({ onConnect, onCancel }) =>
   const handleCheckSsh = async () => {
     setSshError(null);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/ssh-status/`);
+      const res = await authFetch(`${API_BASE_URL}/api/ssh-status/`);
       const data = await res.json();
       setOsType(data.os === 'windows' ? 'windows' : 'linux');
       setSshInstalled(data.installed);
@@ -127,7 +128,7 @@ const SshTunnelMenu: React.FC<SshTunnelMenuProps> = ({ onConnect, onCancel }) =>
     setTunnelLoading(true);
     setTunnelError(null);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/create-ssh-tunnel/`, {
+      const res = await authFetch(`${API_BASE_URL}/api/create-ssh-tunnel/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -160,7 +161,7 @@ const SshTunnelMenu: React.FC<SshTunnelMenuProps> = ({ onConnect, onCancel }) =>
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/test-mysql-ssh-tunnel/`, {
+      const res = await authFetch(`${API_BASE_URL}/api/test-mysql-ssh-tunnel/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

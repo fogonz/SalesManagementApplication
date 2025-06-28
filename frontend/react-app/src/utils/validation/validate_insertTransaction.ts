@@ -1,5 +1,6 @@
 import { TransactionFormData, ValidationResult, Tipo } from "./types";
 import { API_BASE_URL } from '../../services/api';
+import { authFetch } from '../authFetch';
 
 const allowedFields = [
     "fecha",
@@ -78,7 +79,7 @@ export function createHandleSubmit(
         try {
             // DEBUG: log el payload que realmente se envía
             console.log("DEBUG - PAYLOAD ENVIADO AL BACKEND:", JSON.stringify(movimientoPayload));
-            const response = await fetch(`${API_BASE_URL}/movimientos/`, {
+            const response = await authFetch(`${API_BASE_URL}/movimientos/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

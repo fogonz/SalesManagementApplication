@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ShoppingCartTotal from '../../../components/Components/ShoppingCart/ShoppingCartTotal';
 import AccountDropdown from '../Dropdown/AccountDropdown';
 import { API_BASE_URL } from '../../../services/api';
+import { authFetch } from '../../../utils/authFetch';
 
 // Nuevo componente: FacturaDropdown
 const FacturaDropdown: React.FC<{
@@ -264,7 +265,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     useEffect(() => {
         const fetchAccounts = async () => {
             try {
-                const responseAccounts = await fetch(`${API_BASE_URL}/cuentas`);
+                const responseAccounts = await authFetch(`${API_BASE_URL}/cuentas`);
                 const jsonAccounts = await responseAccounts.json();
                 setOptions(jsonAccounts);
                 console.log(jsonAccounts);
@@ -280,7 +281,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch(`${API_BASE_URL}/productos`);
+                const res = await authFetch(`${API_BASE_URL}/productos`);
                 const json = await res.json();
                 setData(json);
             } catch (err) {
@@ -318,7 +319,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
         if ((tipo === "pago" || tipo === "cobranza") && cuenta) {
             // SOLO permitir pagos de facturas de compra y cobranzas de facturas de venta
             const tipoFactura = tipo === "pago" ? "factura_compra" : "factura_venta";
-            fetch(`${API_BASE_URL}/movimientos/?tipo=${tipoFactura}&cuenta=${cuenta}`)
+            authFetch(`${API_BASE_URL}/movimientos/?tipo=${tipoFactura}&cuenta=${cuenta}`)
                 .then(res => res.json())
                 .then(data => {
                     // Filtrar SOLO facturas (no pagos/cobranzas) y con total > 0

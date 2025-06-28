@@ -1,4 +1,5 @@
 import { Tabla } from "../../types";
+import { authFetch } from "../../utils/authFetch";
 
 export const API_BASE_URL = 'https://salesmanagementapplication-production.up.railway.app/api';
 
@@ -107,7 +108,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
 
   async crear(payload: TPayload): Promise<TResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/${this.endpoint}`, {
+      const response = await authFetch(`${API_BASE_URL}/${this.endpoint}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +134,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
 
   async obtener(id: number): Promise<TResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/${this.endpoint}/${id}/`, {
+      const response = await authFetch(`${API_BASE_URL}/${this.endpoint}/${id}/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -168,7 +169,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
 
       const url = `${API_BASE_URL}/${this.endpoint}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
       
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -207,7 +208,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
         delete payloadData.productos;
       }
       
-      const response = await fetch(`${API_BASE_URL}/${this.endpoint}/${id}/`, {
+      const response = await authFetch(`${API_BASE_URL}/${this.endpoint}/${id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -234,7 +235,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
 
   async actualizarCampos(id: number, payload: Partial<TPayload>): Promise<TResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/${this.endpoint}/${id}/`, {
+      const response = await authFetch(`${API_BASE_URL}/${this.endpoint}/${id}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -261,7 +262,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
 
   async eliminar(id: number): Promise<{ success: boolean; message?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/${this.endpoint}/${id}/`, {
+      const response = await authFetch(`${API_BASE_URL}/${this.endpoint}/${id}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -306,7 +307,7 @@ export const fetchTableData = async (table: string, baseURL = '') => {
   const url = `${urlBase}/${realTable}/`;
 
   if (baseURL) {
-    const response = await fetch(url);
+    const response = await authFetch(url);
     if (!response.ok) throw new Error('Error fetching data');
     return await response.json();
   }
@@ -344,13 +345,13 @@ export const getAPI = (table: string) => {
 
 // Helper for saldo fetch/update (no afecta el funcionamiento de GenericAPI ni fetchTableData)
 export const fetchSaldo = async () => {
-  const response = await fetch(`${API_BASE_URL}/saldo/`);
+  const response = await authFetch(`${API_BASE_URL}/saldo/`);
   if (!response.ok) throw new Error('Error fetching saldo');
   return await response.json();
 };
 
 export const patchSaldo = async (saldo_inicial: number) => {
-  const response = await fetch(`${API_BASE_URL}/saldo/`, {
+  const response = await authFetch(`${API_BASE_URL}/saldo/`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ saldo_inicial }),
