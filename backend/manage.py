@@ -3,6 +3,9 @@
 import os
 import sys
 
+# Add this block to ensure the project root is in sys.path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 
 def main():
     """Run administrative tasks."""

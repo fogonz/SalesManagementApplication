@@ -6,8 +6,16 @@
 __pycache__/
 */**__pycache__/
 *.py[cod]
-*$py.class
-*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+*.log
 
 # Django específico
 *.log

@@ -2,6 +2,9 @@ import os
 from pathlib import Path
 import dj_database_url
 from datetime import timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Paths base
 BASE_DIR = Path(__file__).resolve().parent.parent
