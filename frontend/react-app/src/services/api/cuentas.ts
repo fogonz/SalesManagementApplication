@@ -1,9 +1,11 @@
 import { CuentaRow } from '../../utils/filterUtils';
-import { API_BASE_URL } from '.';
+import { authFetch } from '../../utils/authFetch';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://salesmanagementapplication-production.up.railway.app/api';
 
 export const fetchCuentas = async (): Promise<CuentaRow[]> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/cuentas/`);
+    const response = await authFetch(`${API_BASE_URL}/cuentas/`);
     const data = await response.json();
     return data;
   } catch (err) {

@@ -32,6 +32,9 @@ export default defineConfig({
       port: 5173,
     },
     cors: true,
+    proxy: {
+      '/api': 'https://salesmanagementapplication-production.up.railway.app',
+    },
   },
   // Nunca pongas `base` aquí, o asegúrate que sea "/"
 });

@@ -1,5 +1,6 @@
 import { ProductoRow } from '../../utils/filterUtils';
-import { API_BASE_URL } from '.';
+import { authFetch } from '../../utils/authFetch';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://salesmanagementapplication-production.up.railway.app/api';
 
 // Type definitions
 interface ProductoPayload {
@@ -43,12 +44,10 @@ interface APIError {
 class ProductosAPI {
   async crear(payload: ProductoPayload): Promise<ProductoResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/productos`, {
+      const response = await authFetch(`${API_BASE_URL}/productos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Add authorization header if needed
-          // 'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
@@ -72,7 +71,7 @@ class ProductosAPI {
 
   async obtener(id: number): Promise<ProductoResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/productos/${id}`, {
+      const response = await authFetch(`${API_BASE_URL}/productos/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +107,7 @@ class ProductosAPI {
 
       const url = `${API_BASE_URL}/productos${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
       
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +132,7 @@ class ProductosAPI {
 
   async actualizar(id: number, payload: Partial<ProductoPayload>): Promise<ProductoResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/productos/${id}`, {
+      const response = await authFetch(`${API_BASE_URL}/productos/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -159,7 +158,7 @@ class ProductosAPI {
 
   async eliminar(id: number): Promise<{ success: boolean; message?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/productos/${id}`, {
+      const response = await authFetch(`${API_BASE_URL}/productos/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -183,7 +182,7 @@ class ProductosAPI {
   }
 
   async actualizarCampos(id: number, payload: Partial<ProductoPayload>): Promise<ProductoResponse> {
-    const response = await fetch(`${API_BASE_URL}/productos/${id}`, {
+    const response = await authFetch(`${API_BASE_URL}/productos/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

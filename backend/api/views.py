@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 import MySQLdb
 from sshtunnel import SSHTunnelForwarder
 import subprocess
@@ -24,7 +24,7 @@ ssh_tunnel_server = None
 
 
 class TransaccionesViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = Transacciones.objects.all().select_related('cuenta').prefetch_related('transaccionitems_set')
 
     def get_serializer_class(self):
@@ -195,13 +195,13 @@ class TransaccionesViewSet(viewsets.ModelViewSet):
 class TransaccionItemsViewSet(viewsets.ModelViewSet):
     queryset = TransaccionItems.objects.all()
     serializer_class = TransaccionItemsSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class CuentasViewSet(viewsets.ModelViewSet):
     queryset = Cuentas.objects.all()
     serializer_class = CuentasSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['post'])
     def recalculate_balance(self, request, pk=None):
@@ -237,7 +237,7 @@ class ProductosViewSet(viewsets.ModelViewSet):
     """
     queryset = Productos.objects.all()
     serializer_class = ProductosSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         # Log and recalculate cantidad for all products before returning
@@ -286,7 +286,7 @@ class ProductosViewSet(viewsets.ModelViewSet):
 
 
 class VentasPorProductoAPIView(APIView):
-    permission_classes = [permissions.AllowAny]  # o el permiso que necesites
+    permission_classes = [IsAuthenticated]  # o el permiso que necesites
 
     def get(self, request, *args, **kwargs):
         qs = (
@@ -301,7 +301,7 @@ class VentasPorProductoAPIView(APIView):
 
 
 class SaldoSingletonView(APIView):
-    permission_classes = [permissions.AllowAny]  # Adjust as needed
+    permission_classes = [IsAuthenticated]  # Adjust as needed
 
     def get(self, request):
         saldo = Saldo.get_singleton()

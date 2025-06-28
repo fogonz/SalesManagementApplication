@@ -1,4 +1,6 @@
-import { API_BASE_URL } from ".";
+import { authFetch } from '../../utils/authFetch';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://salesmanagementapplication-production.up.railway.app/api';
+
 import { APIError } from "./apiTypes";
 
 export interface MovimientoPayload {
@@ -44,12 +46,10 @@ export interface MovimientoFiltros {
 class MovimientosAPI {
   async crear(payload: MovimientoPayload): Promise<MovimientoResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/movimientos`, {
+      const response = await authFetch(`${API_BASE_URL}/movimientos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Add authorization header if needed
-          // 'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
@@ -73,7 +73,7 @@ class MovimientosAPI {
 
   async obtener(id: number): Promise<MovimientoResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/movimientos/${id}/`, {
+      const response = await authFetch(`${API_BASE_URL}/movimientos/${id}/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ class MovimientosAPI {
 
       const url = `${API_BASE_URL}/movimientos${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
       
-      const response = await fetch(url, {
+      const response = await authFetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ class MovimientosAPI {
       }
       
       // Now send the complete object
-      const response = await fetch(`${API_BASE_URL}/movimientos/${id}/`, {
+      const response = await authFetch(`${API_BASE_URL}/movimientos/${id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -180,7 +180,7 @@ class MovimientosAPI {
   // Alternative method for simple field updates (PATCH instead of PUT)
   async actualizarCampos(id: number, payload: Partial<MovimientoPayload>): Promise<MovimientoResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/movimientos/${id}/`, {
+      const response = await authFetch(`${API_BASE_URL}/movimientos/${id}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -207,7 +207,7 @@ class MovimientosAPI {
 
   async eliminar(id: number): Promise<{ success: boolean; message?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/movimientos/${id}/`, {
+      const response = await authFetch(`${API_BASE_URL}/movimientos/${id}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

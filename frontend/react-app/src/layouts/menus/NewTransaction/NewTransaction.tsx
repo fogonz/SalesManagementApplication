@@ -264,7 +264,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     useEffect(() => {
         const fetchAccounts = async () => {
             try {
-                const responseAccounts = await fetch(`${API_BASE_URL}/api/cuentas`);
+                const responseAccounts = await fetch(`${API_BASE_URL}/cuentas`);
                 const jsonAccounts = await responseAccounts.json();
                 setOptions(jsonAccounts);
                 console.log(jsonAccounts);
@@ -280,7 +280,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch(`${API_BASE_URL}/api/productos`);
+                const res = await fetch(`${API_BASE_URL}/productos`);
                 const json = await res.json();
                 setData(json);
             } catch (err) {
@@ -318,7 +318,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
         if ((tipo === "pago" || tipo === "cobranza") && cuenta) {
             // SOLO permitir pagos de facturas de compra y cobranzas de facturas de venta
             const tipoFactura = tipo === "pago" ? "factura_compra" : "factura_venta";
-            fetch(`${API_BASE_URL}/api/movimientos/?tipo=${tipoFactura}&cuenta=${cuenta}`)
+            fetch(`${API_BASE_URL}/movimientos/?tipo=${tipoFactura}&cuenta=${cuenta}`)
                 .then(res => res.json())
                 .then(data => {
                     // Filtrar SOLO facturas (no pagos/cobranzas) y con total > 0
@@ -346,7 +346,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                     let maxNumero = 0;
                     try {
                         const res = await fetch(
-                            `${API_BASE_URL}/api/movimientos/?tipo=${facturaSeleccionada.tipo}&cuenta=${facturaSeleccionada.cuenta}`
+                            `${API_BASE_URL}/movimientos/?tipo=${facturaSeleccionada.tipo}&cuenta=${facturaSeleccionada.cuenta}`
                         );
                         if (res.ok) {
                             const movimientos = await res.json();
@@ -422,7 +422,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                         let maxNumero = 0;
                         try {
                             const res = await fetch(
-                                `${API_BASE_URL}/api/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
+                                `${API_BASE_URL}/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
                             );
                             if (res.ok) {
                                 const movimientos = await res.json();
@@ -521,7 +521,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                             let maxNumero = 0;
                             try {
                                 const res = await fetch(
-                                    `${API_BASE_URL}/api/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
+                                    `${API_BASE_URL}/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
                             );
                             if (res.ok) {
                                 const movimientos = await res.json();
@@ -574,7 +574,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                 let maxNumero = 0;
                 try {
                     const res = await fetch(
-                        `${API_BASE_URL}/api/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
+                        `${API_BASE_URL}/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
                     );
                     if (res.ok) {
                         const movimientos = await res.json();
@@ -657,7 +657,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                                     let maxNumero = 0;
                                                     try {
                                                         const res = await fetch(
-                                                            `${API_BASE_URL}/api/movimientos/?tipo=${tipo}&cuenta=${acc}`
+                                                            `${API_BASE_URL}/movimientos/?tipo=${tipo}&cuenta=${acc}`
                                                         );
                                                         if (res.ok) {
                                                             const movimientos = await res.json();

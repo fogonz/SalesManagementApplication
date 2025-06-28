@@ -86,6 +86,13 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
     navigate('/')
   }
 
+  // Handler para logout
+  const handleLogout = () => {
+    localStorage.removeItem('access');
+    localStorage.removeItem('refresh');
+    window.location.reload();
+  };
+
   return (
     <div className="header-top">
       {/* Botón recargar página completamente a la izquierda */}
@@ -98,6 +105,15 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
         <i className="fas fa-rotate-right" style={{ color: 'white' }} />
       </button>
       <div className="header-right-controls">
+        {/* Botón Logout */}
+        <button
+          className="topbar-logout-btn"
+          title="Cerrar sesión"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: 8 }}
+          onClick={handleLogout}
+        >
+          <i className="fas fa-sign-out-alt" /> Logout
+        </button>
         {/* Botón engranaje para saldo */}
         <button
           className="topbar-gear-btn"

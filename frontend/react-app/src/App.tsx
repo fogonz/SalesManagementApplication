@@ -6,11 +6,16 @@ import { useState } from "react";
 import { DataProvider } from "./contexts/DataContext";
 import { Tabla, Menu, ValidTabla } from "./types";
 import React from "react";
+import Login from "./pages/Login";
 
 
 const isValidTabla = (value: string | null): value is ValidTabla => {
   return ['movimientos', 'cuentas', 'productos', 'cajachica'].includes(value as string);
 };
+
+function isAuthenticated() {
+  return !!localStorage.getItem('access');
+}
 
 function App() {
   const savedView = localStorage.getItem('activeView');
@@ -23,6 +28,10 @@ function App() {
   React.useEffect(() => {
     localStorage.setItem('activeView', activeView);
   }, [activeView]);
+
+  if (!isAuthenticated()) {
+    return <Login />;
+  }
 
   return (
     <DataProvider>

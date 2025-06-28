@@ -44,7 +44,7 @@ const SaldoMenu: React.FC<SaldoMenuProps> = ({ visible, onClose, onSave, saldoAc
       return;
     }
     try {
-      const resp = await fetch(`${API_BASE_URL}/api/saldo/`, {
+      const resp = await fetch(`${API_BASE_URL}/saldo/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ saldo_inicial: num }),
@@ -68,7 +68,7 @@ const SaldoMenu: React.FC<SaldoMenuProps> = ({ visible, onClose, onSave, saldoAc
     setBalanceResult(null);
     
     try {
-      const resp = await fetch(`${API_BASE_URL}/api/movimientos/batch_recalculate_balances/`, {
+      const resp = await fetch(`${API_BASE_URL}/movimientos/batch_recalculate_balances/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });

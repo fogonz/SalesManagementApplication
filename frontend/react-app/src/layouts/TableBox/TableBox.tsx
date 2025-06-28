@@ -108,52 +108,29 @@ const useCuentas = (activeView: Tabla) => {
   return { cuentas, error };
 };
 
-const useTableData = (activeView: Tabla, cuentas: CuentaRow[], refreshTrigger?: number) => {
-  const [data, setData] = useState<MovimientoRow[] | CuentaRow[] | ProductoRow[]>([]);
-  const [loading, setLoading] = useState<boolean>(false); // <-- NEW
+// Hook optimizado: siempre trae movimientos si activeView es movimientos o cajachica
+const useMovimientosOrCajaData = (activeView: Tabla, refreshTrigger?: number) => {
+  const [data, setData] = useState<MovimientoRow[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const loadData = async () => {
-    setLoading(true); // <-- NEW
+    setLoading(true);
     try {
-      const tableData = await fetchTableData(activeView);
+      const tableData = await fetchTableData('movimientos');
       setData(tableData);
     } catch (err) {
-      console.error(`Error loading ${activeView} data:`, err);
+      console.error(`Error loading movimientos/cajachica data:`, err);
     } finally {
-      setLoading(false); // <-- NEW
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    if ((activeView === 'movimientos') && cuentas.length === 0) {
-      return;
-    }
     loadData();
-  }, [activeView, cuentas, refreshTrigger]);
+    // eslint-disable-next-line
+  }, [refreshTrigger]);
 
-  return { data, loadData, loading }; // <-- NEW
-};
-
-// NEW: Custom hook for movimientos data
-const useMovimientosData = () => {
-  const [movimientosData, setMovimientosData] = useState<MovimientoRow[]>([]);
-
-  const loadMovimientosData = async () => {
-    try {
-      // Pasa la URL base igual que en fetchTableData de useTableData
-      const data = await fetchTableData('movimientos');
-      setMovimientosData(data as MovimientoRow[]);
-      console.log(`MOVIMIENTOS DATA: ${JSON.stringify(data)}`)
-    } catch (err) {
-      console.error('Error loading movimientos data:', err);
-    }
-  };
-
-  useEffect(() => {
-    loadMovimientosData();
-  }, []);
-
-  return { movimientosData, loadMovimientosData };
+  return { data, loadData, loading };
 };
 
 const useSearch = () => {
@@ -222,17 +199,43 @@ const TableBox: React.FC<TableBoxProps> = ({
 }) => {
   // Custom hooks
   const { cuentas, error } = useCuentas(activeView);
-  const { data, loadData, loading } = useTableData(activeView, cuentas, refreshTrigger);
-  const { movimientosData } = useMovimientosData();
-  const { 
-    searchTerm, 
-    selectedDates, 
-    handleSearch, 
-    handleDateSelect, 
-    clearDateFilter 
+  // Hook optimizado solo para movimientos/cajachica
+  const { data: movimientosOrCajaData, loadData: loadMovimientosOrCaja, loading: loadingMovimientosOrCaja } = useMovimientosOrCajaData(activeView, refreshTrigger);
+  // Estado para cuentas y productos
+  const [cuentasData, setCuentasData] = useState<CuentaRow[]>([]);
+  const [productosData, setProductosData] = useState<ProductoRow[]>([]);
+  const [loadingCuentas, setLoadingCuentas] = useState(false);
+  const [loadingProductos, setLoadingProductos] = useState(false);
+
+  // Hook de búsqueda (asegúrate de que esté aquí y no duplicado)
+  const {
+    searchTerm,
+    selectedDates,
+    handleSearch,
+    handleDateSelect,
+    clearDateFilter
   } = useSearch();
+
+  // Hook de calendario (asegúrate de que esté aquí y no duplicado)
   const { showCalendar, setShowCalendar, calendarRef } = useCalendar();
-  
+
+  useEffect(() => {
+    if (activeView === 'cuentas') {
+      setLoadingCuentas(true);
+      fetchTableData('cuentas').then(data => {
+        setCuentasData(data);
+        setLoadingCuentas(false);
+      });
+    }
+    if (activeView === 'productos') {
+      setLoadingProductos(true);
+      fetchTableData('productos').then(data => {
+        setProductosData(data);
+        setLoadingProductos(false);
+      });
+    }
+  }, [activeView, refreshTrigger]);
+
   // Refs
   const productDisplayRef = useRef<any>(null);
 
@@ -266,29 +269,42 @@ const TableBox: React.FC<TableBoxProps> = ({
     }
   }, [refreshTrigger, activeView]);
 
-  // Add this effect to force re-fetch on refreshTrigger
+  // Add this effect to force re-fetch on refreshTrigger SOLO para productos
   useEffect(() => {
-    loadData();
-  }, [refreshTrigger]); // <-- This ensures data is always re-fetched
+    if (activeView === 'productos') {
+      // Si tienes un hook para productos, llama aquí su loadData
+    }
+  }, [refreshTrigger, activeView]);
 
   // Computed values
   const filteredData = (() => {
-    if (activeView === 'cajachica') {
-      // Show only movimientos with tipo = "cobranza" or "pago" or any tipo except "factura_venta" and "factura_compra"
-      return filterData(
-        data.filter(
-          (row: any) =>
-            row.tipo === 'cobranza' ||
-            row.tipo === 'pago' ||
-            (row.tipo !== 'factura_venta' && row.tipo !== 'factura_compra')
-        ),
-        'movimientos',
-        searchTerm,
-        selectedDates,
-        cuentas
-      );
+    if (activeView === 'cajachica' || activeView === 'movimientos') {
+      // Filtra localmente según el tipo de vista
+      const baseData = movimientosOrCajaData;
+      if (activeView === 'cajachica') {
+        return filterData(
+          baseData.filter(
+            (row: any) =>
+              row.tipo === 'cobranza' ||
+              row.tipo === 'pago' ||
+              (row.tipo !== 'factura_venta' && row.tipo !== 'factura_compra')
+          ),
+          'movimientos',
+          searchTerm,
+          selectedDates,
+          cuentas
+        );
+      }
+      // Si es movimientos, muestra todos
+      return filterData(baseData, 'movimientos', searchTerm, selectedDates, cuentas);
     }
-    return filterData(data, activeView, searchTerm, selectedDates, cuentas);
+    if (activeView === 'cuentas') {
+      return filterData(cuentasData, 'cuentas', searchTerm, selectedDates, cuentas);
+    }
+    if (activeView === 'productos') {
+      return filterData(productosData, 'productos', searchTerm, selectedDates, cuentas);
+    }
+    return [];
   })();
   const columns = activeView === 'cajachica'
     ? getCajachicaColumns(cuentas)
@@ -448,14 +464,22 @@ const TableBox: React.FC<TableBoxProps> = ({
               rows={filteredData} 
               columns={columns}
               tableType={activeView}
-              movimientosData={movimientosData}
+              movimientosData={movimientosOrCajaData}
               movimientosColumns={movimientosColumns}
               isAdmin={isAdmin}
               rowSelected={rowSelected}
               onCellEdit={handleCellEdit}
               onRowSelect={setRowSelected}
               onRefresh={onRefresh}
-              loading={loading} // <-- Use real loading state
+              loading={
+                activeView === 'movimientos' || activeView === 'cajachica'
+                  ? loadingMovimientosOrCaja
+                  : activeView === 'cuentas'
+                    ? loadingCuentas
+                    : activeView === 'productos'
+                      ? loadingProductos
+                      : false
+              }
             />
           )}
           {/* Renderiza el menú de confirmación si es necesario */}

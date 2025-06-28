@@ -27,6 +27,7 @@ export interface MovimientoRow {
   tipoMovimiento?: string
   abonado?: number | null
   items?: { nombre_producto: string; precio_unitario: string; cantidad: string; descuento_item: string }[]
+  numero_comprobante?: number | null // <-- Added to match backend schema
 }
 
 export interface CuentaRow {
@@ -118,6 +119,11 @@ const TableComponent: React.FC<TableProps> = ({
   const [showLargeList, setShowLargeList] = useState(false);
   const [largeListItems, setLargeListItems] = useState<any[] | null>(null);
   const [largeListTitle, setLargeListTitle] = useState<string>("");
+
+  // Handler para mostrar movimientos asociados por cuenta y numero_comprobante
+  const [showAssociatedModal, setShowAssociatedModal] = useState(false);
+  const [associatedRows, setAssociatedRows] = useState<MovimientoRow[]>([]);
+  const [associatedTitle, setAssociatedTitle] = useState<string>("");
 
   const openModal = (cuentaId: number, cuentaNombre: string) => {
     setSelectedCuentaId(cuentaId)
@@ -252,6 +258,21 @@ const TableComponent: React.FC<TableProps> = ({
     setShowLargeList(true);
   };
 
+  // Handler para mostrar movimientos asociados por cuenta y numero_comprobante
+  const handleShowAssociated = (cuenta: number, numero_comprobante: any) => {
+    if (!movimientosData) return;
+    const asociados = movimientosData.filter(m => m.cuenta === cuenta && m.numero_comprobante === numero_comprobante);
+    // Buscar el nombre de la cuenta en rows (debería ser CuentaRow)
+    let cuentaNombre = '';
+    const cuentaRow = rows.find(r => (r as any).id === cuenta);
+    if (cuentaRow && (cuentaRow as any).nombre) {
+      cuentaNombre = (cuentaRow as any).nombre;
+    }
+    setAssociatedRows(asociados);
+    setAssociatedTitle(`Movimientos asociados a N° ${numero_comprobante}${cuentaNombre ? ` (Cuenta: ${cuentaNombre})` : ''}`);
+    setShowAssociatedModal(true);
+  };
+
   const getSelectMenuOptions = (): SelectMenuOption[] => {
     if (!selectMenu) return []
     const options: SelectMenuOption[] = []
@@ -273,6 +294,17 @@ const TableComponent: React.FC<TableProps> = ({
         action: handleViewDetails,
         icon: '👁️'
       })
+    }
+    // Opción "Ver asociados" para numero_comprobante
+    if (tableType === 'movimientos' && selectMenu.columnKey === 'numero_comprobante') {
+      const row = rows.find(r => (r as any).id === selectMenu.rowId);
+      if (row) {
+        options.push({
+          label: 'Ver asociados',
+          action: () => handleShowAssociated((row as any).cuenta, (row as any).numero_comprobante),
+          icon: '🔗'
+        });
+      }
     }
     // Opción "Ver más" para celdas con lista de productos
     if (
@@ -755,7 +787,34 @@ const TableComponent: React.FC<TableProps> = ({
                       </span>
                     </li>
                   ))}
+                  {/* Total row */}
+                  <li className="list-total" style={{ fontWeight: 700, borderTop: '1px solid #eee', marginTop: 8, paddingTop: 8 }}>
+                    <span style={{ gridColumn: '1 / span 3', textAlign: 'right' }}>TOTAL ABSOLUTO</span>
+                    <span style={{ textAlign: 'right' }}>
+                      {"$" + largeListItems.reduce((acc, it) => acc + (Number(it.precio_unitario) * Number(it.cantidad)), 0).toLocaleString("es-AR", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </span>
+                  </li>
                 </ul>
+              </div>
+            </div>
+          )}
+
+          {/* Modal para ver movimientos asociados */}
+          {showAssociatedModal && associatedRows && (
+            <div className="modal-overlay" onClick={() => setShowAssociatedModal(false)}>
+              <div className="modal" onClick={e => e.stopPropagation()}>
+                <button className="modal-close" onClick={() => setShowAssociatedModal(false)}>×</button>
+                <h2>{associatedTitle}</h2>
+                <TableComponent
+                  columns={movimientosColumns || columns}
+                  rows={associatedRows}
+                  tableType="movimientos"
+                  isAdmin={false}
+                  disableInteractions={true}
+                />
               </div>
             </div>
           )}
