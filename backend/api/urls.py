@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from .views import TransaccionesViewSet, CuentasViewSet, ProductosViewSet, TransaccionItemsViewSet, VentasPorProductoAPIView, SaldoSingletonView, test_mysql_connection, test_mysql_ssh_tunnel, ssh_status, ssh_install, ssh_start, create_ssh_tunnel
+from .views import TransaccionesViewSet, CuentasViewSet, ProductosViewSet, TransaccionItemsViewSet, VentasPorProductoAPIView, SaldoSingletonView, test_mysql_connection, test_mysql_ssh_tunnel, ssh_status, ssh_install, ssh_start, create_ssh_tunnel, create_admin_users
 
 router = routers.DefaultRouter()
 router.register(r'movimientos', TransaccionesViewSet, basename='movimientos')
@@ -22,4 +22,5 @@ urlpatterns = [
     path('ssh-install/', ssh_install, name='ssh-install'),
     path('ssh-start/', ssh_start, name='ssh-start'),
     path('create-ssh-tunnel/', create_ssh_tunnel, name='create-ssh-tunnel'),
+    path('create-admin-users/', create_admin_users, name='create-admin-users'),
 ]

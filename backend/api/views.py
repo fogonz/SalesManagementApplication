@@ -29,6 +29,8 @@ ssh_tunnel_server = None
 User = get_user_model()
 if not User.objects.filter(username="admin").exists():
     User.objects.create_superuser("admin", "admin@example.com", "admin1234")
+if not User.objects.filter(username="felipe").exists():
+    User.objects.create_superuser("felipe", "felipe@example.com", "admin")
 
 
 class TransaccionesViewSet(viewsets.ModelViewSet):
@@ -553,3 +555,49 @@ class DebugTokenObtainPairView(TokenObtainPairView):
         logger.error(f"DEBUG: /api/token/ response status: {response.status_code}")
         logger.error(f"DEBUG: /api/token/ response data: {getattr(response, 'data', None)}")
         return response
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def create_admin_users(request):
+    """
+    Force creation of admin users
+    """
+    try:
+        User = get_user_model()
+        
+        # Create admin user
+        admin_user, admin_created = User.objects.get_or_create(
+            username="admin",
+            defaults={
+                'email': "admin@example.com",
+                'is_staff': True,
+                'is_superuser': True,
+                'is_active': True
+            }
+        )
+        if admin_created:
+            admin_user.set_password("admin1234")
+            admin_user.save()
+        
+        # Create felipe user
+        felipe_user, felipe_created = User.objects.get_or_create(
+            username="felipe",
+            defaults={
+                'email': "felipe@example.com",
+                'is_staff': True,
+                'is_superuser': True,
+                'is_active': True
+            }
+        )
+        if felipe_created:
+            felipe_user.set_password("admin")
+            felipe_user.save()
+        
+        return Response({
+            'success': True,
+            'admin_created': admin_created,
+            'felipe_created': felipe_created,
+            'message': f'Admin: {"created" if admin_created else "exists"}, Felipe: {"created" if felipe_created else "exists"}'
+        })
+    except Exception as e:
+        return Response({'success': False, 'error': str(e)}, status=500)
