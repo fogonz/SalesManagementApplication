@@ -107,14 +107,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ productos, carrito, onCarrito
         <div className="product-grid__empty">
           <p>No hay productos disponibles</p>
         </div>
-        
-        {/* Panel de debug */}
-        <div className="product-grid__debug">
-          <h3>Estado del carrito:</h3>
-          <pre>{JSON.stringify(carrito, null, 2)}</pre>
-          <p>Total de productos: {carrito.length}</p>
-          <p>Total de unidades: {carrito.reduce((total, item) => total + item.cantidad, 0)}</p>
-        </div>
       </div>
     );
   }
