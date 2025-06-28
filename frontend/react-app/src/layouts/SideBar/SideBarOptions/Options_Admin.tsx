@@ -101,7 +101,7 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 				>
 					<i className="fas fa-file-excel"></i> EXPORTAR A EXCEL
 				</button>
-
+				{/*
 				<button
 					className="menu-button-round blue-border"
 					onClick={() => {
@@ -109,7 +109,7 @@ const Options_Admin: React.FC<OptionsAdminProps> = ({
 					}}
 				>
 					<i className="fas fa-link"></i> VINCULAR DISPOSITIVO
-				</button>
+				</button>*/}
 
 				{/* CHAT BUTTON 
 				<button
