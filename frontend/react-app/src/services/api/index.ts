@@ -127,7 +127,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
 
       return await response.json() as TResponse;
     } catch (error) {
-      console.error(`Error creando ${this.endpoint}:`, error);
+      console.error(`Error creating ${this.endpoint}:`, error);
       throw error;
     }
   }
@@ -152,7 +152,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
 
       return await response.json() as TResponse;
     } catch (error) {
-      console.error(`Error obteniendo ${this.endpoint}:`, error);
+      console.error(`Error fetching ${this.endpoint}:`, error);
       throw error;
     }
   }
@@ -187,7 +187,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
 
       return await response.json() as TResponse[];
     } catch (error) {
-      console.error(`Error listando ${this.endpoint}:`, error);
+      console.error(`Error listing ${this.endpoint}:`, error);
       throw error;
     }
   }
@@ -228,7 +228,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
       return await response.json();
       
     } catch (error) {
-      console.error(`Error actualizando ${this.endpoint}:`, error);
+      console.error(`Error updating ${this.endpoint}:`, error);
       throw error;
     }
   }
@@ -255,7 +255,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
       return await response.json();
       
     } catch (error) {
-      console.error(`Error actualizando campos de ${this.endpoint}:`, error);
+      console.error(`Error updating ${this.endpoint} fields:`, error);
       throw error;
     }
   }
@@ -285,7 +285,7 @@ class GenericAPI<TPayload extends BasePayload, TResponse extends BaseResponse> {
       }
       return null;
     } catch (error) {
-      console.error(`Error eliminando ${this.endpoint}:`, error);
+      console.error(`Error deleting ${this.endpoint}:`, error);
       throw error;
     }
   }
@@ -308,7 +308,7 @@ export const fetchTableData = async (table: string, baseURL = '') => {
 
   if (baseURL) {
     const response = await authFetch(url);
-    if (!response.ok) throw new Error('Error obteniendo datos');
+    if (!response.ok) throw new Error('Error fetching data');
     return await response.json();
   }
 
@@ -323,7 +323,7 @@ export const fetchTableData = async (table: string, baseURL = '') => {
     case 'movimiento-items':
       return await movimientoItemsAPI.listar();
     default:
-      throw new Error(`Tabla desconocida: ${table}`);
+      throw new Error(`Unknown table: ${realTable}`);
   }
 };
 
@@ -339,14 +339,14 @@ export const getAPI = (table: string) => {
     case 'movimiento-items':
       return movimientoItemsAPI;
     default:
-      throw new Error(`Tabla desconocida: ${table}`);
+      throw new Error(`Unknown table: ${table}`);
   }
 }
 
 // Helper for saldo fetch/update (no afecta el funcionamiento de GenericAPI ni fetchTableData)
 export const fetchSaldo = async () => {
   const response = await authFetch(`${API_BASE_URL}/saldo/`);
-  if (!response.ok) throw new Error('Error obteniendo saldo');
+  if (!response.ok) throw new Error('Error fetching saldo');
   return await response.json();
 };
 
@@ -356,6 +356,6 @@ export const patchSaldo = async (saldo_inicial: number) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ saldo_inicial }),
   });
-  if (!response.ok) throw new Error('Error actualizando saldo');
+  if (!response.ok) throw new Error('Error updating saldo');
   return await response.json();
 };

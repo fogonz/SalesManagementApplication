@@ -2,6 +2,7 @@ import * as React from 'react';
 import '../menus.css';
 import { useEffect, useState } from 'react';
 import { API_BASE_URL } from '../../../services/api';
+import { authFetch } from '../../../utils/authFetch';
 
 interface ProductProps {
     onClose: () => void;
@@ -84,7 +85,7 @@ const NewProduct: React.FC<ProductProps> = ({ onClose, onAccept, editingProduct 
             
             const method = editingProduct ? 'PUT' : 'POST';
 
-            const response = await fetch(url, {
+            const response = await authFetch(url, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',

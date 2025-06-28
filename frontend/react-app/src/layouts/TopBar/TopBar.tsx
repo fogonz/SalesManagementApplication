@@ -5,6 +5,8 @@ import './DarkMode.css';
 import { useState, useEffect } from 'react';
 import { TopBarProps } from '../../types';
 import SaldoMenu from './SaldoMenu';
+import { authFetch } from '../../utils/authFetch';
+import { API_BASE_URL } from '../../services/api';
 
 const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, setOpenMenu }) => {
   const [state, setState] = useState<"1" | "2" | "0">("1");
@@ -55,7 +57,7 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
   // Fetch saldo actual al abrir el menú
   useEffect(() => {
     if (saldoMenuVisible) {
-      fetch('/api/saldo/')
+      authFetch(`${API_BASE_URL}/saldo/`)
         .then(res => res.json())
         .then(data => {
           setSaldoActual(data.saldo_inicial); // <-- Cambia a saldo_inicial
@@ -64,7 +66,7 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
   }, [saldoMenuVisible]);
 
   const handleSaveSaldo = async (nuevoSaldo: number) => {
-    await fetch('/api/saldo/', {
+    await authFetch(`${API_BASE_URL}/saldo/`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ saldo_inicial: nuevoSaldo }) // <-- Cambia a saldo_inicial
@@ -109,10 +111,10 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
         <button
           className="topbar-logout-btn"
           title="Cerrar sesión"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: 8, color: 'white' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: 8 }}
           onClick={handleLogout}
         >
-          <i className="fas fa-sign-out-alt" style={{ marginRight: '6px' }} /> Cerrar sesión
+          <i className="fas fa-sign-out-alt" /> Logout
         </button>
         {/* Botón engranaje para saldo */}
         <button

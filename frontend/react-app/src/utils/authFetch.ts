@@ -23,6 +23,12 @@ async function refreshToken() {
 
 export async function authFetch(input: RequestInfo, init: RequestInit = {}) {
   let access = localStorage.getItem('access');
+  
+  // If no access token exists, don't make the request
+  if (!access) {
+    throw new Error('No authentication token available');
+  }
+  
   if (!init.headers) init.headers = {};
   (init.headers as any)['Authorization'] = `Bearer ${access}`;
   let res = await fetch(input, init);
@@ -32,6 +38,11 @@ export async function authFetch(input: RequestInfo, init: RequestInit = {}) {
     if (access) {
       (init.headers as any)['Authorization'] = `Bearer ${access}`;
       res = await fetch(input, init);
+    } else {
+      // If refresh failed, redirect to login
+      localStorage.removeItem('access');
+      localStorage.removeItem('refresh');
+      window.location.reload();
     }
   }
   return res;

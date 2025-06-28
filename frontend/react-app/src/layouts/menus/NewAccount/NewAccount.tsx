@@ -2,6 +2,7 @@ import * as React from 'react';
 import '../menus.css';
 import { useEffect, useState } from 'react';
 import { API_BASE_URL } from '../../../services/api';
+import { authFetch } from '../../../utils/authFetch';
 
 interface AccountProps {
     onClose: () => void;
@@ -80,7 +81,7 @@ const NewAccount: React.FC<AccountProps> = ({ onClose, onAccept, editingAccount 
             
             const method = editingAccount ? 'PUT' : 'POST';
 
-            const response = await fetch(url, {
+            const response = await authFetch(url, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',

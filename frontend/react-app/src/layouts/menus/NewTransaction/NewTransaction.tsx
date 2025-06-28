@@ -346,7 +346,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                 const sugerirNumero = async () => {
                     let maxNumero = 0;
                     try {
-                        const res = await fetch(
+                        const res = await authFetch(
                             `${API_BASE_URL}/movimientos/?tipo=${facturaSeleccionada.tipo}&cuenta=${facturaSeleccionada.cuenta}`
                         );
                         if (res.ok) {
@@ -422,7 +422,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                         // Buscar el mayor numero_comprobante existente para este tipo y cuenta
                         let maxNumero = 0;
                         try {
-                            const res = await fetch(
+                            const res = await authFetch(
                                 `${API_BASE_URL}/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
                             );
                             if (res.ok) {
@@ -521,7 +521,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                             // Buscar el siguiente número disponible
                             let maxNumero = 0;
                             try {
-                                const res = await fetch(
+                                const res = await authFetch(
                                     `${API_BASE_URL}/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
                             );
                             if (res.ok) {
@@ -574,7 +574,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
             if ((tipo === "factura_venta" || tipo === "factura_compra") && cuenta) {
                 let maxNumero = 0;
                 try {
-                    const res = await fetch(
+                    const res = await authFetch(
                         `${API_BASE_URL}/movimientos/?tipo=${tipo}&cuenta=${cuenta}`
                     );
                     if (res.ok) {
@@ -657,7 +657,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                                 (async () => {
                                                     let maxNumero = 0;
                                                     try {
-                                                        const res = await fetch(
+                                                        const res = await authFetch(
                                                             `${API_BASE_URL}/movimientos/?tipo=${tipo}&cuenta=${acc}`
                                                         );
                                                         if (res.ok) {
