@@ -175,7 +175,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       setExpensesData(chartData);
       
     } catch (err: any) {
-      console.error('Error fetching expenses data:', err);
+      console.error('Error obteniendo datos de gastos:', err);
       setExpensesError(err.message);
     } finally {
       setExpensesLoading(false);
@@ -209,7 +209,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       setProductData(processedData);
       
     } catch (err: any) {
-      console.error('Error fetching product data:', err);
+      console.error('Error obteniendo datos de productos:', err);
       setProductError(err.message);
     } finally {
       setProductLoading(false);
@@ -235,7 +235,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       setVentasData(processedData);
       
     } catch (err: any) {
-      console.error('Error fetching ventas data:', err);
+      console.error('Error obteniendo datos de ventas:', err);
       setVentasError(err.message);
     } finally {
       setVentasLoading(false);
