@@ -100,6 +100,7 @@ class TransaccionesSerializer(serializers.ModelSerializer):
             'numero_comprobante', 'saldo_diferencia',
             'descuento_total', 'concepto', 'items',
             'cantidad_productos',
+            'estado',  # <-- Agregado para incluir el campo estado
         ]
 
     def create(self, validated_data):
@@ -124,7 +125,8 @@ class TransaccionesWriteSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'tipo', 'fecha', 'cuenta', 'total',
             'numero_comprobante', 'saldo_diferencia',
-            'descuento_total', 'concepto', 'items'
+            'descuento_total', 'concepto', 'items',
+            'estado',  # <-- Agregado para incluir el campo estado
         ]
 
     def create(self, validated_data):
