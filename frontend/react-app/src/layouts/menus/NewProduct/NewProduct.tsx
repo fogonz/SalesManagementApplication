@@ -1,6 +1,7 @@
 import * as React from 'react';
 import '../menus.css';
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../../services/api';
 
 interface ProductProps {
     onClose: () => void;
@@ -78,8 +79,8 @@ const NewProduct: React.FC<ProductProps> = ({ onClose, onAccept, editingProduct 
             console.log("DEBUG FRONTEND - PAYLOAD ENVIADO:", productData);
 
             const url = editingProduct 
-                ? `http://localhost:8000/api/productos/${editingProduct.id}`
-                : `http://localhost:8000/api/productos/`;
+                ? `${API_BASE_URL}/productos/${editingProduct.id}`
+                : `${API_BASE_URL}/productos/`;
             
             const method = editingProduct ? 'PUT' : 'POST';
 

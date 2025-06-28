@@ -36,6 +36,10 @@ INSTALLED_APPS = [
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    # Add your production frontend URL here when deployed
+]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

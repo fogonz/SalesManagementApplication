@@ -1,6 +1,7 @@
 import * as React from 'react';
 import '../menus.css';
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../../services/api';
 
 interface AccountProps {
     onClose: () => void;
@@ -74,8 +75,8 @@ const NewAccount: React.FC<AccountProps> = ({ onClose, onAccept, editingAccount 
             };
 
             const url = editingAccount 
-                ? `http://localhost:8000/api/cuentas/${editingAccount.id}`
-                : `http://localhost:8000/api/cuentas/`;
+                ? `${API_BASE_URL}/cuentas/${editingAccount.id}`
+                : `${API_BASE_URL}/cuentas/`;
             
             const method = editingAccount ? 'PUT' : 'POST';
 

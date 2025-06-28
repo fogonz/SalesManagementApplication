@@ -1,5 +1,6 @@
 import React, { useState, forwardRef, useImperativeHandle, useEffect } from "react";
 import "./ProductDisplay.css";
+import { API_BASE_URL } from '../../../services/api';
 
 export interface ProductDisplayRef {
   addProduct: () => void;
@@ -36,7 +37,7 @@ const ProductDisplay = forwardRef<ProductDisplayRef, ProductDisplayProps>(({
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:8000/api/productos/');
+      const response = await fetch(`${API_BASE_URL}/productos/`);
       if (!response.ok) throw new Error('Error al obtener productos');
 
       const data = await response.json();

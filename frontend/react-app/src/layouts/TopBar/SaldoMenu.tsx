@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../../services/api';
 
 interface SaldoMenuProps {
   visible: boolean;
@@ -43,7 +44,7 @@ const SaldoMenu: React.FC<SaldoMenuProps> = ({ visible, onClose, onSave, saldoAc
       return;
     }
     try {
-      const resp = await fetch('http://localhost:8000/api/saldo/', {
+      const resp = await fetch(`${API_BASE_URL}/api/saldo/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ saldo_inicial: num }),
@@ -67,7 +68,7 @@ const SaldoMenu: React.FC<SaldoMenuProps> = ({ visible, onClose, onSave, saldoAc
     setBalanceResult(null);
     
     try {
-      const resp = await fetch('http://localhost:8000/api/movimientos/batch_recalculate_balances/', {
+      const resp = await fetch(`${API_BASE_URL}/api/movimientos/batch_recalculate_balances/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -93,7 +94,7 @@ const SaldoMenu: React.FC<SaldoMenuProps> = ({ visible, onClose, onSave, saldoAc
     setQuantitiesResult(null);
     
     try {
-      const resp = await fetch('http://localhost:8000/api/productos/batch_recalculate_quantities/', {
+      const resp = await fetch(`${API_BASE_URL}/api/productos/batch_recalculate_quantities/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });

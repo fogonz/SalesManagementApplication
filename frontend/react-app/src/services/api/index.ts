@@ -1,6 +1,6 @@
 import { Tabla } from "../../types";
 
-export const API_BASE_URL = 'http://localhost:8000/api';
+export const API_BASE_URL = 'https://d3f0fd3c-97c5-422b-8ede-79bd1c488019.up.railway.app/api';
 
 export interface APIError {
   message: string;
@@ -301,9 +301,11 @@ export const fetchTableData = async (table: string, baseURL = '') => {
   // Map cajachica to movimientos
   const realTable = table === 'cajachica' ? 'movimientos' : table;
 
-  // Si se pasa un baseURL, usar fetch directo (modo legacy)
+  // Si se pasa un baseURL, usar API_BASE_URL en vez de baseURL directo
+  const urlBase = baseURL || API_BASE_URL;
+  const url = `${urlBase}/${realTable}/`;
+
   if (baseURL) {
-    const url = `${baseURL}/api/${realTable}/`;
     const response = await fetch(url);
     if (!response.ok) throw new Error('Error fetching data');
     return await response.json();
@@ -342,13 +344,13 @@ export const getAPI = (table: string) => {
 
 // Helper for saldo fetch/update (no afecta el funcionamiento de GenericAPI ni fetchTableData)
 export const fetchSaldo = async () => {
-  const response = await fetch('http://localhost:8000/api/saldo/');
+  const response = await fetch(`${API_BASE_URL}/saldo/`);
   if (!response.ok) throw new Error('Error fetching saldo');
   return await response.json();
 };
 
 export const patchSaldo = async (saldo_inicial: number) => {
-  const response = await fetch('http://localhost:8000/api/saldo/', {
+  const response = await fetch(`${API_BASE_URL}/saldo/`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ saldo_inicial }),

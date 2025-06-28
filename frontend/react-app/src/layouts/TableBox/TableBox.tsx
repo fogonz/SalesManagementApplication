@@ -6,7 +6,7 @@ import ProductDisplay from '../../components/Components/ProductDisplay/ProductDi
 import AddButton from '../../assets/AddButton';
 import DeleteButton from '../../assets/DeleteButton';
 import { fetchCuentas } from '../../services/api/cuentas';
-import { fetchTableData } from '../../services/api';
+import { API_BASE_URL, fetchTableData } from '../../services/api';
 import { getColumnsForActiveView } from '../../config/tableColumns';
 import { TableBoxProps, Tabla } from '../../types';
 import {
@@ -113,7 +113,7 @@ const useTableData = (activeView: Tabla, cuentas: CuentaRow[], refreshTrigger?: 
 
   const loadData = async () => {
     try {
-      const tableData = await fetchTableData(activeView, 'http://localhost:8000');
+      const tableData = await fetchTableData(activeView);
       setData(tableData);
     } catch (err) {
       console.error(`Error loading ${activeView} data:`, err);
@@ -139,7 +139,7 @@ const useMovimientosData = () => {
   const loadMovimientosData = async () => {
     try {
       // Pasa la URL base igual que en fetchTableData de useTableData
-      const data = await fetchTableData('movimientos', 'http://localhost:8000');
+      const data = await fetchTableData('movimientos');
       setMovimientosData(data as MovimientoRow[]);
       console.log(`MOVIMIENTOS DATA: ${JSON.stringify(data)}`)
     } catch (err) {
