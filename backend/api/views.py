@@ -560,12 +560,12 @@ class DebugTokenObtainPairView(TokenObtainPairView):
 @permission_classes([AllowAny])
 def create_admin_users(request):
     """
-    Force creation of admin users
+    Force creation of admin users and reset their passwords
     """
     try:
         User = get_user_model()
         
-        # Create admin user
+        # Create or get admin user
         admin_user, admin_created = User.objects.get_or_create(
             username="admin",
             defaults={
@@ -575,11 +575,14 @@ def create_admin_users(request):
                 'is_active': True
             }
         )
-        if admin_created:
-            admin_user.set_password("admin1234")
-            admin_user.save()
+        # Always set password (even if user exists)
+        admin_user.set_password("admin1234")
+        admin_user.is_staff = True
+        admin_user.is_superuser = True
+        admin_user.is_active = True
+        admin_user.save()
         
-        # Create felipe user
+        # Create or get felipe user
         felipe_user, felipe_created = User.objects.get_or_create(
             username="felipe",
             defaults={
@@ -589,15 +592,20 @@ def create_admin_users(request):
                 'is_active': True
             }
         )
-        if felipe_created:
-            felipe_user.set_password("admin")
-            felipe_user.save()
+        # Always set password (even if user exists)
+        felipe_user.set_password("admin")
+        felipe_user.is_staff = True
+        felipe_user.is_superuser = True
+        felipe_user.is_active = True
+        felipe_user.save()
         
         return Response({
             'success': True,
             'admin_created': admin_created,
             'felipe_created': felipe_created,
-            'message': f'Admin: {"created" if admin_created else "exists"}, Felipe: {"created" if felipe_created else "exists"}'
+            'admin_password_reset': True,
+            'felipe_password_reset': True,
+            'message': f'Admin: {"created" if admin_created else "updated"}, Felipe: {"created" if felipe_created else "updated"}, passwords reset'
         })
     except Exception as e:
         return Response({'success': False, 'error': str(e)}, status=500)
