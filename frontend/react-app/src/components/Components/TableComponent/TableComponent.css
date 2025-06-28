@@ -248,6 +248,30 @@
   }
 }
 
+/* --- Mobile improvements: larger fonts --- */
+@media (max-width: 600px) {
+  .table_container {
+    font-size: 1.25rem;
+  }
+  .table_body {
+    font-size: 1.18rem;
+  }
+  .table_header {
+    font-size: 1.05rem;
+    height: 5.5vh;
+    min-height: 38px;
+  }
+}
+
+/* --- Mobile improvements: horizontal scroll for .table-component --- */
+@media (max-width: 600px) {
+  .table-component {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+  }
+}
+
 .modal-overlay {
   position: fixed;
   top: 25px;

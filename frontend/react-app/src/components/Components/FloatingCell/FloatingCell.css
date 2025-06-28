@@ -115,3 +115,10 @@
 	margin-left: auto;
 	padding-right: 5%;
 }
+
+/* --- Ocultar floating-cell en mobile --- */
+@media (max-width: 600px) {
+  .floating-cell {
+    display: none !important;
+  }
+}

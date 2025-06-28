@@ -24,7 +24,7 @@
   /* LAYOUT VARS */
   --sidebar-width: 15vw;
   --content-padding: 20px;
-  --toolbar-height: 70px;
+  --toolbar-height: 60px;
   --topbar-height: 4vh;
   --app-height: calc(100vh - var(--topbar-height));
   --newTransaction-width: 35vw;

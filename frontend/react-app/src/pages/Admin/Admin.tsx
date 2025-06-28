@@ -31,6 +31,7 @@ import { ConfirmDeleteMenu } from '../../layouts/menus/ConfitmDelete/ConfirmDele
 import { useData, DataProvider } from '../../contexts/DataContext';
 import { filterData } from '../../utils/filterUtils';
 import { fetchTableData } from '../../services/api';
+import { isMobileDevice } from '../../utils/isMobile';
 
 import { ValidTabla, Tabla, Menu, AdminProps, AdminView } from '../../types';
 import SshTunnelMenu from '../../layouts/menus/ConnectionMenu/SshTunnelMenu';
@@ -365,6 +366,12 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
   };
 
   // ========== RENDERIZADO PRINCIPAL ==========
+  const [isMobile, setIsMobile] = useState(() => isMobileDevice());
+  useEffect(() => {
+    const handleResize = () => setIsMobile(isMobileDevice());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   return (
     <div className='app-wrapper'>
       <div className='admin-container'>
@@ -373,10 +380,9 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           currentSection='admin'
           activeView={
             // Solo pasar un valor válido de Tabla, nunca ""
-            (['movimientos', 'cuentas', 'productos', 'cajachica'].includes(currentAdminView)
+            (['movimientos', 'cuentas', 'productos', 'cajachica'].includes(currentAdminView as string)
               ? (currentAdminView as Tabla)
-              : 'movimientos'
-            )
+              : 'movimientos')
           }
           setActiveView={(view) => {
             setActiveView(view);
@@ -384,8 +390,8 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           }}
           currentAdminView={currentAdminView}
           setCurrentAdminView={setCurrentAdminView}
+          isMobile={isMobile}
         />
-
         {/* Contenido principal */}
         <main>
           <>

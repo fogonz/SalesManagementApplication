@@ -10,6 +10,7 @@ interface SideBarProps {
   setActiveView?: React.Dispatch<React.SetStateAction<Tabla>>;
   currentAdminView?: AdminView;
   setCurrentAdminView?: React.Dispatch<React.SetStateAction<AdminView>>;
+  isMobile?: boolean; // Agregado para manejar vista móvil
 }
 
 const SideBar: React.FC<SideBarProps> = ({
@@ -17,10 +18,11 @@ const SideBar: React.FC<SideBarProps> = ({
   setActiveView, 
   currentAdminView, 
   setCurrentAdminView, 
-  currentSection = "home"
+  currentSection = "home",
+  isMobile = false // Valor por defecto en false
 }) => {
   return (
-    <div className="sidebar">
+    <div className={`sidebar${isMobile ? ' mobile-hidden' : ''}`}>
       <div className="logo-section">
         <img
           src="https://static.tingelmar.com/app/uy/negocios/g/30/81030/g81030-sm-0-0-1-12411261855.jpg"

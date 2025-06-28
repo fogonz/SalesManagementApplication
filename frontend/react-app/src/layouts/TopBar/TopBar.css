@@ -252,3 +252,18 @@
 .fa-sign-out-alt {
     color: white;
 }
+
+/* --- Mobile improvements --- */
+@media (max-width: 600px) {
+  .header-top {
+    min-height: 80px;
+    height: 10vh;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    font-size: 1.25rem;
+  }
+  .topbar-button {
+    font-size: 1.15rem;
+    height: 54px;
+  }
+}

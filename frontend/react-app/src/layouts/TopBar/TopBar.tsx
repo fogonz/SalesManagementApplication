@@ -98,37 +98,36 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
   return (
     <div className="header-top">
       {/* Botón recargar página completamente a la izquierda */}
-      <button
-        className="topbar-refresh-btn"
-        title="Recargar página"
-        style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: 16 }}
-        onClick={() => window.location.reload()}
-      >
-        <i className="fas fa-rotate-right" style={{ color: 'white' }} />
-      </button>
-      <div className="header-right-controls">
-        {/* Botón Logout */}
+      <div className="header-right-controls" style={{ display: 'flex', alignItems: 'center', gap: '6px', height: '36px', marginLeft: 'auto' }}>
         <button
-          className="topbar-logout-btn"
-          title="Cerrar sesión"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: 8, color: '#dc3545', fontWeight: 600, borderRadius: 6, padding: '8px 16px' }}
-          onClick={handleLogout}
+          className="topbar-refresh-btn"
+          title="Recargar página"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', height: '32px', width: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+          onClick={() => window.location.reload()}
         >
-          <i className="fas fa-sign-out-alt" style={{ color: '#dc3545' }} />
+          <i className="fas fa-rotate-right" style={{ color: 'white', fontSize: '1.05rem' }} />
         </button>
         {/* Botón engranaje para saldo */}
         <button
           className="topbar-gear-btn"
           title="Editar saldo"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: 8 }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff', height: '32px', width: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, margin: 0 }}
           onClick={() => setSaldoMenuVisible(true)}
         >
-          <i className="fas fa-gear" />
+          <i className="fas fa-gear" style={{ fontSize: '1.05rem', margin: 0, padding: 0 }} />
+        </button>
+        {/* Botón Logout */}
+        <button
+          className="topbar-logout-btn"
+          title="Cerrar sesión"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#dc3545', borderRadius: 6, height: '32px', width: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+          onClick={handleLogout}
+        >
+          <i className="fas fa-sign-out-alt" style={{ color: '#dc3545', fontSize: '1.05rem' }} />
         </button>
         {/* Dark Mode Toggle */}
-        <div className="dark-mode-container">
-                     
-          <label className="switch">
+        <div className="dark-mode-container" style={{ height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <label className="switch" style={{ margin: 0 }}>
             <input
               type="checkbox"
               checked={darkMode}
