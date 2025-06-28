@@ -90,9 +90,14 @@ app.whenReady().then(() => {
 
   // Inicia el chequeo de actualizaciones solo si la app está empaquetada
   if (app.isPackaged) {
-    autoUpdater.checkForUpdatesAndNotify()
-
-    autoUpdater.on('update-available', () => {
+    console.log('App empaquetada detectada, iniciando auto-updater...')
+    
+    autoUpdater.on('checking-for-update', () => {
+      console.log('Checking for update...')
+    })
+    
+    autoUpdater.on('update-available', (info) => {
+      console.log('Update available:', info)
       dialog.showMessageBox({
         type: 'info',
         title: 'Actualización disponible',
@@ -100,7 +105,12 @@ app.whenReady().then(() => {
       })
     })
 
-    autoUpdater.on('update-downloaded', () => {
+    autoUpdater.on('update-not-available', (info) => {
+      console.log('Update not available:', info)
+    })
+
+    autoUpdater.on('update-downloaded', (info) => {
+      console.log('Update downloaded:', info)
       dialog.showMessageBox({
         type: 'info',
         title: 'Actualización lista',
@@ -112,7 +122,16 @@ app.whenReady().then(() => {
 
     autoUpdater.on('error', (err) => {
       console.error('Error en autoUpdater:', err)
+      dialog.showErrorBox('Error de actualización', `Error: ${err.message}`)
     })
+
+    // Chequear actualizaciones después de un delay
+    setTimeout(() => {
+      console.log('Iniciando chequeo de actualizaciones...')
+      autoUpdater.checkForUpdatesAndNotify()
+    }, 5000)
+  } else {
+    console.log('App en desarrollo, auto-updater deshabilitado')
   }
 
   setTimeout(createWindow, 3000)
