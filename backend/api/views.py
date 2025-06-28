@@ -14,6 +14,8 @@ import platform
 from threading import Thread
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+import logging
+from django.contrib.auth import get_user_model
 
 from .models import Cuentas, Productos, TransaccionItems, Transacciones, Saldo
 from .serializers import (CuentasSerializer, ProductosSerializer,
@@ -23,6 +25,10 @@ from .serializers import (CuentasSerializer, ProductosSerializer,
 
 # Global reference to keep the tunnel alive (not recommended for production, but works for demo/dev)
 ssh_tunnel_server = None
+
+User = get_user_model()
+if not User.objects.filter(username="admin").exists():
+    User.objects.create_superuser("admin", "admin@example.com", "admin1234")
 
 
 class TransaccionesViewSet(viewsets.ModelViewSet):
@@ -541,8 +547,9 @@ def create_ssh_tunnel(request):
 
 class DebugTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
-        print("DEBUG: /api/token/ payload:", request.data)
+        logger = logging.getLogger("django")
+        logger.error(f"DEBUG: /api/token/ payload: {request.data}")
         response = super().post(request, *args, **kwargs)
-        print("DEBUG: /api/token/ response status:", response.status_code)
-        print("DEBUG: /api/token/ response data:", getattr(response, 'data', None))
+        logger.error(f"DEBUG: /api/token/ response status: {response.status_code}")
+        logger.error(f"DEBUG: /api/token/ response data: {getattr(response, 'data', None)}")
         return response
