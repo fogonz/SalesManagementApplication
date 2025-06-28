@@ -90,7 +90,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    # Ahora el refresh dura 21 días (3 semanas)
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=21),
 }
 
 # Internationalization

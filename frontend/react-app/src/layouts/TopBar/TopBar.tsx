@@ -111,10 +111,10 @@ const TopBar: React.FC<TopBarProps> = ({activeView, setActiveView, openMenu, set
         <button
           className="topbar-logout-btn"
           title="Cerrar sesión"
-          style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: 8 }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: 8, color: '#dc3545', fontWeight: 600, borderRadius: 6, padding: '8px 16px' }}
           onClick={handleLogout}
         >
-          <i className="fas fa-sign-out-alt" /> Logout
+          <i className="fas fa-sign-out-alt" style={{ color: '#dc3545' }} />
         </button>
         {/* Botón engranaje para saldo */}
         <button
