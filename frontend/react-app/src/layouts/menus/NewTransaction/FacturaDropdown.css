@@ -1,0 +1,206 @@
+/* Estilos para el nuevo FacturaDropdown */
+.factura-dropdown {
+	width: 100%;
+	margin-bottom: 8px;
+}
+
+.factura-dropdown__menu {
+	z-index: 10;
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	box-shadow: 0 6px 24px 0 rgba(0,0,0,0.18), 0 1.5px 4px 0 rgba(0,0,0,0.10);
+	margin-top: 4px;
+	padding: 0 0 8px 0;
+	position: relative;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.dropdown-label {
+	font-size: 15px;
+	font-weight: 600;
+	color: #374151;
+	margin-bottom: 4px;
+	margin-left: 2px;
+	padding: 12px 16px 0 16px;
+	background: #fff;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+}
+
+.selector, .search__input, .dropdown-item, .factura-dropdown-item {
+	min-height: 44px;
+	box-sizing: border-box;
+	font-size: 15px;
+}
+
+.selector {
+	border: 1px solid #bcc4c4;
+	transition: border 0.2s;
+	font-size: 15px;
+	text-align: left;
+	padding: 8px 12px;
+	min-height: 44px;
+	border-radius: 6px;
+	background: #fff;
+	width: 100%;
+	box-sizing: border-box;
+	margin-bottom: 0;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
+
+.selector:focus, .selector:active {
+	outline: none;
+	border-color: #6366f1;
+}
+
+.selector__text {
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.factura-nro, .factura-fecha, .factura-total, .factura-concepto {
+	font-size: 14px;
+	font-weight: 500;
+	color: #374151;
+	margin-right: 8px;
+}
+
+.factura-nro {
+	min-width: 60px;
+}
+
+.factura-fecha {
+	min-width: 90px;
+	color: #6b7280;
+}
+
+.factura-total {
+	min-width: 70px;
+	color: #059669;
+	font-weight: 600;
+}
+
+.factura-concepto {
+	min-width: 120px;
+	color: #6366f1;
+}
+
+.factura-list-header {
+	display: flex;
+	gap: 12px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #6b7280;
+	padding: 0 16px 4px 16px;
+	margin-top: 8px;
+}
+
+.factura-list-header>div {
+	min-width: 70px;
+}
+
+.factura-list-wrapper {
+	max-height: 220px;
+	overflow-y: auto;
+}
+
+.factura-dropdown-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 12px;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background 0.15s;
+	min-height: 44px;
+	box-sizing: border-box;
+}
+
+.factura-dropdown-item.dropdown-item--selected {
+	background: #e0f2fe;
+}
+
+.factura-dropdown-item.dropdown-item--hoverable:hover {
+	background: #f3f4f6;
+}
+
+.factura-item-content {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+}
+
+.item-nro, .item-fecha, .item-total, .item-detalle {
+	min-width: 70px;
+	font-size: 14px;
+}
+
+.item-total {
+	color: #059669;
+	font-weight: 600;
+}
+
+.item-detalle {
+	color: #6366f1;
+}
+
+.search {
+	width: 100%;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+}
+
+.search__input {
+	width: 100%;
+	margin: 8px 0 0 0;
+	padding: 8px 12px;
+	border: 1px solid #e5e7eb;
+	border-radius: 6px;
+	font-size: 15px;
+	outline: none;
+	transition: border 0.2s;
+	box-sizing: border-box;
+}
+
+.search__input:focus {
+	border-color: #6366f1;
+}
+
+.empty-state {
+	text-align: center;
+	color: #9ca3af;
+	padding: 16px 0;
+	font-size: 15px;
+}
+
+.item-action {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	min-width: 24px;
+	min-height: 24px;
+	max-width: 24px;
+	max-height: 24px;
+	border: none;
+	background: none;
+	padding: 0;
+	margin-left: 8px;
+	font-size: 16px;
+	line-height: 1;
+}
+
+.item-action i {
+	font-size: 16px;
+	line-height: 1;
+	vertical-align: middle;
+}

@@ -27,7 +27,7 @@
   --toolbar-height: 70px;
   --topbar-height: 4vh;
   --app-height: calc(100vh - var(--topbar-height));
-  --newTransaction-width: 30vw;
+  --newTransaction-width: 35vw;
   --newTransaction-height: 78vh;
   --newTransaction-products-width: 50vw;
   --newAccount-width: 30vw;

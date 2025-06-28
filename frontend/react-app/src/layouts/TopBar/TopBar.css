@@ -248,3 +248,7 @@
 .saldo-menu-modal button:last-child:hover {
     background: #0056b3;
 }
+
+.fa-sign-out-alt {
+    color: white;
+}

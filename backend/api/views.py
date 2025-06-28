@@ -14,6 +14,8 @@ import platform
 from threading import Thread
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.exceptions import InvalidToken
+from django.contrib.auth import authenticate
 import logging
 from django.contrib.auth import get_user_model
 
@@ -547,7 +549,22 @@ def create_ssh_tunnel(request):
     except Exception as e:
         return Response({'success': False, 'error': str(e)}, status=500)
 
+class SpanishTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """Custom serializer with Spanish error messages"""
+    
+    def validate(self, attrs):
+        try:
+            return super().validate(attrs)
+        except Exception as e:
+            # Check if it's the standard authentication error
+            if "No active account found with the given credentials" in str(e):
+                raise InvalidToken("No se encontró una cuenta activa con las credenciales proporcionadas")
+            # For other authentication errors, provide a generic Spanish message
+            raise InvalidToken("Credenciales inválidas o cuenta inactiva")
+
 class DebugTokenObtainPairView(TokenObtainPairView):
+    serializer_class = SpanishTokenObtainPairSerializer
+    
     def post(self, request, *args, **kwargs):
         logger = logging.getLogger("django")
         logger.error(f"DEBUG: /api/token/ payload: {request.data}")

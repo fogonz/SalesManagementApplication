@@ -1,5 +1,6 @@
 import * as React from 'react';
 import '../menus.css';
+import './FacturaDropdown.css';
 import { useEffect, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -45,27 +46,37 @@ const FacturaDropdown: React.FC<{
         return facturas.find(f => f.id === selectedFactura?.id || f.id === selectedFactura) || null;
     }, [selectedFactura, facturas]);
 
+    // Label dinámico
+    const label = tipo === "pago" ? "Facturas sin pagar" : tipo === "cobranza" ? "Facturas sin cobrar" : "Facturas";
+
     return (
-        <div className="dropdown">
+        <div className="dropdown factura-dropdown">
             <div
                 className={`selector ${isSubmitting ? 'selector--disabled' : ''}`}
                 onClick={() => { if (!isSubmitting) setIsOpen(!isOpen); }}
             >
                 <span className="selector__text">
                     {selectedFacturaObj
-                        ? `N° ${selectedFacturaObj.numero_comprobante || "-"} | ${selectedFacturaObj.fecha} | $${selectedFacturaObj.total} | ${selectedFacturaObj.concepto || ""}`
+                        ? (
+                            <>
+                                <span className="factura-nro">N° {selectedFacturaObj.numero_comprobante || "-"}</span>
+                                <span className="factura-fecha">{selectedFacturaObj.fecha}</span>
+                                <span className="factura-total">${selectedFacturaObj.total}</span>
+                                <span className="factura-concepto">{selectedFacturaObj.concepto || ""}</span>
+                            </>
+                        )
                         : placeholder
                     }
                 </span>
                 <i className={`fas fa-chevron-${isOpen ? 'up' : 'down'} selector__chevron`}></i>
             </div>
             {isOpen && (
-                <div className="dropdown__menu">
+                <div className="dropdown__menu factura-dropdown__menu">
                     <div className="search">
                         <input
                             type="text"
                             className="search__input"
-                            placeholder="¿Qué factura buscas?"
+                            placeholder="Buscar factura por número o concepto..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                             onClick={e => e.stopPropagation()}
@@ -76,14 +87,14 @@ const FacturaDropdown: React.FC<{
                             </div>
                         )}
                     </div>
-                    <div className="list-container">
-                        <div className="list-header">
+                    <div className="list-container factura-list-container">
+                        <div className="list-header factura-list-header">
                             <div><span>N°</span></div>
                             <div><span>Fecha</span></div>
                             <div><span>Total</span></div>
                             <div><span>Detalle</span></div>
                         </div>
-                        <div className="list-wrapper">
+                        <div className="list-wrapper factura-list-wrapper">
                             {filteredFacturas.length === 0 ? (
                                 <div className="empty-state">
                                     <i className="fas fa-search"></i>
@@ -93,10 +104,10 @@ const FacturaDropdown: React.FC<{
                                 filteredFacturas.map((f, idx) => (
                                     <div
                                         key={f.id || idx}
-                                        className={`dropdown-item ${selectedFacturaObj?.id === f.id ? 'dropdown-item--selected' : 'dropdown-item--hoverable'}`}
+                                        className={`dropdown-item factura-dropdown-item ${selectedFacturaObj?.id === f.id ? 'dropdown-item--selected' : 'dropdown-item--hoverable'}`}
                                         onClick={() => { onSelectFactura(f); setIsOpen(false); setSearchTerm(""); }}
                                     >
-                                        <div className="item-content">
+                                        <div className="item-content factura-item-content">
                                             <div className="item-nro"><span>{f.numero_comprobante || "-"}</span></div>
                                             <div className="item-fecha"><span>{f.fecha}</span></div>
                                             <div className="item-total"><span>${f.total}</span></div>
@@ -317,15 +328,22 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
     useEffect(() => {
         // Solo buscar si es pago/cobranza y hay cuenta seleccionada
         if ((tipo === "pago" || tipo === "cobranza") && cuenta) {
-            // SOLO permitir pagos de facturas de compra y cobranzas de facturas de venta
             const tipoFactura = tipo === "pago" ? "factura_compra" : "factura_venta";
             authFetch(`${API_BASE_URL}/movimientos/?tipo=${tipoFactura}&cuenta=${cuenta}`)
                 .then(res => res.json())
                 .then(data => {
-                    // Filtrar SOLO facturas (no pagos/cobranzas) y con total > 0
+                    // Filtrar SOLO por el tipo correspondiente (no ambos)
                     const soloFacturas = data.filter(f =>
-                        (f.tipo === "factura_compra" || f.tipo === "factura_venta") && f.total > 0
+                        f.tipo === tipoFactura &&
+                        f.total > 0 &&
+                        f.estado === "pendiente"
                     );
+                    console.log('DEBUG facturasPendientes:', soloFacturas);
+                    if (soloFacturas.length > 0) {
+                        console.log('DEBUG primer factura:', soloFacturas[0]);
+                        console.log('DEBUG campo cuenta de la primer factura:', soloFacturas[0].cuenta);
+                    }
+                    console.log('DEBUG cuenta seleccionada:', cuenta);
                     setFacturasPendientes(soloFacturas);
                 })
                 .catch(() => setFacturasPendientes([]));
@@ -400,14 +418,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                     tipo,
                     descuento_total: isNaN(descuentoTotal) ? 0 : descuentoTotal,
                     total: totalFinal,
-                    // Si es pago/cobranza y hay factura seleccionada, enviar concepto automático
-                    concepto: ( (tipo === "pago" || tipo === "cobranza") && facturaSeleccionada )
-                        ? (
-                            tipo === "pago"
-                                ? `Pago de ${facturaSeleccionada.carrito?.length || 1} producto${(facturaSeleccionada.carrito?.length === 1) ? '' : 's'}`
-                                : `Cobranza de ${facturaSeleccionada.carrito?.length || 1} producto${(facturaSeleccionada.carrito?.length === 1) ? '' : 's'}`
-                        )
-                        : concepto
+                    concepto // Usar solo el valor del input del usuario
                 };
 
                 if (tipo === "factura_venta" || tipo === "factura_compra") {
@@ -486,11 +497,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                 total: totalFinal,
                                 // Mantener el mismo número de comprobante
                                 numero_comprobante: numeroComprobante ? parseInt(numeroComprobante, 10) : undefined,
-                                concepto: `${
-                                    tipo === "factura_venta"
-                                        ? `Cobranza de ${cantidadProductos} producto${cantidadProductos === 1 ? '' : 's'}`
-                                        : `Pago de ${cantidadProductos} producto${cantidadProductos === 1 ? '' : 's'}`
-                                }`,
+                                concepto, // Usar solo el valor del input del usuario
                                 descuento_total: 0,
                                 carrito: []
                             };
@@ -737,15 +744,14 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                             </div>
                                         </div>
                                         <FacturaDropdown
-                                            facturas={facturasPendientes
-                                                .filter(f =>
-                                                    // Solo mostrar facturas de la cuenta seleccionada
-                                                    f.cuenta == cuenta &&
-                                                    (
-                                                        (tipo === "pago" && f.tipo === "factura_compra") ||
-                                                        (tipo === "cobranza" && f.tipo === "factura_venta")
-                                                    )
-                                                )}
+                                            facturas={facturasPendientes.filter(f => {
+                                                // Si f.cuenta es objeto, comparar f.cuenta.id
+                                                if (f.cuenta && typeof f.cuenta === 'object' && 'id' in f.cuenta) {
+                                                    return String(f.cuenta.id) === String(cuenta);
+                                                }
+                                                // Si es string o number
+                                                return String(f.cuenta) === String(cuenta);
+                                            })}
                                             selectedFactura={facturaSeleccionada}
                                             onSelectFactura={f => {
                                                 setFacturaSeleccionada(f);
@@ -780,37 +786,7 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
 
                                 {/* Detalle solo si NO es factura_venta ni factura_compra */}
                                 {tipo !== "factura_venta" && tipo !== "factura_compra" && (
-                                    <>
-                                        {/* Si es pago/cobranza y hay factura seleccionada, mostrar texto automático */}
-                                        {( (tipo === "pago" || tipo === "cobranza") && facturaSeleccionada ) ? (
-                                            // NO mostrar input de detalle, solo mostrar el texto
-                                            <div className="entry">
-                                                <div className="entry_label">
-                                                    <div className="text open-sans">
-                                                        {tipo === "pago"
-                                                            ? `Pago de ${facturaSeleccionada.carrito?.length || 1} producto${(facturaSeleccionada.carrito?.length === 1) ? '' : 's'}`
-                                                            : `Cobranza de ${facturaSeleccionada.carrito?.length || 1} producto${(facturaSeleccionada.carrito?.length === 1) ? '' : 's'}`
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            // Si no, mostrar input editable de detalle
-                                            <div className="entry">
-                                                <div className="entry_label">
-                                                    <div className="text open-sans">Detalle</div>
-                                                </div>
-                                                <input 
-                                                    type="text" 
-                                                    className="custom_input" 
-                                                    placeholder="(OPCIONAL) Describir movimiento..."
-                                                    value={concepto} 
-                                                    onChange={(e) => setConcepto(e.target.value)}
-                                                    disabled={isSubmitting}
-                                                />
-                                            </div>
-                                        )}
-                                    </>
+                                    <></>
                                 )}
     
                                 <div className="entry">
