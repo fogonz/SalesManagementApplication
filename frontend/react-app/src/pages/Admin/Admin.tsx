@@ -71,15 +71,15 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
       setCurrentAdminView(activeView as AdminView);
     }
   }, [activeView]);
-  
+
   // Control de refrescar datos
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  
+
   // Estados para datos de ROI
-  const [roiChartData, setRoiChartData] = useState<{  }[]>([]);
+  const [roiChartData, setRoiChartData] = useState<{}[]>([]);
   const [loadingRoiData, setLoadingRoiData] = useState(false);
   const [roiError, setRoiError] = useState("");
-  
+
   // Estados para movimientos
   const [movimientosData, setMovimientosData] = useState<any[]>([]);
   const [loadingMovs, setLoadingMovs] = useState(true);
@@ -115,7 +115,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
   // ========== HANDLERS DE MENÚS ==========
   // Abrir menú específico
   const open = (menu: Exclude<Menu, null>) => setOpenMenu(menu);
-  
+
   // Cerrar menú actual
   const close = () => {
     setOpenMenu(null);
@@ -123,13 +123,13 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
   };
 
   const handleRowDelete = (params: RowDeleteParams) => {
-  console.log('Se solicitó eliminar una fila:', params);
-  
-  // Store the delete data
-  setRowDeleteData(params);
-  
-  // Open the delete confirmation menu
-  open('confirmDelete');
+    console.log('Se solicitó eliminar una fila:', params);
+
+    // Store the delete data
+    setRowDeleteData(params);
+
+    // Open the delete confirmation menu
+    open('confirmDelete');
   };
 
   const handleConfirmDelete = () => {
@@ -142,9 +142,9 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
   };
 
   const handleCancelDelete = () => {
-  console.log("Eliminación cancelada");
-  setRowDeleteData(null); // <-- Clear first
-  close();
+    console.log("Eliminación cancelada");
+    setRowDeleteData(null); // <-- Clear first
+    close();
   };
 
   // Manejar edición de celda
@@ -161,7 +161,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
       original: editData.prevValue,
       new: editData.newValue
     });
-  
+
     setCellEditData(editData);
     open('confirmChanges');
   };
@@ -279,7 +279,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
       //       </div>
       //     </div>
       //   );
-      
+
       // Vista de historial (placeholder)
       case 'historial':
         return (
@@ -288,14 +288,14 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
             <p>Contenido del historial de movimientos...</p>
           </div>
         );
-      
+
       // Vistas de tablas (movimientos, cuentas, productos)
       case 'movimientos':
       case 'cuentas':
       case 'productos':
         const tableActiveView: Tabla = currentAdminView as Tabla;
         return (
-            <div className={`dashboard-container ${openMenu ? "blurred" : ""}`}>
+          <div className={`dashboard-container ${openMenu ? "blurred" : ""}`}>
             <TableBox
               onCellEdit={handleCellEdit}
               onRowDelete={handleRowDelete}
@@ -307,16 +307,16 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
               }}
               refreshTrigger={refreshTrigger}
               onOpenMenu={() => open(
-                tableActiveView === 'movimientos' ? 'transaction' : 
-                tableActiveView === 'cuentas' ? 'account' : 
-                tableActiveView === 'productos' ? 'product' :
-                'transaction'
+                tableActiveView === 'movimientos' ? 'transaction' :
+                  tableActiveView === 'cuentas' ? 'account' :
+                    tableActiveView === 'productos' ? 'product' :
+                      'transaction'
               )}
               onRefresh={() => setRefreshTrigger(prev => prev + 1)} // <-- Ensure this is present
             />
-            </div>
+          </div>
         );
-      
+
       // Vista de exportación
       case 'exportar':
         return (
@@ -327,7 +327,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
             </button>
           </div>
         );
-      
+
       // Vista de chat
       case 'chat':
         return (
@@ -338,10 +338,6 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
       case 'linkDevice':
         return (
           <div className="dashboard-container">
-            <SshTunnelMenu
-              onConnect={handleSshConnect}
-              isConnected={sshConnected}
-            />
           </div>
         );
       case 'cajachica':
@@ -373,8 +369,8 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
     <div className='app-wrapper'>
       <div className='admin-container'>
         {/* Barra lateral de navegación */}
-        <SideBar 
-          currentSection='admin' 
+        <SideBar
+          currentSection='admin'
           activeView={
             // Solo pasar un valor válido de Tabla, nunca ""
             (['movimientos', 'cuentas', 'productos', 'cajachica'].includes(currentAdminView)
@@ -389,7 +385,7 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
           currentAdminView={currentAdminView}
           setCurrentAdminView={setCurrentAdminView}
         />
-        
+
         {/* Contenido principal */}
         <main>
           <>
@@ -404,12 +400,12 @@ const Admin: React.FC<AdminProps> = ({ activeView, setActiveView, openMenu, setO
       {openMenu === 'transaction' && (
         <Transaction onClose={close} onAccept={handleAcceptTransaction} />
       )}
-      
+
       {/* Modal de nueva cuenta */}
       {openMenu === 'account' && (
         <NewAccount onClose={close} onAccept={handleAcceptAccount} />
       )}
-      
+
       {/* Modal de nuevo producto */}
       {openMenu === 'product' && (
         <NewProduct onClose={close} onAccept={handleAcceptProduct} />

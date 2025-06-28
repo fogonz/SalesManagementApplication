@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import dj_database_url
 from datetime import timedelta
 
 # Paths base
@@ -65,14 +66,7 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 # Database
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "db_schema_nuevo",
-		"USER": "root",
-		"HOST": "localhost",
-		"PORT": 3306,
-		"PASSWORD": "765123",
-    }
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
 
 # REST Framework & JWT

@@ -15,8 +15,8 @@ sqlparse = "*"
 psycopg2-binary = "*"
 python-dotenv = "*"
 django-vite = "*"
-flask = "*"
 pyngrok = "*"
+dj-database-url = "*"
 
 [dev-packages]
 
