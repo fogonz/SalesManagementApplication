@@ -30,10 +30,12 @@ INSTALLED_APPS = [
     "django_vite",
 
     # Aplicaciones locales
-    "api",
+    "backend.api",
 ]
 
+# CORS
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -102,10 +104,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "backend/frontend/static")
 # Define MEDIA_URL to avoid collision with STATIC_URL
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "mediafiles"
-
-# CORS
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
 
 # Configuración de django-vite
 django_vite_build = {
