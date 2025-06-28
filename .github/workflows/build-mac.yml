@@ -1,0 +1,31 @@
+name: Build Electron App for Mac
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Instalar dependencias
+        run: npm install
+        working-directory: electron
+      - name: Build frontend
+        run: npm run build
+        working-directory: frontend/react-app
+      - name: Build Electron app (Mac)
+        run: npm run dist
+        working-directory: electron
+      - name: Subir artefactos a la release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: electron/dist/*.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
