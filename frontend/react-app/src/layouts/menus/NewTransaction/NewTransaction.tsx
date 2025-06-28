@@ -332,6 +332,13 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
             authFetch(`${API_BASE_URL}/movimientos/?tipo=${tipoFactura}&cuenta=${cuenta}`)
                 .then(res => res.json())
                 .then(data => {
+                    // LOG: Mostrar todas las facturas recibidas del backend
+                    console.log('DEBUG facturas recibidas del backend:', data);
+                    if (Array.isArray(data)) {
+                        data.forEach((f, idx) => {
+                            console.log(`Factura[${idx}]: id=${f.id}, tipo=${f.tipo}, cuenta=${JSON.stringify(f.cuenta)}, estado=${f.estado}, total=${f.total}`);
+                        });
+                    }
                     // Filtrar SOLO por el tipo correspondiente (no ambos)
                     const soloFacturas = data.filter(f =>
                         f.tipo === tipoFactura &&
@@ -745,15 +752,18 @@ const Transaction: React.FC<TransactionProps> = ({ onClose, onAccept }) => {
                                         </div>
                                         <FacturaDropdown
                                             facturas={facturasPendientes.filter(f => {
-                                                // Si f.cuenta es objeto, comparar f.cuenta.id
+                                                let match = false;
                                                 if (f.cuenta && typeof f.cuenta === 'object' && 'id' in f.cuenta) {
-                                                    return String(f.cuenta.id) === String(cuenta);
+                                                    match = String(f.cuenta.id) === String(cuenta);
+                                                    console.log('[DROPDOWN] Comparando cuenta objeto:', f.cuenta.id, cuenta, '=>', match, f);
+                                                } else {
+                                                    match = String(f.cuenta) === String(cuenta);
+                                                    console.log('[DROPDOWN] Comparando cuenta simple:', f.cuenta, cuenta, '=>', match, f);
                                                 }
-                                                // Si es string o number
-                                                return String(f.cuenta) === String(cuenta);
+                                                return match;
                                             })}
                                             selectedFactura={facturaSeleccionada}
-                                            onSelectFactura={f => {
+                                            onSelectFactura={(f: any) => {
                                                 setFacturaSeleccionada(f);
                                                 if (f && f.numero_comprobante) {
                                                     setNumeroComprobante(f.numero_comprobante.toString());

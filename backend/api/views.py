@@ -39,25 +39,36 @@ class TransaccionesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Transacciones.objects.all().select_related('cuenta').prefetch_related('transaccionitems_set')
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        tipo = self.request.query_params.get('tipo')
+        cuenta = self.request.query_params.get('cuenta')
+        estado = self.request.query_params.get('estado')
+        if tipo:
+            queryset = queryset.filter(tipo=tipo)
+        if cuenta:
+            queryset = queryset.filter(cuenta_id=cuenta)
+        if estado:
+            queryset = queryset.filter(estado=estado)
+        print('[BACKEND] get_queryset:', list(queryset.values('id','tipo','cuenta_id','estado','total','numero_comprobante')), flush=True)
+        return queryset
+
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return TransaccionesWriteSerializer
         return TransaccionesSerializer
 
     def perform_create(self, serializer):
-        """Create transaction and auto-update account balance"""
         with transaction.atomic():
-            serializer.save()
+            instance = serializer.save()
             # Balance is automatically updated via signals
 
     def perform_update(self, serializer):
-        """Update transaction and auto-update account balance"""
         with transaction.atomic():
             serializer.save()
             # Balance is automatically updated via signals
 
     def perform_destroy(self, instance):
-        """Delete transaction and auto-update account balance"""
         with transaction.atomic():
             instance.delete()
             # Balance is automatically updated via signals
@@ -137,6 +148,9 @@ class TransaccionesViewSet(viewsets.ModelViewSet):
         data = request.data.copy()
         data.pop('carrito', None)
         data.pop('productos', None)
+        # Forzar estado pendiente al crear factura_venta/factura_compra
+        if tipo in ['factura_venta', 'factura_compra']:
+            data['estado'] = 'pendiente'
 
         # Validación de número de comprobante único para la cuenta y tipo
         if tipo in ['factura_venta', 'factura_compra']:
