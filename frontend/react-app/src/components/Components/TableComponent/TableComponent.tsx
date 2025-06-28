@@ -51,7 +51,7 @@ type TableRow = MovimientoRow | CuentaRow | ProductoRow
 type TableProps = {
   columns: ColumnDefinition[]
   rows: TableRow[]
-  tableType: 'movimientos' | 'cuentas' | 'productos' | 'cajachica' // <-- add cajachica
+  tableType: 'movimientos' | 'cuentas' | 'productos' | 'cajachica'
   movimientosData?: MovimientoRow[]
   movimientosColumns?: ColumnDefinition[] 
   isAdmin?: boolean
@@ -66,7 +66,8 @@ type TableProps = {
   }) => void;
   onRowDelete?: (rowId: number) => void;
   onRefresh?: () => void;
-  disableInteractions?: boolean; // <-- NUEVO
+  disableInteractions?: boolean;
+  loading?: boolean;
 }
 
 // Helper function to format tipo values
@@ -88,7 +89,8 @@ const TableComponent: React.FC<TableProps> = ({
   onRowDelete,
   rowSelected,
   onRefresh,
-  disableInteractions = false // <-- NUEVO
+  disableInteractions = false,
+  loading = false // <-- NUEVO
 }) => {
   const tableRef = useRef<HTMLDivElement>(null)
   const [hoveredCell, setHoveredCell] = useState<any>(null)
@@ -361,6 +363,46 @@ const TableComponent: React.FC<TableProps> = ({
       return (a as any).id - (b as any).id;
     });
   }, [rows]);
+
+  if (loading) {
+    return (
+      <div className="table_wrapper" ref={tableRef}>
+        <div className="table_scroll">
+          <div className="table_header">
+            {columns.map(col => (
+              <div key={col.key} className="table_header__cell" style={{ width: col.width }}>
+                {col.label}
+              </div>
+            ))}
+          </div>
+          <div className="table_container">
+            <div className="table_body">
+              <div className="loading-message">
+                <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" stroke="#1976d2">
+                  <g fill="none" fillRule="evenodd">
+                    <g transform="translate(2 2)" strokeWidth="3">
+                      <circle strokeOpacity=".3" cx="18" cy="18" r="18" />
+                      <path d="M36 18c0-9.94-8.06-18-18-18">
+                        <animateTransform
+                          attributeName="transform"
+                          type="rotate"
+                          from="0 18 18"
+                          to="360 18 18"
+                          dur="1s"
+                          repeatCount="indefinite"
+                        />
+                      </path>
+                    </g>
+                  </g>
+                </svg>
+                <span style={{ marginLeft: 16 }}>Cargando datos de la tabla...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (!rows.length) {
     return (

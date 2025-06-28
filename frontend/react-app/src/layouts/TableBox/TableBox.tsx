@@ -110,26 +110,28 @@ const useCuentas = (activeView: Tabla) => {
 
 const useTableData = (activeView: Tabla, cuentas: CuentaRow[], refreshTrigger?: number) => {
   const [data, setData] = useState<MovimientoRow[] | CuentaRow[] | ProductoRow[]>([]);
+  const [loading, setLoading] = useState<boolean>(false); // <-- NEW
 
   const loadData = async () => {
+    setLoading(true); // <-- NEW
     try {
       const tableData = await fetchTableData(activeView);
       setData(tableData);
     } catch (err) {
       console.error(`Error loading ${activeView} data:`, err);
+    } finally {
+      setLoading(false); // <-- NEW
     }
   };
 
   useEffect(() => {
-    // Para cajachica, NO dependas de cuentas.length
     if ((activeView === 'movimientos') && cuentas.length === 0) {
       return;
     }
-    // Para cajachica, siempre carga los datos aunque cuentas esté vacío
     loadData();
   }, [activeView, cuentas, refreshTrigger]);
 
-  return { data, loadData };
+  return { data, loadData, loading }; // <-- NEW
 };
 
 // NEW: Custom hook for movimientos data
@@ -220,7 +222,7 @@ const TableBox: React.FC<TableBoxProps> = ({
 }) => {
   // Custom hooks
   const { cuentas, error } = useCuentas(activeView);
-  const { data, loadData } = useTableData(activeView, cuentas, refreshTrigger);
+  const { data, loadData, loading } = useTableData(activeView, cuentas, refreshTrigger);
   const { movimientosData } = useMovimientosData();
   const { 
     searchTerm, 
@@ -453,6 +455,7 @@ const TableBox: React.FC<TableBoxProps> = ({
               onCellEdit={handleCellEdit}
               onRowSelect={setRowSelected}
               onRefresh={onRefresh}
+              loading={loading} // <-- Use real loading state
             />
           )}
           {/* Renderiza el menú de confirmación si es necesario */}

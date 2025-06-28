@@ -1,6 +1,6 @@
 import { Tabla } from "../../types";
 
-export const API_BASE_URL = 'https://d3f0fd3c-97c5-422b-8ede-79bd1c488019.up.railway.app/api';
+export const API_BASE_URL = 'https://salesmanagementapplication-production.up.railway.app/api';
 
 export interface APIError {
   message: string;
