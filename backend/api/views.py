@@ -12,6 +12,8 @@ import subprocess
 import sys
 import platform
 from threading import Thread
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import Cuentas, Productos, TransaccionItems, Transacciones, Saldo
 from .serializers import (CuentasSerializer, ProductosSerializer,
@@ -536,3 +538,11 @@ def create_ssh_tunnel(request):
         })
     except Exception as e:
         return Response({'success': False, 'error': str(e)}, status=500)
+
+class DebugTokenObtainPairView(TokenObtainPairView):
+    def post(self, request, *args, **kwargs):
+        print("DEBUG: /api/token/ payload:", request.data)
+        response = super().post(request, *args, **kwargs)
+        print("DEBUG: /api/token/ response status:", response.status_code)
+        print("DEBUG: /api/token/ response data:", getattr(response, 'data', None))
+        return response
