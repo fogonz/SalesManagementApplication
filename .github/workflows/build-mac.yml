@@ -24,7 +24,7 @@ jobs:
         run: npm run build
         working-directory: frontend/react-app
       - name: Build Electron app (Mac)
-        run: npm run build:frontend && CI=true npx electron-builder --publish never
+        run: npm run build:frontend && CI=true npx electron-builder --mac --publish never
         working-directory: electron
       - name: Subir artefactos a la release
         uses: softprops/action-gh-release@v2
