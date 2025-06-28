@@ -77,7 +77,16 @@
         "from": "../backend",
         "to": "backend"
       }
+    ],
+    "publish": [
+      {
+        "provider": "github"
+      }
     ]
   },
-  "homepage": "https://github.com/fogonz/SalesManagementApplication"
+  "homepage": "https://github.com/fogonz/SalesManagementApplication",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fogonz/SalesManagementApplication.git"
+  }
 }
